@@ -1,13 +1,4 @@
-import org.apache.tools.ant.filters.ReplaceTokens
-
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.1'
-    }
-}
+import org.apache.tools.ant.filters.*
 
 plugins {
     id "com.github.johnrengelman.shadow" version "2.0.1"
@@ -18,40 +9,25 @@ plugins {
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'java-library'
-apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'jacoco'
 
+apply from: "monext.gradle"
+//apply from: "external.gradle"
+
 description = 'payment-method-sdd-docapost'
-group = 'com.payline'
+group = 'com.payline.payment.sdd-docapost'
 version = '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+compileJava.options.encoding = 'UTF-8'
 
 ext {
     paymentMethodApiVersion = '1.0-RC3'
     paymentMethodIntegrationVersion = "1.0-RC3"
     mockitoVersion = '2.19.0'
     releaseDirectoryPath = 'D:/build'
-}
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
-publishing {
-    publications {
-        shadow(MavenPublication) { publication ->
-            project.shadow.component(publication)
-        }
-    }
-    repositories {
-        mavenLocal()
-/**
- if (project.version.endsWith('-SNAPSHOT')) {url nexusSnapshotUrl} else {url nexusPublicUrl}credentials {username mavenUser
- password mavenPassword}*/
-    }
 }
 
 dependencies {
@@ -120,22 +96,12 @@ task printVersion {
 
 /* Replace tokens in resources files after compilation */
 processResources {
-    filter ReplaceTokens, tokens: [
-            "version": project.version.replace("-SNAPSHOT", ""),
-            "date"   : new Date().format("dd/MM/yyyy")
-    ]
+    filesMatching('release.properties') {
+        filter( ReplaceTokens, tokens:[
+                'version': project.version.replaceFirst("-.*", ""),
+                'date': new Date().format("dd/MM/yyyy")
+        ])
+    }
 }
 
 test.exclude '**/*IT.class'
-
-sonarqube {
-    properties {
-        property "sonar.jacoco.reportPaths", "${project.buildDir}/jacoco/test.exec"
-        property "sonar.dependencyCheck.reportPath", "${project.buildDir}/reports/dependency-check-report.xml"
-        property 'sonar.dependencyCheck.htmlReportPath', "${project.buildDir}/reports/dependency-check-report.html"
-
-        property 'sonar.organization', 'thales-services-monext'
-        property 'sonar.host.url', 'https://sonarcloud.io'
-
-    }
-}
