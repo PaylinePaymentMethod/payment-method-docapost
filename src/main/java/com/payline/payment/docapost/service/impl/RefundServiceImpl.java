@@ -13,8 +13,12 @@ import com.payline.payment.docapost.utils.DocapostUtils;
 import com.payline.payment.docapost.utils.config.ConfigEnvironment;
 import com.payline.payment.docapost.utils.config.ConfigProperties;
 import com.payline.payment.docapost.utils.http.StringResponse;
+import com.payline.payment.docapost.utils.type.WSRequestResultEnum;
+import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 import com.payline.pmapi.bean.refund.response.RefundResponse;
+import com.payline.pmapi.bean.refund.response.impl.RefundResponseFailure;
+import com.payline.pmapi.bean.refund.response.impl.RefundResponseSuccess;
 import com.payline.pmapi.service.RefundService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -76,12 +80,51 @@ public class RefundServiceImpl extends AbstractRefundHttpService<RefundRequest> 
     @Override
     public RefundResponse processResponse(StringResponse response) throws IOException {
 
-        AbstractXmlResponse orderCancelXmlResponse = getSctOrderCreateResponse(response.getContent().trim());
+        AbstractXmlResponse sctOrderCreateXmlResponse = getSctOrderCreateResponse(response.getContent().trim());
 
+        if (sctOrderCreateXmlResponse != null) {
 
+            if (sctOrderCreateXmlResponse.isResultOk()) {
 
+                WSCTOrderDTOResponse sctorderCreateResponse = (WSCTOrderDTOResponse) sctOrderCreateXmlResponse;
 
-        return null;
+                return RefundResponseSuccess
+                        .RefundResponseSuccessBuilder
+                        .aRefundResponseSuccess()
+                        .withStatusCode(sctorderCreateResponse.getStatus())
+                        .withTransactionId(sctorderCreateResponse.getE2eId())
+                        .build();
+
+            } else {
+
+                XmlErrorResponse xmlErrorResponse = (XmlErrorResponse) sctOrderCreateXmlResponse;
+
+                WSRequestResultEnum wsRequestResult = WSRequestResultEnum.fromDocapostErrorCode(xmlErrorResponse.getException().getCode());
+
+                return RefundResponseFailure
+                        .RefundResponseFailureBuilder
+                        .aRefundResponseFailure()
+                        .withErrorCode(wsRequestResult.getDocapostErrorCode())
+                        .withFailureCause(wsRequestResult.getPaylineFailureCause())
+                        // FIXME : Add fields ?
+                        //.withTransactionId()
+                        .build();
+
+            }
+
+        } else {
+
+            return RefundResponseFailure
+                    .RefundResponseFailureBuilder
+                    .aRefundResponseFailure()
+                    .withErrorCode("XML RESPONSE PARSING FAILED")
+                    .withFailureCause(FailureCause.INVALID_DATA)
+                    // FIXME : Add fields ?
+                    //.withTransactionId()
+                    .build();
+
+        }
+
     }
 
     @Override
@@ -114,7 +157,7 @@ public class RefundServiceImpl extends AbstractRefundHttpService<RefundRequest> 
 
         }
 
-        if (xmlResponse.contains(MANDATE_WS_XML__WS_SDD_ORDER_DTO)) {
+        if (xmlResponse.contains(MANDATE_WS_XML__WS_SCT_ORDER_DTO)) {
 
             sctorderCreateResponse = ResponseBuilderFactory.buildWsctOrderDTOResponse(xmlResponse);
 

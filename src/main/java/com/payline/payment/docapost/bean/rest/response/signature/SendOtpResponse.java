@@ -40,7 +40,7 @@ public class SendOtpResponse extends AbstractWSSignatureResponse {
     //******************************************************************************************************************
     //***** BUILDER
     public static final class Builder {
-        public SendOtpResponse fromJson(String jsonContent ) {
+        public SendOtpResponse fromJson( String jsonContent ) {
             Gson gson = new Gson();
             return gson.fromJson( jsonContent, SendOtpResponse.class );
         }

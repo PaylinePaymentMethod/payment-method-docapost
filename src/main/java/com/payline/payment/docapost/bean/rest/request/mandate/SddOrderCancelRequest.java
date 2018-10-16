@@ -1,5 +1,6 @@
 package com.payline.payment.docapost.bean.rest.request.mandate;
 
+import com.payline.payment.docapost.bean.PaymentResponseSuccessAdditionalData;
 import com.payline.payment.docapost.exception.InvalidRequestException;
 import com.payline.payment.docapost.utils.DocapostUtils;
 import com.payline.pmapi.bean.payment.ContractProperty;
@@ -71,7 +72,8 @@ public class SddOrderCancelRequest {
 
             SddOrderCancelRequest request = new SddOrderCancelRequest(
                     paylineRequest.getContractConfiguration().getContractProperties().get( CONTRACT_CONFIG__CREDITOR_ID ).getValue(),
-                    paylineRequest.getPartnerConfiguration().getProperty(CONTEXT_DATA__MANDATE_RUM),
+                    // FIXME : En attente reception nouveau jar PM API avec ResetRequest#additionalData
+                    "" /* new PaymentResponseSuccessAdditionalData.Builder().fromJson(paylineRequest.getAdditionalData()).getMandateRum() */,
                     paylineRequest.getPartnerTransactionId()
             );
 
@@ -110,6 +112,11 @@ public class SddOrderCancelRequest {
 //                throw new InvalidRequestException( "Additional data object must not be null" );
 //            }
 //            String additionalData = paylineRequest.getAdditionalData();
+//            PaymentResponseSuccessAdditionalData paymentResponseSuccessAdditionalData = new PaymentResponseSuccessAdditionalData.Builder().fromJson(additionalData);
+//            if ( paymentResponseSuccessAdditionalData == null
+//                    || paymentResponseSuccessAdditionalData.getMandateRum() == null ) {
+//                throw new InvalidRequestException( "Missing additional data property: mandate rum" );
+//            }
 
             if ( DocapostUtils.isEmpty(paylineRequest.getPartnerTransactionId()) ) {
                 throw new InvalidRequestException( "Missing mandatory property: partner transaction id" );

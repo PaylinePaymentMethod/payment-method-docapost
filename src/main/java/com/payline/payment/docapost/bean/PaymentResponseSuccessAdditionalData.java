@@ -55,8 +55,32 @@ public class PaymentResponseSuccessAdditionalData {
         return this;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder result = new StringBuilder();
+
+        result.append("***** PaymentResponseSuccessAdditionalData info\n");
+
+        result.append("mandateRum : " + mandateRum + "\n");
+        result.append("transactionId : " + transactionId + "\n");
+        result.append("signatureId : " + signatureId + "\n");
+
+        return result.toString();
+    }
+
     public String toJson() {
         return new Gson().toJson(this);
     }
+
+    //******************************************************************************************************************
+    //***** BUILDER
+    public static final class Builder {
+        public PaymentResponseSuccessAdditionalData fromJson( String jsonContent ) {
+            Gson gson = new Gson();
+            return gson.fromJson( jsonContent, PaymentResponseSuccessAdditionalData.class );
+        }
+    }
+    //***** BUILDER
+    //******************************************************************************************************************
 
 }

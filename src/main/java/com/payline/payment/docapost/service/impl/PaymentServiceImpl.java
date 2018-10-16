@@ -240,27 +240,33 @@ public class PaymentServiceImpl implements PaymentService {
 
                     AbstractXmlResponse mandateCreateXmlResponse = getMandateCreateResponse(responseBody);
 
-                    if (mandateCreateXmlResponse.isResultOk()) {
+                    if (mandateCreateXmlResponse != null) {
 
-                        WSMandateDTOResponse mandateCreateResponse = (WSMandateDTOResponse) mandateCreateXmlResponse;
+                        if (mandateCreateXmlResponse.isResultOk()) {
 
-                        this.logger.debug("WSMandateDTOResponse :");
-                        this.logger.debug(mandateCreateResponse.toString());
+                            WSMandateDTOResponse mandateCreateResponse = (WSMandateDTOResponse) mandateCreateXmlResponse;
 
-                        // Recuperation du parametre mandateRum
-                        this.docapostLocalParam.setMandateRum(mandateCreateResponse.getRum());
+                            this.logger.debug("WSMandateDTOResponse :");
+                            this.logger.debug(mandateCreateResponse.toString());
+
+                            // Recuperation du parametre mandateRum
+                            this.docapostLocalParam.setMandateRum(mandateCreateResponse.getRum());
+
+                        } else {
+
+                            XmlErrorResponse xmlErrorResponse = (XmlErrorResponse) mandateCreateXmlResponse;
+
+                            this.logger.debug("WSMandateDTOResponse error :");
+                            this.logger.debug(xmlErrorResponse.toString());
+
+                            WSRequestResultEnum wsRequestResult = WSRequestResultEnum.fromDocapostErrorCode(xmlErrorResponse.getException().getCode());
+
+                            return buildPaymentResponseFailure( wsRequestResult );
+
+                        }
 
                     } else {
-
-                        XmlErrorResponse xmlErrorResponse = (XmlErrorResponse) mandateCreateXmlResponse;
-
-                        this.logger.debug("WSMandateDTOResponse error :");
-                        this.logger.debug(xmlErrorResponse.toString());
-
-                        WSRequestResultEnum wsRequestResult = WSRequestResultEnum.fromDocapostErrorCode(xmlErrorResponse.getException().getCode());
-
-                        return buildPaymentResponseFailure( wsRequestResult );
-
+                        return buildPaymentResponseFailure( "XML RESPONSE PARSING FAILED", FailureCause.INVALID_DATA );
                     }
 
                 } else if( mandateCreateStringResponse != null && mandateCreateStringResponse.getCode() != 200 ) {
@@ -627,27 +633,33 @@ public class PaymentServiceImpl implements PaymentService {
 
                     AbstractXmlResponse orderCreateXmlResponse = getOrderCreateResponse(responseBody);
 
-                    if (orderCreateXmlResponse.isResultOk()) {
+                    if (orderCreateXmlResponse != null) {
 
-                        WSDDOrderDTOResponse orderCreateResponse = (WSDDOrderDTOResponse) orderCreateXmlResponse;
+                        if (orderCreateXmlResponse.isResultOk()) {
 
-                        this.logger.debug("SddOrderCreateRequest :");
-                        this.logger.debug(orderCreateResponse.toString());
+                            WSDDOrderDTOResponse orderCreateResponse = (WSDDOrderDTOResponse) orderCreateXmlResponse;
 
-                        // Nothing to do
-                        this.docapostLocalParam.setOrderStatus(orderCreateResponse.getStatus());
+                            this.logger.debug("SddOrderCreateRequest :");
+                            this.logger.debug(orderCreateResponse.toString());
+
+                            // Nothing to do
+                            this.docapostLocalParam.setOrderStatus(orderCreateResponse.getStatus());
+
+                        } else {
+
+                            XmlErrorResponse xmlErrorResponse = (XmlErrorResponse) orderCreateXmlResponse;
+
+                            this.logger.debug("SddOrderCreateRequest error :");
+                            this.logger.debug(xmlErrorResponse.toString());
+
+                            WSRequestResultEnum wsRequestResult = WSRequestResultEnum.fromDocapostErrorCode(xmlErrorResponse.getException().getCode());
+
+                            return buildPaymentResponseFailure( wsRequestResult );
+
+                        }
 
                     } else {
-
-                        XmlErrorResponse xmlErrorResponse = (XmlErrorResponse) orderCreateXmlResponse;
-
-                        this.logger.debug("SddOrderCreateRequest error :");
-                        this.logger.debug(xmlErrorResponse.toString());
-
-                        WSRequestResultEnum wsRequestResult = WSRequestResultEnum.fromDocapostErrorCode(xmlErrorResponse.getException().getCode());
-
-                        return buildPaymentResponseFailure( wsRequestResult );
-
+                        return buildPaymentResponseFailure( "XML RESPONSE PARSING FAILED", FailureCause.INVALID_DATA );
                     }
 
                 } else if( orderCreateStringResponse != null && orderCreateStringResponse.getCode() != 200 ) {

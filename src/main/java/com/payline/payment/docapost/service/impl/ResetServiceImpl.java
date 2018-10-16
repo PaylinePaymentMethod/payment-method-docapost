@@ -14,6 +14,7 @@ import com.payline.payment.docapost.utils.config.ConfigProperties;
 import com.payline.payment.docapost.utils.http.DocapostHttpClient;
 import com.payline.payment.docapost.utils.http.StringResponse;
 import com.payline.payment.docapost.utils.type.WSRequestResultEnum;
+import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.reset.request.ResetRequest;
 import com.payline.pmapi.bean.reset.response.ResetResponse;
 import com.payline.pmapi.bean.reset.response.impl.ResetResponseFailure;
@@ -77,28 +78,43 @@ public class ResetServiceImpl extends AbstractResetHttpService<ResetRequest> imp
 
         AbstractXmlResponse orderCancelXmlResponse = getOrderCancelResponse(response.getContent().trim());
 
-        if (orderCancelXmlResponse.isResultOk()) {
+        if (orderCancelXmlResponse != null) {
 
-            WSDDOrderDTOResponse orderCancelResponse = (WSDDOrderDTOResponse) orderCancelXmlResponse;
+            if (orderCancelXmlResponse.isResultOk()) {
 
-            return ResetResponseSuccess
-                    .ResetResponseSuccessBuilder
-                    .aResetResponseSuccess()
-                    .withStatusCode(orderCancelResponse.getStatus())
-                    .withTransactionId(orderCancelResponse.getE2eId())
-                    .build();
+                WSDDOrderDTOResponse orderCancelResponse = (WSDDOrderDTOResponse) orderCancelXmlResponse;
+
+                return ResetResponseSuccess
+                        .ResetResponseSuccessBuilder
+                        .aResetResponseSuccess()
+                        .withStatusCode(orderCancelResponse.getStatus())
+                        .withTransactionId(orderCancelResponse.getE2eId())
+                        .build();
+
+            } else {
+
+                XmlErrorResponse xmlErrorResponse = (XmlErrorResponse) orderCancelXmlResponse;
+
+                WSRequestResultEnum wsRequestResult = WSRequestResultEnum.fromDocapostErrorCode(xmlErrorResponse.getException().getCode());
+
+                return ResetResponseFailure
+                        .ResetResponseFailureBuilder
+                        .aResetResponseFailure()
+                        .withErrorCode(wsRequestResult.getDocapostErrorCode())
+                        .withFailureCause(wsRequestResult.getPaylineFailureCause())
+                        // FIXME : Add fields ?
+                        //.withTransactionId()
+                        .build();
+
+            }
 
         } else {
-
-            XmlErrorResponse xmlErrorResponse = (XmlErrorResponse) orderCancelXmlResponse;
-
-            WSRequestResultEnum wsRequestResult = WSRequestResultEnum.fromDocapostErrorCode(xmlErrorResponse.getException().getCode());
 
             return ResetResponseFailure
                     .ResetResponseFailureBuilder
                     .aResetResponseFailure()
-                    .withErrorCode(wsRequestResult.getDocapostErrorCode())
-                    .withFailureCause(wsRequestResult.getPaylineFailureCause())
+                    .withErrorCode("XML RESPONSE PARSING FAILED")
+                    .withFailureCause(FailureCause.INVALID_DATA)
                     // FIXME : Add fields ?
                     //.withTransactionId()
                     .build();
