@@ -1,29 +1,18 @@
 package com.payline.payment.docapost.service.impl;
 
-import static com.payline.payment.docapost.utils.DocapostConstants.*;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.payline.payment.docapost.bean.PaymentResponseSuccessAdditionalData;
 import com.payline.payment.docapost.bean.rest.request.RequestBuilderFactory;
-import com.payline.payment.docapost.bean.rest.request.mandate.SddOrderCreateRequest;
-import com.payline.payment.docapost.bean.rest.response.ResponseBuilderFactory;
-import com.payline.payment.docapost.bean.rest.response.mandate.WSMandateDTOResponse;
-import com.payline.payment.docapost.bean.rest.response.mandate.WSDDOrderDTOResponse;
-import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.payline.payment.docapost.bean.rest.request.mandate.MandateCreateRequest;
+import com.payline.payment.docapost.bean.rest.request.mandate.SddOrderCreateRequest;
 import com.payline.payment.docapost.bean.rest.request.signature.InitiateSignatureRequest;
 import com.payline.payment.docapost.bean.rest.request.signature.SendOtpRequest;
 import com.payline.payment.docapost.bean.rest.request.signature.SetCodeRequest;
 import com.payline.payment.docapost.bean.rest.request.signature.TerminateSignatureRequest;
-import com.payline.payment.docapost.bean.rest.response.mandate.AbstractXmlResponse;
+import com.payline.payment.docapost.bean.rest.response.ResponseBuilderFactory;
 import com.payline.payment.docapost.bean.rest.response.error.XmlErrorResponse;
+import com.payline.payment.docapost.bean.rest.response.mandate.AbstractXmlResponse;
+import com.payline.payment.docapost.bean.rest.response.mandate.WSDDOrderDTOResponse;
+import com.payline.payment.docapost.bean.rest.response.mandate.WSMandateDTOResponse;
 import com.payline.payment.docapost.bean.rest.response.signature.InitiateSignatureResponse;
 import com.payline.payment.docapost.bean.rest.response.signature.SendOtpResponse;
 import com.payline.payment.docapost.bean.rest.response.signature.SetCodeResponse;
@@ -37,6 +26,7 @@ import com.payline.payment.docapost.utils.http.DocapostHttpClient;
 import com.payline.payment.docapost.utils.http.StringResponse;
 import com.payline.payment.docapost.utils.type.WSRequestResultEnum;
 import com.payline.pmapi.bean.common.FailureCause;
+import com.payline.pmapi.bean.payment.RequestContext;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFailure;
@@ -50,6 +40,17 @@ import com.payline.pmapi.bean.paymentform.bean.form.CustomForm;
 import com.payline.pmapi.bean.paymentform.response.configuration.PaymentFormConfigurationResponse;
 import com.payline.pmapi.bean.paymentform.response.configuration.impl.PaymentFormConfigurationResponseSpecific;
 import com.payline.pmapi.service.PaymentService;
+import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.payline.payment.docapost.utils.DocapostConstants.*;
 
 public class PaymentServiceImpl implements PaymentService {
 
