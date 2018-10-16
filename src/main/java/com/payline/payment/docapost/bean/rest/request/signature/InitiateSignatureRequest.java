@@ -89,6 +89,18 @@ public class InitiateSignatureRequest extends WSSignatureRequest implements WSSi
                 throw new InvalidRequestException( "Missing contract configuration property: creditor id" );
             }
 
+            if ( paylineRequest.getPartnerConfiguration() == null
+                    || paylineRequest.getPartnerConfiguration().getSensitiveProperties() == null ) {
+                throw new InvalidRequestException( "Partner configuration sensitive properties object must not be null" );
+            }
+            Map<String, String> sensitiveProperties = paylineRequest.getPartnerConfiguration().getSensitiveProperties();
+            if ( sensitiveProperties.get( PARTNER_CONFIG__AUTH_LOGIN ) == null ) {
+                throw new InvalidRequestException( "Missing partner configuration property: auth login" );
+            }
+            if ( sensitiveProperties.get( PARTNER_CONFIG__AUTH_PASS ) == null ) {
+                throw new InvalidRequestException( "Missing partner configuration property: auth pass" );
+            }
+
             if ( docapostLocalParam == null
                     || DocapostUtils.isEmpty(docapostLocalParam.getMandateRum()) ) {
                 throw new InvalidRequestException( "Missing mandatory property: mandate rum" );

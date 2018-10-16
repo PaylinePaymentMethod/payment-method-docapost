@@ -1,7 +1,5 @@
 package com.payline.payment.docapost.bean.rest.response.mandate;
 
-import com.payline.payment.docapost.bean.rest.response.AbstractXmlResponse;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -12,27 +10,19 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "WSDDOrderDTO")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OrderCreateResponse extends AbstractXmlResponse {
-
-    // Original fields from request
-    @XmlElement(name = "creditorId")
-    private String creditorId;
-
-    @XmlElement(name = "rum")
-    private String rum;
-
-    @XmlElement(name = "amount")
-    private Float amount;
+public class WSDDOrderDTOResponse extends AbstractXmlResponse {
 
     @XmlElement(name = "label")
     private String label;
 
-    // Added response fields
-    @XmlElement(name = "e2eId")
-    private String e2eId;
+    @XmlElement(name = "reference")
+    private String reference;
 
     @XmlElement(name = "dueDate")
     private String dueDate;
+
+    @XmlElement(name = "e2eId")
+    private String e2eId;
 
     @XmlElement(name = "remitDate")
     private String remitDate;
@@ -40,40 +30,28 @@ public class OrderCreateResponse extends AbstractXmlResponse {
     @XmlElement(name = "sequence")
     private String sequence;
 
+    @XmlElement(name = "identifier")
+    private String identifier;
+
+    @XmlElement(name = "rum")
+    private String rum;
+
+    @XmlElement(name = "creditorId")
+    private String creditorId;
+
     @XmlElement(name = "status")
     private String status;
 
-    @XmlElement(name = "identifier")
-    private String identifier;
+    @XmlElement(name = "statusDate")
+    private String statusDate;
+
+    @XmlElement(name = "amount")
+    private Float amount;
 
     /**
      * Public default constructor
      */
-    public OrderCreateResponse() { }
-
-    public String getCreditorId() {
-        return creditorId;
-    }
-
-    public void setCreditorId(String creditorId) {
-        this.creditorId = creditorId;
-    }
-
-    public String getRum() {
-        return rum;
-    }
-
-    public void setRum(String rum) {
-        this.rum = rum;
-    }
-
-    public Float getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Float amount) {
-        this.amount = amount;
-    }
+    public WSDDOrderDTOResponse() { }
 
     public String getLabel() {
         return label;
@@ -83,12 +61,12 @@ public class OrderCreateResponse extends AbstractXmlResponse {
         this.label = label;
     }
 
-    public String getE2eId() {
-        return e2eId;
+    public String getReference() {
+        return reference;
     }
 
-    public void setE2eId(String e2eId) {
-        this.e2eId = e2eId;
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 
     public String getDueDate() {
@@ -97,6 +75,14 @@ public class OrderCreateResponse extends AbstractXmlResponse {
 
     public void setDueDate(String dueDate) {
         this.dueDate = dueDate;
+    }
+
+    public String getE2eId() {
+        return e2eId;
+    }
+
+    public void setE2eId(String e2eId) {
+        this.e2eId = e2eId;
     }
 
     public String getRemitDate() {
@@ -115,14 +101,6 @@ public class OrderCreateResponse extends AbstractXmlResponse {
         this.sequence = sequence;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public String getIdentifier() {
         return identifier;
     }
@@ -131,22 +109,64 @@ public class OrderCreateResponse extends AbstractXmlResponse {
         this.identifier = identifier;
     }
 
+    public String getRum() {
+        return rum;
+    }
+
+    public void setRum(String rum) {
+        this.rum = rum;
+    }
+
+    public String getCreditorId() {
+        return creditorId;
+    }
+
+    public void setCreditorId(String creditorId) {
+        this.creditorId = creditorId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getStatusDate() {
+        return statusDate;
+    }
+
+    public void setStatusDate(String statusDate) {
+        this.statusDate = statusDate;
+    }
+
+    public Float getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Float amount) {
+        this.amount = amount;
+    }
+
     @Override
     public String toString() {
         final StringBuilder result = new StringBuilder();
 
-        result.append("***** OrderCreateResponse info\n");
+        result.append("***** WSDDOrderDTOResponse info\n");
 
-        result.append("creditorId : " + creditorId + "\n");
-        result.append("rum : " + rum + "\n");
-        result.append("amount : " + amount + "\n");
         result.append("label : " + label + "\n");
-        result.append("e2eId : " + e2eId + "\n");
+        result.append("reference : " + reference + "\n");
         result.append("dueDate : " + dueDate + "\n");
+        result.append("e2eId : " + e2eId + "\n");
         result.append("remitDate : " + remitDate + "\n");
         result.append("sequence : " + sequence + "\n");
-        result.append("status : " + status + "\n");
         result.append("identifier : " + identifier + "\n");
+        result.append("rum : " + rum + "\n");
+        result.append("creditorId : " + creditorId + "\n");
+        result.append("status : " + status + "\n");
+        result.append("statusDate : " + statusDate + "\n");
+        result.append("amount : " + amount + "\n");
 
         return result.toString();
     }
@@ -154,8 +174,8 @@ public class OrderCreateResponse extends AbstractXmlResponse {
     //******************************************************************************************************************
     //***** BUILDER
     public static final class Builder {
-        public OrderCreateResponse fromXml(String xmlContent) {
-            return (OrderCreateResponse) parse(OrderCreateResponse.class, xmlContent);
+        public WSDDOrderDTOResponse fromXml(String xmlContent) {
+            return (WSDDOrderDTOResponse) parse(WSDDOrderDTOResponse.class, xmlContent);
         }
     }
     //***** BUILDER

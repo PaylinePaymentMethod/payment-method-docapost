@@ -1,4 +1,4 @@
-package com.payline.payment.docapost.service;
+package com.payline.payment.docapost.service.impl;
 
 import static com.payline.payment.docapost.utils.DocapostConstants.*;
 
@@ -6,20 +6,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.payline.payment.docapost.bean.rest.request.RequestBuilderFactory;
+import com.payline.payment.docapost.bean.rest.request.mandate.SddOrderCreateRequest;
+import com.payline.payment.docapost.bean.rest.response.ResponseBuilderFactory;
+import com.payline.payment.docapost.bean.rest.response.mandate.WSMandateDTOResponse;
+import com.payline.payment.docapost.bean.rest.response.mandate.WSDDOrderDTOResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.payline.payment.docapost.bean.rest.request.mandate.MandateCreateRequest;
-import com.payline.payment.docapost.bean.rest.request.mandate.OrderCreateRequest;
 import com.payline.payment.docapost.bean.rest.request.signature.InitiateSignatureRequest;
 import com.payline.payment.docapost.bean.rest.request.signature.SendOtpRequest;
 import com.payline.payment.docapost.bean.rest.request.signature.SetCodeRequest;
 import com.payline.payment.docapost.bean.rest.request.signature.TerminateSignatureRequest;
-import com.payline.payment.docapost.bean.rest.response.AbstractXmlResponse;
+import com.payline.payment.docapost.bean.rest.response.mandate.AbstractXmlResponse;
 import com.payline.payment.docapost.bean.rest.response.error.XmlErrorResponse;
-import com.payline.payment.docapost.bean.rest.response.mandate.MandateCreateResponse;
-import com.payline.payment.docapost.bean.rest.response.mandate.OrderCreateResponse;
 import com.payline.payment.docapost.bean.rest.response.signature.InitiateSignatureResponse;
 import com.payline.payment.docapost.bean.rest.response.signature.SendOtpResponse;
 import com.payline.payment.docapost.bean.rest.response.signature.SetCodeResponse;
@@ -58,7 +60,7 @@ public class PaymentServiceImpl implements PaymentService {
     private DocapostLocalParam docapostLocalParam;
 
     /**
-     * constructeur
+     * Constructeur
      */
     public PaymentServiceImpl() {
 
@@ -79,7 +81,7 @@ public class PaymentServiceImpl implements PaymentService {
 
             PaymentResponse response = null;
 
-            // Recuperation des donnees necessaire pour la generation du Header Basic credentials des appels WS
+            // Recuperation des donnees necessaires pour la generation du Header Basic credentials des appels WS
             String username = paymentRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG__AUTH_LOGIN);
             String pass = paymentRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG__AUTH_PASS);
 
@@ -188,7 +190,7 @@ public class PaymentServiceImpl implements PaymentService {
                 //### API MandateWS /api/mandate/create
 
                 // Initialisation de la requete Docapost
-                MandateCreateRequest mandateCreateRequest = new MandateCreateRequest.Builder().fromPaylineRequest(paymentRequest);
+                MandateCreateRequest mandateCreateRequest = RequestBuilderFactory.buildMandateCreateRequest(paymentRequest);
 
                 // Generation des donnees du body de la requete
                 requestBody = mandateCreateRequest.buildBody();
@@ -217,16 +219,16 @@ public class PaymentServiceImpl implements PaymentService {
 
                     responseBody = mandateCreateStringResponse.getContent().trim();
 
-                    this.logger.debug("MandateCreateResponse XML body :");
+                    this.logger.debug("WSMandateDTOResponse XML body :");
                     this.logger.debug(responseBody);
 
                     AbstractXmlResponse mandateCreateXmlResponse = getMandateCreateResponse(responseBody);
 
                     if (mandateCreateXmlResponse.isResultOk()) {
 
-                        MandateCreateResponse mandateCreateResponse = (MandateCreateResponse) mandateCreateXmlResponse;
+                        WSMandateDTOResponse mandateCreateResponse = (WSMandateDTOResponse) mandateCreateXmlResponse;
 
-                        this.logger.debug("MandateCreateResponse :");
+                        this.logger.debug("WSMandateDTOResponse :");
                         this.logger.debug(mandateCreateResponse.toString());
 
                         // Recuperation du parametre mandateRum
@@ -236,7 +238,7 @@ public class PaymentServiceImpl implements PaymentService {
 
                         XmlErrorResponse xmlErrorResponse = (XmlErrorResponse) mandateCreateXmlResponse;
 
-                        this.logger.debug("MandateCreateResponse error :");
+                        this.logger.debug("WSMandateDTOResponse error :");
                         this.logger.debug(xmlErrorResponse.toString());
 
                         WSRequestResultEnum wsRequestResult = WSRequestResultEnum.fromDocapostErrorCode(xmlErrorResponse.getException().getCode());
@@ -259,7 +261,7 @@ public class PaymentServiceImpl implements PaymentService {
                 //### API MandateWS /api/initiateSignature
 
                 // Initialisation de la requete Docapost
-                InitiateSignatureRequest initiateSignatureRequest = new InitiateSignatureRequest.Builder().fromPaylineRequest(paymentRequest, this.docapostLocalParam);
+                InitiateSignatureRequest initiateSignatureRequest = RequestBuilderFactory.buildInitiateSignatureRequest(paymentRequest, this.docapostLocalParam);
 
                 // Execution de l'appel WS Docapost /api/initiateSignature et recuperation de l'information "transactionId"
                 path = ConfigProperties.get(CONFIG__PATH_WSSIGNATURE_INITIATE_SIGNATURE);
@@ -285,7 +287,7 @@ public class PaymentServiceImpl implements PaymentService {
                     this.logger.debug("InitiateSignatureResponse JSON body :");
                     this.logger.debug(responseBody);
 
-                    InitiateSignatureResponse initiateSignatureResponse = getInitiateSignatureResponse(responseBody);
+                    InitiateSignatureResponse initiateSignatureResponse = ResponseBuilderFactory.buildInitiateSignatureResponse(responseBody);
 
                     if (initiateSignatureResponse.isResultOk()) {
 
@@ -318,7 +320,7 @@ public class PaymentServiceImpl implements PaymentService {
                 //### API MandateWS /api/api/sendOTP
 
                 // Initialisation de la requete Docapost
-                SendOtpRequest sendOtpRequest = new SendOtpRequest.Builder().fromPaylineRequest(paymentRequest, this.docapostLocalParam);
+                SendOtpRequest sendOtpRequest = RequestBuilderFactory.buildSendOtpRequest(paymentRequest, this.docapostLocalParam);
 
                 // Execution de l'appel WS Docapost /api/sendOTP et recuperation de l'information "signatureId"
                 path = ConfigProperties.get(CONFIG__PATH_WSSIGNATURE_SEND_OTP);
@@ -344,7 +346,7 @@ public class PaymentServiceImpl implements PaymentService {
                     this.logger.debug("SendOTPResponse JSON body :");
                     this.logger.debug(responseBody);
 
-                    SendOtpResponse sendOtpResponse = getSendOtpResponse(responseBody);
+                    SendOtpResponse sendOtpResponse = ResponseBuilderFactory.buildSendOtpResponse(responseBody);
 
                     if (sendOtpResponse.isResultOk()) {
 
@@ -438,7 +440,7 @@ public class PaymentServiceImpl implements PaymentService {
                 //### API MandateWS /api/setCode
 
                 // Initialisation de la requete Docapost
-                SetCodeRequest setCodeRequest = new SetCodeRequest.Builder().fromPaylineRequest(paymentRequest);
+                SetCodeRequest setCodeRequest = RequestBuilderFactory.buildSetCodeRequest(paymentRequest);
 
                 // Execution de l'appel WS Docapost /api/setCode
                 path = ConfigProperties.get(CONFIG__PATH_WSSIGNATURE_SET_CODE);
@@ -464,7 +466,7 @@ public class PaymentServiceImpl implements PaymentService {
                     this.logger.debug("SetCodeResponse JSON body :");
                     this.logger.debug(responseBody);
 
-                    SetCodeResponse setCodeResponse = getSetCodeResponse(responseBody);
+                    SetCodeResponse setCodeResponse = ResponseBuilderFactory.buildSetCodeResponse(responseBody);
 
                     if (setCodeResponse.isResultOk()) {
 
@@ -497,7 +499,7 @@ public class PaymentServiceImpl implements PaymentService {
                 //### API MandateWS /api/terminateSignature
 
                 // Initialisation de la requete Docapost
-                TerminateSignatureRequest terminateSignatureRequest = new TerminateSignatureRequest.Builder().fromPaylineRequest(paymentRequest, this.docapostLocalParam);
+                TerminateSignatureRequest terminateSignatureRequest = RequestBuilderFactory.buildTerminateSignatureRequest(paymentRequest, this.docapostLocalParam);
 
                 // Execution de l'appel WS Docapost /api/terminateSignature
                 path = ConfigProperties.get(CONFIG__PATH_WSSIGNATURE_TERMINATE_SIGNATURE);
@@ -523,7 +525,7 @@ public class PaymentServiceImpl implements PaymentService {
                     this.logger.debug("TerminateSignatureResponse JSON body :");
                     this.logger.debug(responseBody);
 
-                    TerminateSignatureResponse terminateSignatureResponse = getTerminateSignatureResponse(responseBody);
+                    TerminateSignatureResponse terminateSignatureResponse = ResponseBuilderFactory.buildTerminateSignatureResponse(responseBody);
 
                     if (terminateSignatureResponse.isResultOk()) {
 
@@ -555,12 +557,12 @@ public class PaymentServiceImpl implements PaymentService {
                 //### API MandateWS /api/order/create
 
                 // Initialisation de la requete Docapost
-                OrderCreateRequest orderCreateRequest = new OrderCreateRequest.Builder().fromPaylineRequest(paymentRequest);
+                SddOrderCreateRequest orderCreateRequest = RequestBuilderFactory.buildSddOrderCreateRequest(paymentRequest);
 
                 // Generation des donnees du body de la requete
                 requestBody = orderCreateRequest.buildBody();
 
-                this.logger.debug("OrderCreateRequest XML body :");
+                this.logger.debug("SddOrderCreateRequest XML body :");
                 this.logger.debug(requestBody);
 
                 // Execution de l'appel WS Docapost /api/order/create
@@ -574,26 +576,26 @@ public class PaymentServiceImpl implements PaymentService {
                 );
 
                 if ( orderCreateStringResponse != null ) {
-                    this.logger.debug("OrderCreateRequest StringResponse :");
+                    this.logger.debug("SddOrderCreateRequest StringResponse :");
                     this.logger.debug(orderCreateStringResponse.toString());
                 } else {
-                    this.logger.debug("OrderCreateRequest StringResponse is null !");
+                    this.logger.debug("SddOrderCreateRequest StringResponse is null !");
                 }
 
                 if ( orderCreateStringResponse != null && orderCreateStringResponse.getCode() == 200 && orderCreateStringResponse.getContent() != null ) {
 
                     responseBody = orderCreateStringResponse.getContent().trim();
 
-                    this.logger.debug("OrderCreateRequest XML body :");
+                    this.logger.debug("SddOrderCreateRequest XML body :");
                     this.logger.debug(responseBody);
 
                     AbstractXmlResponse orderCreateXmlResponse = getOrderCreateResponse(responseBody);
 
                     if (orderCreateXmlResponse.isResultOk()) {
 
-                        OrderCreateResponse orderCreateResponse = (OrderCreateResponse) orderCreateXmlResponse;
+                        WSDDOrderDTOResponse orderCreateResponse = (WSDDOrderDTOResponse) orderCreateXmlResponse;
 
-                        this.logger.debug("OrderCreateRequest :");
+                        this.logger.debug("SddOrderCreateRequest :");
                         this.logger.debug(orderCreateResponse.toString());
 
                         // Nothing to do
@@ -602,7 +604,7 @@ public class PaymentServiceImpl implements PaymentService {
 
                         XmlErrorResponse xmlErrorResponse = (XmlErrorResponse) orderCreateXmlResponse;
 
-                        this.logger.debug("OrderCreateRequest error :");
+                        this.logger.debug("SddOrderCreateRequest error :");
                         this.logger.debug(xmlErrorResponse.toString());
 
                         WSRequestResultEnum wsRequestResult = WSRequestResultEnum.fromDocapostErrorCode(xmlErrorResponse.getException().getCode());
@@ -676,18 +678,18 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     /**
-     * Return a AbstractXmlResponse (OrderCreateResponse or XmlErrorResponse in case of error) based on a XML content
+     * Return a AbstractXmlResponse (WSDDOrderDTOResponse or XmlErrorResponse in case of error) based on a XML content
      * @param xmlResponse the XML content
      * @return the AbstractXmlResponse
      */
     private static AbstractXmlResponse getMandateCreateResponse(String xmlResponse) {
 
         XmlErrorResponse xmlErrorResponse = null;
-        MandateCreateResponse mandateCreateResponse = null;
+        WSMandateDTOResponse mandateCreateResponse = null;
 
         if (xmlResponse.contains(MANDATE_WS_XML__SEPALIA_ERROR)) {
 
-            xmlErrorResponse = new XmlErrorResponse.Builder().fromXml(xmlResponse);
+            xmlErrorResponse = ResponseBuilderFactory.buildXmlErrorResponse(xmlResponse);
 
             if (xmlErrorResponse != null) {
                 return xmlErrorResponse;
@@ -695,9 +697,9 @@ public class PaymentServiceImpl implements PaymentService {
 
         }
 
-        if (xmlResponse.contains(MANDATE_WS_XML__MANDATE_CREATE_DTO)) {
+        if (xmlResponse.contains(MANDATE_WS_XML__WS_MANDATE_DTO)) {
 
-            mandateCreateResponse = new MandateCreateResponse.Builder().fromXml(xmlResponse);
+            mandateCreateResponse = ResponseBuilderFactory.buildWsMandateDTOResponse(xmlResponse);
 
             if (mandateCreateResponse != null) {
                 return mandateCreateResponse;
@@ -710,18 +712,18 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     /**
-     * Return a AbstractXmlResponse (OrderCreateResponse or XmlErrorResponse in case of error) based on a XML content
+     * Return a AbstractXmlResponse (WSDDOrderDTOResponse or XmlErrorResponse in case of error) based on a XML content
      * @param xmlResponse the XML content
      * @return the AbstractXmlResponse
      */
     private static AbstractXmlResponse getOrderCreateResponse(String xmlResponse) {
 
         XmlErrorResponse xmlErrorResponse = null;
-        OrderCreateResponse orderCreateResponse = null;
+        WSDDOrderDTOResponse orderCreateResponse = null;
 
         if (xmlResponse.contains(MANDATE_WS_XML__SEPALIA_ERROR)) {
 
-            xmlErrorResponse = new XmlErrorResponse.Builder().fromXml(xmlResponse);
+            xmlErrorResponse = ResponseBuilderFactory.buildXmlErrorResponse(xmlResponse);
 
             if (xmlErrorResponse != null) {
                 return xmlErrorResponse;
@@ -729,9 +731,9 @@ public class PaymentServiceImpl implements PaymentService {
 
         }
 
-        if (xmlResponse.contains(MANDATE_WS_XML__ORDER_CREATE_DTO)) {
+        if (xmlResponse.contains(MANDATE_WS_XML__WS_SDD_ORDER_DTO)) {
 
-            orderCreateResponse = new OrderCreateResponse.Builder().fromXml(xmlResponse);
+            orderCreateResponse = ResponseBuilderFactory.buildWsddOrderDTOResponse(xmlResponse);
 
             if (orderCreateResponse != null) {
                 return orderCreateResponse;
@@ -741,42 +743,6 @@ public class PaymentServiceImpl implements PaymentService {
 
         return null;
 
-    }
-
-    /**
-     * Return a InitiateSignatureResponse based on a JSON content
-     * @param jsonResponse the JSON content
-     * @return the InitiateSignatureResponse
-     */
-    private static InitiateSignatureResponse getInitiateSignatureResponse(String jsonResponse) {
-        return new InitiateSignatureResponse.Builder().fromJson(jsonResponse);
-    }
-
-    /**
-     * Return a SendOtpResponse based on a JSON content
-     * @param jsonResponse the JSON content
-     * @return the SendOtpResponse
-     */
-    private static SendOtpResponse getSendOtpResponse(String jsonResponse) {
-        return new SendOtpResponse.Builder().fromJson(jsonResponse);
-    }
-
-    /**
-     * Return a SetCodeResponse based on a JSON content
-     * @param jsonResponse the JSON content
-     * @return the SetCodeResponse
-     */
-    private static SetCodeResponse getSetCodeResponse(String jsonResponse) {
-        return new SetCodeResponse.Builder().fromJson(jsonResponse);
-    }
-
-    /**
-     * Return a TerminateSignatureResponse based on a JSON content
-     * @param jsonResponse the JSON content
-     * @return the TerminateSignatureResponse
-     */
-    private static TerminateSignatureResponse getTerminateSignatureResponse(String jsonResponse) {
-        return new TerminateSignatureResponse.Builder().fromJson(jsonResponse);
     }
 
 }

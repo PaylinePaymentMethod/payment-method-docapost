@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by Thales on 07/09/2018.
  */
-public abstract class WSSignatureResponse {
+public abstract class AbstractWSSignatureResponse {
 
     @SerializedName("errors")
     protected List<JsonErrorResponse> errors;

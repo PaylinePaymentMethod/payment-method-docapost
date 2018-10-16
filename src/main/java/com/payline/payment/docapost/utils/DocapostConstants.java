@@ -29,6 +29,9 @@ public class DocapostConstants {
     public static final String CONFIG__HOST                                     = "docapost.host";
     public static final String CONFIG__PATH_WSMANDATE_MANDATE_CREATE            = "docapost.mandate.create.path";
     public static final String CONFIG__PATH_WSMANDATE_ORDER_CREATE              = "docapost.order.create.path";
+    public static final String CONFIG__PATH_WSMANDATE_ORDER_CANCEL              = "docapost.order.cancel.path";
+    public static final String CONFIG__PATH_WSMANDATE_SCTORDER_CREATE           = "docapost.sct.order.create.path";
+    public static final String CONFIG__PATH_WSMANDATE_SCTORDER_CANCEL           = "docapost.sct.order.cancel.path";
     public static final String CONFIG__PATH_WSSIGNATURE_INITIATE_SIGNATURE      = "docapost.initiate.signature.path";
     public static final String CONFIG__PATH_WSSIGNATURE_TERMINATE_SIGNATURE     = "docapost.terminate.signature.path";
     public static final String CONFIG__PATH_WSSIGNATURE_SEND_OTP                = "docapost.send.otp.path";
@@ -56,20 +59,21 @@ public class DocapostConstants {
     public static final String SIGNATURE_WS_REQUEST_FIELD__OTP              = "otp";
     public static final String SIGNATURE_WS_REQUEST_FIELD__SUCCESS          = "success";
 
-    public static final String FORM_FIELD__IBAN = "formDebtorIban";
-    public static final String FORM_FIELD__PHONE = "formDebtorPhone";
-    public static final String FORM_FIELD__OTP = "formOtp";
+    public static final String FORM_FIELD__IBAN     = "formDebtorIban";
+    public static final String FORM_FIELD__PHONE    = "formDebtorPhone";
+    public static final String FORM_FIELD__OTP      = "formOtp";
 
-    public static final String CONTEXT_DATA__STEP = "step";
-    public static final String CONTEXT_DATA__STEP_IBAN_PHONE = "IBAN_PHONE";
-    public static final String CONTEXT_DATA__STEP_OTP = "OTP";
-    public static final String CONTEXT_DATA__MANDATE_RUM = "mandateRum";
-    public static final String CONTEXT_DATA__TRANSACTION_ID = "transactionId";
-    public static final String CONTEXT_DATA__SIGNATURE_ID = "signatureId";
+    public static final String CONTEXT_DATA__STEP               = "step";
+    public static final String CONTEXT_DATA__STEP_IBAN_PHONE    = "IBAN_PHONE";
+    public static final String CONTEXT_DATA__STEP_OTP           = "OTP";
+    public static final String CONTEXT_DATA__MANDATE_RUM        = "mandateRum";
+    public static final String CONTEXT_DATA__TRANSACTION_ID     = "transactionId";
+    public static final String CONTEXT_DATA__SIGNATURE_ID       = "signatureId";
 
     public static final String MANDATE_WS_XML__SEPALIA_ERROR        = "<sepalia>";
-    public static final String MANDATE_WS_XML__MANDATE_CREATE_DTO   = "<WSMandateDTO>";
-    public static final String MANDATE_WS_XML__ORDER_CREATE_DTO     = "<WSDDOrderDTO>";
+    public static final String MANDATE_WS_XML__WS_MANDATE_DTO       = "<WSMandateDTO>";
+    public static final String MANDATE_WS_XML__WS_SDD_ORDER_DTO     = "<WSDDOrderDTO>";
+    public static final String MANDATE_WS_XML__WS_SCT_ORDER_DTO     = "<WSCTOrderDTO>";
 
     public static final int HTTP_OK = 200;
 

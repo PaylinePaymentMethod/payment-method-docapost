@@ -1,15 +1,11 @@
 package com.payline.payment.docapost.service;
 
-import com.payline.pmapi.bean.configuration.parameter.AbstractParameter;
-import com.payline.pmapi.bean.configuration.ReleaseInformation;
+import com.payline.payment.docapost.service.impl.ConfigurationServiceImpl;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.List;
-import java.util.Locale;
 
 @RunWith( MockitoJUnitRunner.class )
 public class ConfigurationServiceImplTest {

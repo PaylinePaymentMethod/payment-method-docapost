@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 /**
  * Created by Thales on 29/08/2018.
  */
-public class SetCodeResponse extends WSSignatureResponse {
+public class SetCodeResponse extends AbstractWSSignatureResponse {
 
     /**
      * Constructor

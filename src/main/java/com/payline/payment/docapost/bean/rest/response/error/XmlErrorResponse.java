@@ -1,13 +1,8 @@
 package com.payline.payment.docapost.bean.rest.response.error;
 
-import com.payline.payment.docapost.bean.rest.response.AbstractXmlResponse;
+import com.payline.payment.docapost.bean.rest.response.mandate.AbstractXmlResponse;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.UnmarshalException;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.*;
-import java.io.StringReader;
 
 /**
  * Created by Thales on 04/09/2018.

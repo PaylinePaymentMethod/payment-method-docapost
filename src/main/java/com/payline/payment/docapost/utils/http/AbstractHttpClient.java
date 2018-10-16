@@ -6,6 +6,7 @@ import static com.payline.payment.docapost.utils.DocapostConstants.CONTENT_TYPE;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -13,6 +14,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -82,6 +84,49 @@ public abstract class AbstractHttpClient {
         httpPostRequest.setEntity(body);
 
         try (CloseableHttpResponse httpResponse = this.client.execute(httpPostRequest)) {
+
+            final StringResponse strResponse = new StringResponse();
+            strResponse.setCode(httpResponse.getStatusLine().getStatusCode());
+            strResponse.setMessage(httpResponse.getStatusLine().getReasonPhrase());
+
+            if (httpResponse.getEntity() != null) {
+                final String responseAsString = EntityUtils.toString(httpResponse.getEntity());
+                strResponse.setContent(responseAsString);
+            }
+
+            return strResponse;
+
+        }
+
+    }
+
+    /**
+     * Send a GET request
+     *
+     * @param scheme URL scheme
+     * @param host URL host
+     * @param path URL path
+     * @param contentType The content type of the request body
+     * @param credential The authentication credential
+     * @return The response returned from the HTTP call
+     * @throws IOException
+     */
+    protected StringResponse doGet(String scheme, String host, String path, String contentType, String credential) throws IOException, URISyntaxException {
+
+        final URI uri = new URIBuilder()
+                .setScheme(scheme)
+                .setHost(host)
+                .setPath(path)
+                .build();
+
+        Header[] headers = new Header[2];
+        headers[0] = new BasicHeader(AUTHORIZATION, credential);
+        headers[1] = new BasicHeader(CONTENT_TYPE, contentType);
+
+        final HttpGet httpGetRequest = new HttpGet(uri);
+        httpGetRequest.setHeaders(headers);
+
+        try (CloseableHttpResponse httpResponse = this.client.execute(httpGetRequest)) {
 
             final StringResponse strResponse = new StringResponse();
             strResponse.setCode(httpResponse.getStatusLine().getStatusCode());

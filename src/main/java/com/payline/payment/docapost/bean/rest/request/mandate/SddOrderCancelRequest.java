@@ -1,65 +1,61 @@
-package com.payline.payment.docapost.bean.rest.request.signature;
+package com.payline.payment.docapost.bean.rest.request.mandate;
+
+import com.payline.payment.docapost.exception.InvalidRequestException;
+import com.payline.payment.docapost.utils.DocapostUtils;
+import com.payline.pmapi.bean.payment.ContractProperty;
+import com.payline.pmapi.bean.reset.request.ResetRequest;
+
+import java.util.Map;
 
 import static com.payline.payment.docapost.utils.DocapostConstants.*;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+public class SddOrderCancelRequest {
 
-import com.payline.payment.docapost.TmpTestData;
-import com.payline.payment.docapost.bean.rest.request.WSSignature;
-import com.payline.payment.docapost.exception.InvalidRequestException;
-import com.payline.payment.docapost.utils.DocapostLocalParam;
-import com.payline.payment.docapost.utils.DocapostUtils;
-import com.payline.pmapi.bean.payment.ContractProperty;
-import com.payline.pmapi.bean.payment.request.PaymentRequest;
+    private String creditorId;
 
-/**
- * Created by Thales on 29/08/2018.
- */
-public class SendOtpRequest extends WSSignatureRequest implements WSSignature {
+    private String rum;
 
-    private String transactionId;
+    private String e2eId;
+
+    /**
+     * Public default constructor
+     */
+    public SddOrderCancelRequest() { }
 
     /**
      * Constructor
      */
-    public SendOtpRequest(String creditorId,
-                          String mandateRum,
-                          String transactionId) {
+    public SddOrderCancelRequest(String creditorId,
+                                 String rum,
+                                 String e2eId) {
 
-        super(creditorId, mandateRum);
-
-        this.transactionId = transactionId;
+        this.creditorId     = creditorId;
+        this.rum            = rum;
+        this.e2eId          = e2eId;
 
     }
 
-    public String getTransactionId() {
-        return transactionId;
+    public String getCreditorId() {
+        return creditorId;
     }
 
-    @Override
-    public Map<String, String> getRequestBodyMap() {
+    public String getRum() {
+        return rum;
+    }
 
-        Map<String, String> bodyMap = new HashMap<>();
-
-        bodyMap.put(SIGNATURE_WS_REQUEST_FIELD__CREDITOR_ID, this.getCreditorId());
-        bodyMap.put(SIGNATURE_WS_REQUEST_FIELD__MANDATE_RUM, this.getMandateRum());
-        bodyMap.put(SIGNATURE_WS_REQUEST_FIELD__TRANSACTION_ID, this.getTransactionId());
-
-        return bodyMap;
-
+    public String getE2eId() {
+        return e2eId;
     }
 
     @Override
     public String toString() {
         final StringBuilder result = new StringBuilder();
 
-        result.append("***** TerminateSignatureRequest info\n");
+        result.append("***** SddOrderCancelRequest info\n");
 
         result.append("creditorId : " + creditorId + "\n");
-        result.append("mandateRum : " + mandateRum + "\n");
-        result.append("transactionId : " + transactionId + "\n");
+        result.append("rum : " + rum + "\n");
+        result.append("e2eId : " + e2eId + "\n");
 
         return result.toString();
     }
@@ -68,22 +64,22 @@ public class SendOtpRequest extends WSSignatureRequest implements WSSignature {
     //***** BUILDER
     public static final class Builder {
 
-        public SendOtpRequest fromPaylineRequest(PaymentRequest paylineRequest, DocapostLocalParam docapostLocalParam) throws InvalidRequestException {
+        public SddOrderCancelRequest fromPaylineRequest(ResetRequest paylineRequest) throws InvalidRequestException {
 
             // Check the input request for NPEs and mandatory fields
-            this.checkInputRequest(paylineRequest, docapostLocalParam);
+            this.checkInputRequest(paylineRequest);
 
-            SendOtpRequest request = new SendOtpRequest(
+            SddOrderCancelRequest request = new SddOrderCancelRequest(
                     paylineRequest.getContractConfiguration().getContractProperties().get( CONTRACT_CONFIG__CREDITOR_ID ).getValue(),
-                    docapostLocalParam.getMandateRum(),
-                    docapostLocalParam.getTransactionId()
+                    paylineRequest.getPartnerConfiguration().getProperty(CONTEXT_DATA__MANDATE_RUM),
+                    paylineRequest.getPartnerTransactionId()
             );
 
             return request;
 
         }
 
-        private void checkInputRequest(PaymentRequest paylineRequest, DocapostLocalParam docapostLocalParam) throws InvalidRequestException  {
+        private void checkInputRequest(ResetRequest paylineRequest) throws InvalidRequestException  {
             if ( paylineRequest == null ) {
                 throw new InvalidRequestException( "Request must not be null" );
             }
@@ -109,14 +105,14 @@ public class SendOtpRequest extends WSSignatureRequest implements WSSignature {
                 throw new InvalidRequestException( "Missing partner configuration property: auth pass" );
             }
 
-            if ( docapostLocalParam == null
-                    || DocapostUtils.isEmpty(docapostLocalParam.getMandateRum()) ) {
-                throw new InvalidRequestException( "Missing mandatory property: mandate rum" );
-            }
+            // FIXME : En attente reception nouveau jar PM API avec ResetRequest#additionalData
+//            if ( paylineRequest.getAdditionalData() == null ) {
+//                throw new InvalidRequestException( "Additional data object must not be null" );
+//            }
+//            String additionalData = paylineRequest.getAdditionalData();
 
-            if ( docapostLocalParam == null
-                    || DocapostUtils.isEmpty(docapostLocalParam.getTransactionId()) ) {
-                throw new InvalidRequestException( "Missing mandatory property: transaction id" );
+            if ( DocapostUtils.isEmpty(paylineRequest.getPartnerTransactionId()) ) {
+                throw new InvalidRequestException( "Missing mandatory property: partner transaction id" );
             }
 
         }

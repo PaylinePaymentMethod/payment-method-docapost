@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by Thales on 29/08/2018.
  */
-public class SendOtpResponse extends WSSignatureResponse {
+public class SendOtpResponse extends AbstractWSSignatureResponse {
 
     @SerializedName("signatureID")
     private String signatureId;

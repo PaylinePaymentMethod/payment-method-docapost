@@ -1,4 +1,4 @@
-package com.payline.payment.docapost.service;
+package com.payline.payment.docapost.service.impl;
 
 import static com.payline.payment.docapost.utils.DocapostConstants.*;
 

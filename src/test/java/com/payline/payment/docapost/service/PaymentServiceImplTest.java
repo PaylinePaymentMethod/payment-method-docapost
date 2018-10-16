@@ -1,5 +1,6 @@
 package com.payline.payment.docapost.service;
 
+import com.payline.payment.docapost.service.impl.PaymentServiceImpl;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

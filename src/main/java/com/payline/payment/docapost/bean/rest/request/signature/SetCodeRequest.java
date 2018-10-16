@@ -141,6 +141,18 @@ public class SetCodeRequest extends WSSignatureRequest implements WSSignature {
                 throw new InvalidRequestException( "Missing request context data: transaction id" );
             }
 
+            if ( paylineRequest.getPartnerConfiguration() == null
+                    || paylineRequest.getPartnerConfiguration().getSensitiveProperties() == null ) {
+                throw new InvalidRequestException( "Partner configuration sensitive properties object must not be null" );
+            }
+            Map<String, String> sensitiveProperties = paylineRequest.getPartnerConfiguration().getSensitiveProperties();
+            if ( sensitiveProperties.get( PARTNER_CONFIG__AUTH_LOGIN ) == null ) {
+                throw new InvalidRequestException( "Missing partner configuration property: auth login" );
+            }
+            if ( sensitiveProperties.get( PARTNER_CONFIG__AUTH_PASS ) == null ) {
+                throw new InvalidRequestException( "Missing partner configuration property: auth pass" );
+            }
+
         }
 
     }

@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 /**
  * Created by Thales on 07/09/2018.
  */
-public class TerminateSignatureResponse extends WSSignatureResponse {
+public class TerminateSignatureResponse extends AbstractWSSignatureResponse {
 
     /**
      * Constructor

@@ -1,13 +1,11 @@
 package com.payline.payment.docapost.bean.rest.request.mandate;
 
-import com.payline.payment.docapost.TmpTestData;
 import com.payline.payment.docapost.exception.InvalidRequestException;
 import com.payline.payment.docapost.utils.DocapostUtils;
 import com.payline.pmapi.bean.payment.ContractProperty;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 
 import javax.xml.bind.annotation.*;
-import java.io.Serializable;
 import java.util.Map;
 
 import static com.payline.payment.docapost.utils.DocapostConstants.*;
@@ -21,11 +19,12 @@ import static com.payline.payment.docapost.utils.DocapostConstants.*;
                 "creditorId",
                 "rum",
                 "amount",
-                "label"
+                "label",
+                "e2eId"
         }
 )
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OrderCreateRequest extends AbstractXmlRequest {
+public class SddOrderCreateRequest extends AbstractXmlRequest {
 
     @XmlElement(name = "creditorId")
     private String creditorId;
@@ -45,16 +44,16 @@ public class OrderCreateRequest extends AbstractXmlRequest {
     /**
      * Public default constructor
      */
-    public OrderCreateRequest() { }
+    public SddOrderCreateRequest() { }
 
     /**
      * Constructor
      */
-    public OrderCreateRequest(String creditorId,
-                              String rum,
-                              Float amount,
-                              String label,
-                              String e2eId) {
+    public SddOrderCreateRequest(String creditorId,
+                                 String rum,
+                                 Float amount,
+                                 String label,
+                                 String e2eId) {
 
         this.creditorId     = creditorId;
         this.rum            = rum;
@@ -88,7 +87,7 @@ public class OrderCreateRequest extends AbstractXmlRequest {
     public String toString() {
         final StringBuilder result = new StringBuilder();
 
-        result.append("***** OrderCreateRequest info\n");
+        result.append("***** SddOrderCreateRequest info\n");
 
         result.append("creditorId : " + creditorId + "\n");
         result.append("rum : " + rum + "\n");
@@ -103,12 +102,12 @@ public class OrderCreateRequest extends AbstractXmlRequest {
     //***** BUILDER
     public static final class Builder {
 
-        public OrderCreateRequest fromPaylineRequest(PaymentRequest paylineRequest) throws InvalidRequestException {
+        public SddOrderCreateRequest fromPaylineRequest(PaymentRequest paylineRequest) throws InvalidRequestException {
 
             // Check the input request for NPEs and mandatory fields
             this.checkInputRequest(paylineRequest);
 
-            OrderCreateRequest request = new OrderCreateRequest(
+            SddOrderCreateRequest request = new SddOrderCreateRequest(
                     paylineRequest.getContractConfiguration().getContractProperties().get( CONTRACT_CONFIG__CREDITOR_ID ).getValue(),
                     paylineRequest.getRequestContext().getRequestContext().get( CONTEXT_DATA__MANDATE_RUM ),
                     paylineRequest.getOrder().getAmount().getAmountInSmallestUnit().floatValue(),
@@ -135,13 +134,24 @@ public class OrderCreateRequest extends AbstractXmlRequest {
             }
 
             if ( paylineRequest.getRequestContext() == null
-                    || paylineRequest.getRequestContext().getRequestContext() == null
-                    || paylineRequest.getRequestContext().getSensitiveRequestContext() == null ) {
+                    || paylineRequest.getRequestContext().getRequestContext() == null ) {
                 throw new InvalidRequestException( "Request context object must not be null" );
             }
             Map<String, String> requestContext = paylineRequest.getRequestContext().getRequestContext();
             if ( requestContext.get( CONTEXT_DATA__MANDATE_RUM ) == null ) {
                 throw new InvalidRequestException( "Missing context data: mandate rum" );
+            }
+
+            if ( paylineRequest.getPartnerConfiguration() == null
+                    || paylineRequest.getPartnerConfiguration().getSensitiveProperties() == null ) {
+                throw new InvalidRequestException( "Partner configuration sensitive properties object must not be null" );
+            }
+            Map<String, String> sensitiveProperties = paylineRequest.getPartnerConfiguration().getSensitiveProperties();
+            if ( sensitiveProperties.get( PARTNER_CONFIG__AUTH_LOGIN ) == null ) {
+                throw new InvalidRequestException( "Missing partner configuration property: auth login" );
+            }
+            if ( sensitiveProperties.get( PARTNER_CONFIG__AUTH_PASS ) == null ) {
+                throw new InvalidRequestException( "Missing partner configuration property: auth pass" );
             }
 
             if ( DocapostUtils.isEmpty(paylineRequest.getTransactionId()) ) {

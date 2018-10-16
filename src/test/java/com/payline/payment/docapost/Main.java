@@ -2,17 +2,16 @@ package com.payline.payment.docapost;
 
 import static com.payline.payment.docapost.utils.DocapostConstants.*;
 
-import com.payline.payment.docapost.bean.PaymentResponseSuccessAdditionalData;
 import com.payline.payment.docapost.bean.rest.request.mandate.MandateCreateRequest;
-import com.payline.payment.docapost.bean.rest.request.mandate.OrderCreateRequest;
+import com.payline.payment.docapost.bean.rest.request.mandate.SddOrderCreateRequest;
 import com.payline.payment.docapost.bean.rest.request.signature.InitiateSignatureRequest;
 import com.payline.payment.docapost.bean.rest.request.signature.SendOtpRequest;
 import com.payline.payment.docapost.bean.rest.request.signature.SetCodeRequest;
 import com.payline.payment.docapost.bean.rest.request.signature.TerminateSignatureRequest;
-import com.payline.payment.docapost.bean.rest.response.AbstractXmlResponse;
+import com.payline.payment.docapost.bean.rest.response.mandate.AbstractXmlResponse;
 import com.payline.payment.docapost.bean.rest.response.error.XmlErrorResponse;
-import com.payline.payment.docapost.bean.rest.response.mandate.MandateCreateResponse;
-import com.payline.payment.docapost.bean.rest.response.mandate.OrderCreateResponse;
+import com.payline.payment.docapost.bean.rest.response.mandate.WSMandateDTOResponse;
+import com.payline.payment.docapost.bean.rest.response.mandate.WSDDOrderDTOResponse;
 import com.payline.payment.docapost.bean.rest.response.signature.InitiateSignatureResponse;
 import com.payline.payment.docapost.bean.rest.response.signature.SendOtpResponse;
 import com.payline.payment.docapost.bean.rest.response.signature.SetCodeResponse;
@@ -92,7 +91,7 @@ public class Main {
 
         } else {
 
-            MandateCreateResponse mandateCreateResponse = (MandateCreateResponse) mandateCreateXmlResponse;
+            WSMandateDTOResponse mandateCreateResponse = (WSMandateDTOResponse) mandateCreateXmlResponse;
 
             System.out.println(mandateCreateResponse.toString());
 
@@ -307,13 +306,13 @@ public class Main {
         // orderCreate
         try {
 
-            OrderCreateRequest orderCreateRequest = new OrderCreateRequest.Builder().fromPaylineRequest(null);
+            SddOrderCreateRequest orderCreateRequest = new SddOrderCreateRequest.Builder().fromPaylineRequest(null);
 
             System.out.println(orderCreateRequest.toString());
 
             requestBody = orderCreateRequest.buildBody();
 
-            System.out.println("OrderCreateRequest XML body :");
+            System.out.println("SddOrderCreateRequest XML body :");
             System.out.println(requestBody);
 
             String scheme = ConfigProperties.get(CONFIG__SCHEME, ConfigEnvironment.DEV);
@@ -356,7 +355,7 @@ public class Main {
 
         } else {
 
-            OrderCreateResponse orderCreateResponse = (OrderCreateResponse) orderCreateXmlResponse;
+            WSDDOrderDTOResponse orderCreateResponse = (WSDDOrderDTOResponse) orderCreateXmlResponse;
 
             System.out.println(orderCreateResponse.toString());
 
@@ -367,7 +366,7 @@ public class Main {
     private static AbstractXmlResponse getMandateCreateResponse(String xmlResponse) {
 
         XmlErrorResponse xmlErrorResponse = null;
-        MandateCreateResponse mandateCreateResponse = null;
+        WSMandateDTOResponse mandateCreateResponse = null;
 
         if (xmlResponse.contains(MANDATE_WS_XML__SEPALIA_ERROR)) {
 
@@ -379,9 +378,9 @@ public class Main {
 
         }
 
-        if (xmlResponse.contains(MANDATE_WS_XML__MANDATE_CREATE_DTO)) {
+        if (xmlResponse.contains(MANDATE_WS_XML__WS_MANDATE_DTO)) {
 
-            mandateCreateResponse = new MandateCreateResponse.Builder().fromXml(xmlResponse);
+            mandateCreateResponse = new WSMandateDTOResponse.Builder().fromXml(xmlResponse);
 
             if (mandateCreateResponse != null) {
                 return mandateCreateResponse;
@@ -396,7 +395,7 @@ public class Main {
     private static AbstractXmlResponse getOrderCreateResponse(String xmlResponse) {
 
         XmlErrorResponse xmlErrorResponse = null;
-        OrderCreateResponse orderCreateResponse = null;
+        WSDDOrderDTOResponse orderCreateResponse = null;
 
         if (xmlResponse.contains(MANDATE_WS_XML__SEPALIA_ERROR)) {
 
@@ -408,9 +407,9 @@ public class Main {
 
         }
 
-        if (xmlResponse.contains(MANDATE_WS_XML__ORDER_CREATE_DTO)) {
+        if (xmlResponse.contains(MANDATE_WS_XML__WS_SDD_ORDER_DTO)) {
 
-            orderCreateResponse = new OrderCreateResponse.Builder().fromXml(xmlResponse);
+            orderCreateResponse = new WSDDOrderDTOResponse.Builder().fromXml(xmlResponse);
 
             if (orderCreateResponse != null) {
                 return orderCreateResponse;

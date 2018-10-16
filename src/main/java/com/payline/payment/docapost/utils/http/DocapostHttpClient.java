@@ -78,4 +78,18 @@ public class DocapostHttpClient extends AbstractHttpClient {
 
     }
 
+    /**
+     * Send a GET request, with a XML content type.
+     *
+     * @param scheme URL scheme
+     * @param host URL host
+     * @param path URL path
+     * @param credential The authentication credential
+     * @return The response returned from the HTTP call
+     * @throws IOException
+     */
+    public StringResponse doGet(String scheme, String host, String path, String credential ) throws IOException, URISyntaxException {
+        return super.doGet(scheme, host, path, ContentType.APPLICATION_XML.toString(), credential);
+    }
+
 }

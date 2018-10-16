@@ -30,7 +30,10 @@ public enum WSRequestResultEnum {
     DEBTOR_NAME_WITH_CHARACTER_NOT_SEPA     ("DEBTOR_NAME_WITH_CHARACTER_NOT_SEPA",         FailureCause.INVALID_DATA),
     MANDATE_NOT_VALID                       ("MANDATE_NOT_VALID",                           FailureCause.INVALID_DATA),
     EXISTING_ORDER                          ("EXISTING_ORDER",                              FailureCause.INVALID_DATA),
+    EXISTING_SCT_ORDER                      ("EXISTING_SCTORDER",                           FailureCause.INVALID_DATA),
     NOT_FOUND                               ("NOT_FOUND",                                   FailureCause.INVALID_DATA),
+    ACCOUNT_MISSING                         ("ACCOUNT_MISSING",                             FailureCause.INVALID_DATA),
+    INVALID_STATUS_MODIFICATION             ("INVALID_STATUS_MODIFICATION",                 FailureCause.INVALID_DATA),
     UNAUTHORIZED                            ("UNAUTHORIZED ",                               FailureCause.REFUSED);
 
     /**

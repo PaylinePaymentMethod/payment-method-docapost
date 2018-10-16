@@ -1,11 +1,9 @@
-package com.payline.payment.docapost.bean.rest.response;
+package com.payline.payment.docapost.bean.rest.response.mandate;
 
 import com.payline.payment.docapost.bean.rest.response.error.XmlErrorResponse;
-import com.payline.payment.docapost.bean.rest.response.mandate.MandateCreateResponse;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.Unmarshaller;
 import java.io.StringReader;
 
