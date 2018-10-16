@@ -8,6 +8,7 @@ public class DocapostLocalParam {
     private String      transactionId;
     private String      signatureId;
     private Boolean     signatureSuccess;
+    private String      orderStatus;
 
     private DocapostLocalParam() { }
 
@@ -48,6 +49,14 @@ public class DocapostLocalParam {
 
     public void setSignatureSuccess(Boolean signatureSuccess) {
         this.signatureSuccess = signatureSuccess;
+    }
+
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
     }
 
 }

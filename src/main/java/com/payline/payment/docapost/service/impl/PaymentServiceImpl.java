@@ -4,7 +4,9 @@ import static com.payline.payment.docapost.utils.DocapostConstants.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.payline.payment.docapost.bean.rest.request.RequestBuilderFactory;
 import com.payline.payment.docapost.bean.rest.request.mandate.SddOrderCreateRequest;
@@ -164,12 +166,25 @@ public class PaymentServiceImpl implements PaymentService {
                         .withPaymentForm(customForm)
                         .build();
 
+                // Pour le step suivant, on doit envoyer :
+                // - Le step IBAN_PHONE
+                Map<String, String> requestContextMap = new HashMap<>();
+                requestContextMap.put(CONTEXT_DATA__STEP, CONTEXT_DATA__STEP_IBAN_PHONE);
+
+                RequestContext requestContext = RequestContext
+                        .RequestContextBuilder
+                        .aRequestContext()
+                        .withRequestContext(requestContextMap)
+                        // FIXME : Add fields ?
+                        //.withSensitiveRequestContext()
+                        .build();
+
                 response =  PaymentResponseFormUpdated
                         .PaymentResponseFormUpdatedBuilder
                         .aPaymentResponseFormUpdated()
                         .withPaymentFormConfigurationResponse(paymentFormConfigurationResponse)
                         // FIXME : Add fields ?
-                        //.withRedirectionContextData()
+                        .withRequestContext(requestContext)
                         .build();
 
             }
@@ -413,11 +428,31 @@ public class PaymentServiceImpl implements PaymentService {
                         .withPaymentForm(customForm)
                         .build();
 
+                // Pour le step suivant, on doit envoyer :
+                // - Le step IBAN_PHONE
+                // - La valeur du MandateRum obtenu lors de l'appel /api/mandate/create
+                // - La valeur du transactionId obtenu lors de l'appel /api/initiateSignature
+                // - la valeur du signatureId obtenu lors de l'appel /api/sendOTP
+                Map<String, String> requestContextMap = new HashMap<>();
+                requestContextMap.put(CONTEXT_DATA__STEP, CONTEXT_DATA__STEP_OTP);
+                requestContextMap.put(CONTEXT_DATA__MANDATE_RUM, this.docapostLocalParam.getMandateRum());
+                requestContextMap.put(CONTEXT_DATA__TRANSACTION_ID, this.docapostLocalParam.getTransactionId());
+                requestContextMap.put(CONTEXT_DATA__SIGNATURE_ID, this.docapostLocalParam.getSignatureId());
+
+                RequestContext requestContext = RequestContext
+                        .RequestContextBuilder
+                        .aRequestContext()
+                        .withRequestContext(requestContextMap)
+                        // FIXME : Add fields ?
+                        //.withSensitiveRequestContext()
+                        .build();
+
                 // FIXME : PaymentResponseFormUpdated ne possede pas d'attribut de type contextData pour retourner a Payline les parametres mandateRum, transactionId et signatureId
                 response =  PaymentResponseFormUpdated
                         .PaymentResponseFormUpdatedBuilder
                         .aPaymentResponseFormUpdated()
                         .withPaymentFormConfigurationResponse(paymentFormConfigurationResponse)
+                        .withRequestContext(requestContext)
                         .build();
 
             }
@@ -599,6 +634,7 @@ public class PaymentServiceImpl implements PaymentService {
                         this.logger.debug(orderCreateResponse.toString());
 
                         // Nothing to do
+                        this.docapostLocalParam.setOrderStatus(orderCreateResponse.getStatus());
 
                     } else {
 
@@ -627,10 +663,21 @@ public class PaymentServiceImpl implements PaymentService {
 
                  */
 
+                PaymentResponseSuccessAdditionalData paymentResponseSuccessAdditionalData = new PaymentResponseSuccessAdditionalData()
+                        .mandateRum(this.docapostLocalParam.getMandateRum())
+                        .transactionId(this.docapostLocalParam.getTransactionId())
+                        .signatureId(this.docapostLocalParam.getSignatureId());
+
                 // TODO : Renvoyer les infos collectees (mandateRum, transactionId, signatureId) via le paramatre additionnalData
                 response = PaymentResponseSuccess
                         .PaymentResponseSuccessBuilder
                         .aPaymentResponseSuccess()
+                        .withTransactionIdentifier(paymentRequest.getTransactionId())
+                        .withTransactionAdditionalData(paymentResponseSuccessAdditionalData.toJson())
+                        .withStatusCode(this.docapostLocalParam.getOrderStatus())
+                        // FIXME : Add fields ?
+                        //.withMessage()
+                        //.withTransactionDetails()
                         .build();
 
             }
