@@ -59,17 +59,14 @@ public class ResetServiceImpl extends AbstractResetHttpService<ResetRequest> imp
                 + "/" + sddOrderCancelRequest.getE2eId();
 
         // Recuperation des donnees necessaires pour la generation du Header Basic credentials des appels WS
-        String username = resetRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG__AUTH_LOGIN);
-        String pass = resetRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG__AUTH_PASS);
-
-        // Generation des credentials
-        String credentials = DocapostUtils.generateBasicCredentials(username, pass);
+        String authLogin = resetRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG__AUTH_LOGIN);
+        String authPass = resetRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG__AUTH_PASS);
 
         return this.httpClient.doGet(
                 scheme,
                 host,
                 path,
-                credentials
+                DocapostUtils.generateBasicCredentials(authLogin, authPass)
         );
     }
 

@@ -72,7 +72,7 @@ public class SddOrderCancelRequest {
 
             SddOrderCancelRequest request = new SddOrderCancelRequest(
                     paylineRequest.getContractConfiguration().getContractProperties().get( CONTRACT_CONFIG__CREDITOR_ID ).getValue(),
-                    // FIXME : En attente reception nouveau jar PM API avec ResetRequest#additionalData
+                    // FIXME : En attente reception nouveau jar APM API avec ResetRequest#additionalData
                     "" /* new PaymentResponseSuccessAdditionalData.Builder().fromJson(paylineRequest.getAdditionalData()).getMandateRum() */,
                     paylineRequest.getPartnerTransactionId()
             );
@@ -107,7 +107,7 @@ public class SddOrderCancelRequest {
                 throw new InvalidRequestException( "Missing partner configuration property: auth pass" );
             }
 
-            // FIXME : En attente reception nouveau jar PM API avec ResetRequest#additionalData
+            // FIXME : En attente reception nouveau jar APM API avec ResetRequest#additionalData
 //            if ( paylineRequest.getAdditionalData() == null ) {
 //                throw new InvalidRequestException( "Additional data object must not be null" );
 //            }

@@ -58,11 +58,8 @@ public class RefundServiceImpl extends AbstractRefundHttpService<RefundRequest> 
         String path = ConfigProperties.get(CONFIG__PATH_WSMANDATE_SCTORDER_CREATE);
 
         // Recuperation des donnees necessaires pour la generation du Header Basic credentials des appels WS
-        String username = refundRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG__AUTH_LOGIN);
-        String pass = refundRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG__AUTH_PASS);
-
-        // Generation des credentials
-        String credentials = DocapostUtils.generateBasicCredentials(username, pass);
+        String authLogin = refundRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG__AUTH_LOGIN);
+        String authPass = refundRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG__AUTH_PASS);
 
         // Generation des donnees du body de la requete
         String requestBody = sctOrderCreateRequest.buildBody();
@@ -72,7 +69,7 @@ public class RefundServiceImpl extends AbstractRefundHttpService<RefundRequest> 
                 host,
                 path,
                 requestBody,
-                credentials
+                DocapostUtils.generateBasicCredentials(authLogin, authPass)
         );
 
     }

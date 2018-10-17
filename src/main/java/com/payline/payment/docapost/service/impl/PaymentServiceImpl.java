@@ -85,11 +85,8 @@ public class PaymentServiceImpl implements PaymentService {
             PaymentResponse response = null;
 
             // Recuperation des donnees necessaires pour la generation du Header Basic credentials des appels WS
-            String username = paymentRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG__AUTH_LOGIN);
-            String pass = paymentRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG__AUTH_PASS);
-
-            // Generation des credentials
-            String credentials = DocapostUtils.generateBasicCredentials(username, pass);
+            String authLogin = paymentRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG__AUTH_LOGIN);
+            String authPass = paymentRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG__AUTH_PASS);
 
             ConfigEnvironment env = Boolean.FALSE.equals( paymentRequest.getPaylineEnvironment().isSandbox() ) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
             String scheme = StringUtils.EMPTY;
@@ -101,7 +98,6 @@ public class PaymentServiceImpl implements PaymentService {
 
             // Recuperation de l'information de step (etape du processus)
             String step = paymentRequest.getRequestContext().getRequestContext().get(CONTEXT_DATA__STEP);
-
 
             this.logger.debug("PaymentRequest step : " + step);
 
@@ -184,7 +180,6 @@ public class PaymentServiceImpl implements PaymentService {
                         .PaymentResponseFormUpdatedBuilder
                         .aPaymentResponseFormUpdated()
                         .withPaymentFormConfigurationResponse(paymentFormConfigurationResponse)
-                        // FIXME : Add fields ?
                         .withRequestContext(requestContext)
                         .build();
 
@@ -221,7 +216,7 @@ public class PaymentServiceImpl implements PaymentService {
                         host,
                         path,
                         requestBody,
-                        credentials
+                        DocapostUtils.generateBasicCredentials(authLogin, authPass)
                 );
 
                 if ( mandateCreateStringResponse != null ) {
@@ -292,7 +287,7 @@ public class PaymentServiceImpl implements PaymentService {
                         host,
                         path,
                         initiateSignatureRequest.getRequestBodyMap(),
-                        credentials
+                        DocapostUtils.generateBasicCredentials(authLogin, authPass)
                 );
 
                 if ( initiateSignatureStringResponse != null ) {
@@ -351,7 +346,7 @@ public class PaymentServiceImpl implements PaymentService {
                         host,
                         path,
                         sendOtpRequest.getRequestBodyMap(),
-                        credentials
+                        DocapostUtils.generateBasicCredentials(authLogin, authPass)
                 );
 
                 if ( sendOTPStringResponse != null ) {
@@ -491,7 +486,7 @@ public class PaymentServiceImpl implements PaymentService {
                         host,
                         path,
                         setCodeRequest.getRequestBodyMap(),
-                        credentials
+                        DocapostUtils.generateBasicCredentials(authLogin, authPass)
                 );
 
                 if ( setCodeStringResponse != null ) {
@@ -550,7 +545,7 @@ public class PaymentServiceImpl implements PaymentService {
                         host,
                         path,
                         terminateSignatureRequest.getRequestBodyMap(),
-                        credentials
+                        DocapostUtils.generateBasicCredentials(authLogin, authPass)
                 );
 
                 if ( terminateSignatureStringResponse != null ) {
@@ -614,7 +609,7 @@ public class PaymentServiceImpl implements PaymentService {
                         host,
                         path,
                         requestBody,
-                        credentials
+                        DocapostUtils.generateBasicCredentials(authLogin, authPass)
                 );
 
                 if ( orderCreateStringResponse != null ) {
