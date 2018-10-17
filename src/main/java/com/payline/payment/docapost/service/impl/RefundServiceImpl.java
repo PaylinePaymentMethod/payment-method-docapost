@@ -52,7 +52,7 @@ public class RefundServiceImpl extends AbstractRefundHttpService<RefundRequest> 
         // Initialisation de la requete Docapost
         SctOrderCreateRequest sctOrderCreateRequest = RequestBuilderFactory.buildSctOrderCreateRequest(refundRequest);
 
-        ConfigEnvironment env = Boolean.FALSE.equals( refundRequest.getPaylineEnvironment().isSandbox() ) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
+        ConfigEnvironment env = Boolean.FALSE.equals( refundRequest.getEnvironment().isSandbox() ) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
         String scheme = ConfigProperties.get(CONFIG__SCHEME, env);
         String host = ConfigProperties.get(CONFIG__HOST, env);
         String path = ConfigProperties.get(CONFIG__PATH_WSMANDATE_SCTORDER_CREATE);
@@ -89,7 +89,7 @@ public class RefundServiceImpl extends AbstractRefundHttpService<RefundRequest> 
                         .RefundResponseSuccessBuilder
                         .aRefundResponseSuccess()
                         .withStatusCode(sctorderCreateResponse.getStatus())
-                        .withTransactionId(sctorderCreateResponse.getE2eId())
+                        .withPartnerTransactionId(sctorderCreateResponse.getE2eId())
                         .build();
 
             } else {

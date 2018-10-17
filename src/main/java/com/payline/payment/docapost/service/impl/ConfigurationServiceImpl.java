@@ -108,7 +108,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         );
 
         // Check the connection
-        ConfigEnvironment env = Boolean.FALSE.equals( contractParametersCheckRequest.getPaylineEnvironment().isSandbox() ) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
+        ConfigEnvironment env = Boolean.FALSE.equals( contractParametersCheckRequest.getEnvironment().isSandbox() ) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
         String scheme = ConfigProperties.get(CONFIG__SCHEME, env);
         String host = ConfigProperties.get(CONFIG__HOST, env);
         String path = ConfigProperties.get(CONFIG__PATH_WSMANDATE_MANDATE_CREATE);

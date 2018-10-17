@@ -92,9 +92,9 @@ public class SetCodeRequest extends WSSignatureRequest implements WSSignature {
 
             SetCodeRequest request = new SetCodeRequest(
                     paylineRequest.getContractConfiguration().getContractProperties().get( CONTRACT_CONFIG__CREDITOR_ID ).getValue(),
-                    paylineRequest.getRequestContext().getRequestContext().get( CONTEXT_DATA__MANDATE_RUM ),
-                    paylineRequest.getRequestContext().getRequestContext().get( CONTEXT_DATA__TRANSACTION_ID ),
-                    paylineRequest.getRequestContext().getRequestContext().get( CONTEXT_DATA__SIGNATURE_ID),
+                    paylineRequest.getRequestContext().getRequestData().get( CONTEXT_DATA__MANDATE_RUM ),
+                    paylineRequest.getRequestContext().getRequestData().get( CONTEXT_DATA__TRANSACTION_ID ),
+                    paylineRequest.getRequestContext().getRequestData().get( CONTEXT_DATA__SIGNATURE_ID),
                     paylineRequest.getPaymentFormContext().getPaymentFormParameter().get( FORM_FIELD__OTP )
             );
 
@@ -127,10 +127,10 @@ public class SetCodeRequest extends WSSignatureRequest implements WSSignature {
             }
 
             if ( paylineRequest.getRequestContext() == null
-                || paylineRequest.getRequestContext().getRequestContext() == null ) {
+                || paylineRequest.getRequestContext().getRequestData() == null ) {
                 throw new InvalidRequestException( "Request context data object must not be null" );
             }
-            Map<String, String> requestContext = paylineRequest.getRequestContext().getRequestContext();
+            Map<String, String> requestContext = paylineRequest.getRequestContext().getRequestData();
             if ( requestContext.get( CONTEXT_DATA__MANDATE_RUM ) == null ) {
                 throw new InvalidRequestException( "Missing request context data: mandate rum" );
             }

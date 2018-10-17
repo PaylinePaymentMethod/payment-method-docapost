@@ -50,7 +50,7 @@ public class ResetServiceImpl extends AbstractResetHttpService<ResetRequest> imp
         // Initialisation de la requete Docapost
         SddOrderCancelRequest sddOrderCancelRequest = RequestBuilderFactory.buildSddOrderCancelRequest(resetRequest);
 
-        ConfigEnvironment env = Boolean.FALSE.equals( resetRequest.getPaylineEnvironment().isSandbox() ) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
+        ConfigEnvironment env = Boolean.FALSE.equals( resetRequest.getEnvironment().isSandbox() ) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
         String scheme = ConfigProperties.get(CONFIG__SCHEME, env);
         String host = ConfigProperties.get(CONFIG__HOST, env);
         String path = ConfigProperties.get(CONFIG__PATH_WSMANDATE_ORDER_CANCEL)
@@ -85,7 +85,7 @@ public class ResetServiceImpl extends AbstractResetHttpService<ResetRequest> imp
                         .ResetResponseSuccessBuilder
                         .aResetResponseSuccess()
                         .withStatusCode(orderCancelResponse.getStatus())
-                        .withTransactionId(orderCancelResponse.getE2eId())
+                        .withPartnerTransactionId(orderCancelResponse.getE2eId())
                         .build();
 
             } else {

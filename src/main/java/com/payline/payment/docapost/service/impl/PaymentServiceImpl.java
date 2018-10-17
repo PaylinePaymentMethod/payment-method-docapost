@@ -88,7 +88,7 @@ public class PaymentServiceImpl implements PaymentService {
             String authLogin = paymentRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG__AUTH_LOGIN);
             String authPass = paymentRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG__AUTH_PASS);
 
-            ConfigEnvironment env = Boolean.FALSE.equals( paymentRequest.getPaylineEnvironment().isSandbox() ) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
+            ConfigEnvironment env = Boolean.FALSE.equals( paymentRequest.getEnvironment().isSandbox() ) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
             String scheme = StringUtils.EMPTY;
             String host = StringUtils.EMPTY;
             String path = StringUtils.EMPTY;
@@ -97,7 +97,7 @@ public class PaymentServiceImpl implements PaymentService {
             String responseBody = StringUtils.EMPTY;
 
             // Recuperation de l'information de step (etape du processus)
-            String step = paymentRequest.getRequestContext().getRequestContext().get(CONTEXT_DATA__STEP);
+            String step = paymentRequest.getRequestContext().getRequestData().get(CONTEXT_DATA__STEP);
 
             this.logger.debug("PaymentRequest step : " + step);
 
@@ -171,7 +171,7 @@ public class PaymentServiceImpl implements PaymentService {
                 RequestContext requestContext = RequestContext
                         .RequestContextBuilder
                         .aRequestContext()
-                        .withRequestContext(requestContextMap)
+                        .withRequestData(requestContextMap)
                         // FIXME : Add fields ?
                         //.withSensitiveRequestContext()
                         .build();
@@ -397,13 +397,13 @@ public class PaymentServiceImpl implements PaymentService {
 
                  */
 
-                // TODO : Ajouter les autres CustomForm
+                // TODO : Ajouter les autres CustomForm pour les textes, liens web et cases à cocher
 
                 PaymentFormInputFieldText otpForm = PaymentFormInputFieldText
                         .PaymentFormFieldTextBuilder
                         .aPaymentFormFieldText()
                         .withInputType(InputType.NUMBER)
-                        // TODO : Add fields
+                        // FIXME : Add fields ?
                         //.withFieldIcon()
                         //.withKey()
                         //.withLabel()
@@ -444,7 +444,7 @@ public class PaymentServiceImpl implements PaymentService {
                 RequestContext requestContext = RequestContext
                         .RequestContextBuilder
                         .aRequestContext()
-                        .withRequestContext(requestContextMap)
+                        .withRequestData(requestContextMap)
                         // FIXME : Add fields ?
                         //.withSensitiveRequestContext()
                         .build();
@@ -680,7 +680,7 @@ public class PaymentServiceImpl implements PaymentService {
                 response = PaymentResponseSuccess
                         .PaymentResponseSuccessBuilder
                         .aPaymentResponseSuccess()
-                        .withTransactionIdentifier(paymentRequest.getTransactionId())
+                        .withPartnerTransactionId(paymentRequest.getTransactionId())
                         .withTransactionAdditionalData(paymentResponseSuccessAdditionalData.toJson())
                         .withStatusCode(this.docapostLocalParam.getOrderStatus())
                         // FIXME : Add fields ?

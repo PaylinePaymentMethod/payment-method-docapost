@@ -29,8 +29,8 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 ext {
-    paymentMethodApiVersion = '1.0-SNAPSHOT-201810041017'
-    paymentMethodIntegrationVersion = "1.0-SNAPSHOT-201810041017"
+    paymentMethodApiVersion = '1.0-RC1'
+    paymentMethodIntegrationVersion = "1.0-RC1"
     mockitoVersion = '2.19.0'
     releaseDirectoryPath = 'D:/build'
 }

@@ -84,8 +84,8 @@ public class TerminateSignatureRequest extends WSSignatureRequest implements WSS
 
             TerminateSignatureRequest request = new TerminateSignatureRequest(
                     paylineRequest.getContractConfiguration().getContractProperties().get( CONTRACT_CONFIG__CREDITOR_ID ).getValue(),
-                    paylineRequest.getRequestContext().getRequestContext().get( CONTEXT_DATA__MANDATE_RUM ),
-                    paylineRequest.getRequestContext().getRequestContext().get( CONTEXT_DATA__TRANSACTION_ID ),
+                    paylineRequest.getRequestContext().getRequestData().get( CONTEXT_DATA__MANDATE_RUM ),
+                    paylineRequest.getRequestContext().getRequestData().get( CONTEXT_DATA__TRANSACTION_ID ),
                     docapostLocalParam.getSignatureSuccess()
             );
 
@@ -108,10 +108,10 @@ public class TerminateSignatureRequest extends WSSignatureRequest implements WSS
             }
 
             if ( paylineRequest.getRequestContext() == null
-                    || paylineRequest.getRequestContext().getRequestContext() == null ) {
+                    || paylineRequest.getRequestContext().getRequestData() == null ) {
                 throw new InvalidRequestException( "Request context data object must not be null" );
             }
-            Map<String, String> requestContext = paylineRequest.getRequestContext().getRequestContext();
+            Map<String, String> requestContext = paylineRequest.getRequestContext().getRequestData();
             if ( requestContext.get( CONTEXT_DATA__MANDATE_RUM ) == null ) {
                 throw new InvalidRequestException( "Missing request context data: mandate rum" );
             }
