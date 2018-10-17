@@ -1,5 +1,6 @@
 package com.payline.payment.docapost.bean.rest.request.mandate;
 
+import com.payline.payment.docapost.bean.PaymentResponseSuccessAdditionalData;
 import com.payline.payment.docapost.exception.InvalidRequestException;
 import com.payline.payment.docapost.utils.DocapostUtils;
 import com.payline.pmapi.bean.payment.ContractProperty;
@@ -109,7 +110,7 @@ public class SctOrderCreateRequest extends AbstractXmlRequest {
 
             SctOrderCreateRequest request = new SctOrderCreateRequest(
                     paylineRequest.getContractConfiguration().getContractProperties().get( CONTRACT_CONFIG__CREDITOR_ID ).getValue(),
-                    paylineRequest.getPartnerConfiguration().getProperty( CONTEXT_DATA__MANDATE_RUM ),
+                    new PaymentResponseSuccessAdditionalData.Builder().fromJson(paylineRequest.getTransactionAdditionalData()).getMandateRum(),
                     paylineRequest.getOrder().getAmount().getAmountInSmallestUnit().floatValue(),
                     paylineRequest.getSoftDescriptor(),
                     paylineRequest.getPartnerTransactionId()
@@ -145,12 +146,14 @@ public class SctOrderCreateRequest extends AbstractXmlRequest {
                 throw new InvalidRequestException( "Missing partner configuration property: auth pass" );
             }
 
-            if ( paylineRequest.getPartnerConfiguration() == null
-                    || paylineRequest.getPartnerConfiguration() == null ) {
-                throw new InvalidRequestException( "Partner configuration object must not be null" );
+            if ( paylineRequest.getTransactionAdditionalData() == null ) {
+                throw new InvalidRequestException( "Transaction additional data object must not be null" );
             }
-            if ( paylineRequest.getPartnerConfiguration().getProperty( CONTEXT_DATA__MANDATE_RUM ) == null ) {
-                throw new InvalidRequestException( "Missing context data: mandate rum" );
+            String additionalData = paylineRequest.getTransactionAdditionalData();
+            PaymentResponseSuccessAdditionalData paymentResponseSuccessAdditionalData = new PaymentResponseSuccessAdditionalData.Builder().fromJson(additionalData);
+            if ( paymentResponseSuccessAdditionalData == null
+                    || paymentResponseSuccessAdditionalData.getMandateRum() == null ) {
+                throw new InvalidRequestException( "Missing additional data property: mandate rum" );
             }
 
             if ( DocapostUtils.isEmpty(paylineRequest.getPartnerTransactionId()) ) {

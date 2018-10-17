@@ -72,8 +72,7 @@ public class SddOrderCancelRequest {
 
             SddOrderCancelRequest request = new SddOrderCancelRequest(
                     paylineRequest.getContractConfiguration().getContractProperties().get( CONTRACT_CONFIG__CREDITOR_ID ).getValue(),
-                    // FIXME : En attente reception nouveau jar APM API avec ResetRequest#additionalData
-                    "" /* new PaymentResponseSuccessAdditionalData.Builder().fromJson(paylineRequest.getAdditionalData()).getMandateRum() */,
+                    new PaymentResponseSuccessAdditionalData.Builder().fromJson(paylineRequest.getTransactionAdditionalData()).getMandateRum(),
                     paylineRequest.getPartnerTransactionId()
             );
 
@@ -107,16 +106,15 @@ public class SddOrderCancelRequest {
                 throw new InvalidRequestException( "Missing partner configuration property: auth pass" );
             }
 
-            // FIXME : En attente reception nouveau jar APM API avec ResetRequest#additionalData
-//            if ( paylineRequest.getAdditionalData() == null ) {
-//                throw new InvalidRequestException( "Additional data object must not be null" );
-//            }
-//            String additionalData = paylineRequest.getAdditionalData();
-//            PaymentResponseSuccessAdditionalData paymentResponseSuccessAdditionalData = new PaymentResponseSuccessAdditionalData.Builder().fromJson(additionalData);
-//            if ( paymentResponseSuccessAdditionalData == null
-//                    || paymentResponseSuccessAdditionalData.getMandateRum() == null ) {
-//                throw new InvalidRequestException( "Missing additional data property: mandate rum" );
-//            }
+            if ( paylineRequest.getTransactionAdditionalData() == null ) {
+                throw new InvalidRequestException( "Transaction additional data object must not be null" );
+            }
+            String additionalData = paylineRequest.getTransactionAdditionalData();
+            PaymentResponseSuccessAdditionalData paymentResponseSuccessAdditionalData = new PaymentResponseSuccessAdditionalData.Builder().fromJson(additionalData);
+            if ( paymentResponseSuccessAdditionalData == null
+                    || paymentResponseSuccessAdditionalData.getMandateRum() == null ) {
+                throw new InvalidRequestException( "Missing additional data property: mandate rum" );
+            }
 
             if ( DocapostUtils.isEmpty(paylineRequest.getPartnerTransactionId()) ) {
                 throw new InvalidRequestException( "Missing mandatory property: partner transaction id" );
