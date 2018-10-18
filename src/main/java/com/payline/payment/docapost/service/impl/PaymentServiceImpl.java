@@ -334,7 +334,7 @@ public class PaymentServiceImpl implements PaymentService {
                 //######################################################################################################
                 //######################################################################################################
                 //######################################################################################################
-                //### API MandateWS /api/api/sendOTP
+                //### API MandateWS /api/sendOTP
 
                 // Initialisation de la requete Docapost
                 SendOtpRequest sendOtpRequest = RequestBuilderFactory.buildSendOtpRequest(paymentRequest, this.docapostLocalParam);
@@ -680,7 +680,7 @@ public class PaymentServiceImpl implements PaymentService {
                 response = PaymentResponseSuccess
                         .PaymentResponseSuccessBuilder
                         .aPaymentResponseSuccess()
-                        .withPartnerTransactionId(paymentRequest.getTransactionId())
+                        .withPartnerTransactionId(this.docapostLocalParam.getTransactionId())
                         .withTransactionAdditionalData(paymentResponseSuccessAdditionalData.toJson())
                         .withStatusCode(this.docapostLocalParam.getOrderStatus())
                         // FIXME : Add fields ?
