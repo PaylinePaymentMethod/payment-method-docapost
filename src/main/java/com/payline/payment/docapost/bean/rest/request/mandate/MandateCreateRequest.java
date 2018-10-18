@@ -22,10 +22,8 @@ import static com.payline.payment.docapost.utils.DocapostConstants.*;
 @XmlType(
         propOrder = {
                 "creditorId",
-                "flowName",
                 "rum",
                 "recurrent",
-                "contextIdentifier",
                 "language",
                 "debtor"
         }
@@ -36,17 +34,11 @@ public class MandateCreateRequest extends AbstractXmlRequest {
     @XmlElement(name = "creditorId")
     private String creditorId;
 
-//    @XmlElement(name = "flowName")
-//    private String flowName;
-
     @XmlElement(name = "rum")
     private String rum;
 
     @XmlElement(name = "recurrent")
     private Boolean recurrent;
-
-//    @XmlElement(name = "contextIdentifier")
-//    private String contextIdentifier;
 
     @XmlElement(name = "language")
     private String language;
@@ -92,34 +84,9 @@ public class MandateCreateRequest extends AbstractXmlRequest {
 
     }
 
-//    /**
-//     * Constructor
-//     */
-//    public MandateCreateRequest(String creditorId,
-//                                String flowName,
-//                                String rum,
-//                                Boolean recurrent,
-//                                String contextIdentifier,
-//                                String language,
-//                                Debtor debtor) {
-//
-//        this.creditorId             = creditorId;
-//        this.flowName               = flowName;
-//        this.rum                    = rum;
-//        this.recurrent              = recurrent;
-//        this.contextIdentifier      = contextIdentifier;
-//        this.language               = language;
-//        this.debtor                 = debtor;
-//
-//    }
-
     public String getCreditorId() {
         return creditorId;
     }
-
-//    public String getFlowName() {
-//        return flowName;
-//    }
 
     public String getRum() {
         return rum;
@@ -128,10 +95,6 @@ public class MandateCreateRequest extends AbstractXmlRequest {
     public boolean isRecurrent() {
         return recurrent;
     }
-
-//    public String getContextIdentifier() {
-//        return contextIdentifier;
-//    }
 
     public String getLanguage() {
         return language;
@@ -148,10 +111,8 @@ public class MandateCreateRequest extends AbstractXmlRequest {
         result.append("***** MandateCreateRequest info\n");
 
         result.append("creditorId : " + creditorId + "\n");
-//        result.append("flowName : " + flowName + "\n");
         result.append("rum : " + rum + "\n");
         result.append("recurrent : " + recurrent + "\n");
-//        result.append("contextIdentifier : " + contextIdentifier + "\n");
         result.append("language : " + language + "\n");
         result.append(debtor.toString() + "\n");
 

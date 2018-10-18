@@ -70,19 +70,19 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         // Creditor id
         final String creditorId = accountInfo.get( CONTRACT_CONFIG__CREDITOR_ID );
         if( DocapostUtils.isEmpty(creditorId) ){
-            errors.put( CONTRACT_CONFIG__CREDITOR_ID, i18n.getMessage( CONTRACT_CONFIG__CREDITOR_ID_ERROR, locale ) );
+            errors.put( CONTRACT_CONFIG__CREDITOR_ID, this.i18n.getMessage( CONTRACT_CONFIG__CREDITOR_ID_ERROR, locale ) );
         }
 
         // Credential auth login
         final String authLogin = contractParametersCheckRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG__AUTH_LOGIN);
         if( DocapostUtils.isEmpty(authLogin) ){
-            errors.put( PARTNER_CONFIG__AUTH_LOGIN, i18n.getMessage( PARTNER_CONFIG__AUTH_LOGIN_ERROR, locale ) );
+            errors.put( PARTNER_CONFIG__AUTH_LOGIN, this.i18n.getMessage( PARTNER_CONFIG__AUTH_LOGIN_ERROR, locale ) );
         }
 
         // Credential auth password
         final String authPass = contractParametersCheckRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG__AUTH_PASS);
         if( DocapostUtils.isEmpty(authPass) ){
-            errors.put( PARTNER_CONFIG__AUTH_PASS, i18n.getMessage(PARTNER_CONFIG__AUTH_PASS_ERROR, locale ) );
+            errors.put( PARTNER_CONFIG__AUTH_PASS, this.i18n.getMessage(PARTNER_CONFIG__AUTH_PASS_ERROR, locale ) );
         }
 
         // No need to go forward if there is an error at this point
@@ -135,9 +135,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
         } catch( Exception e ){
             this.logger.error( "An error occurred sending the validation request to the Docapost server: " + e.getMessage() );
-            errors.put( CONTRACT_CONFIG__CREDITOR_ID, i18n.getMessage( CONTRACT_CONFIG__CREDITOR_ID_ERROR, locale ) );
-            errors.put( PARTNER_CONFIG__AUTH_LOGIN, i18n.getMessage( PARTNER_CONFIG__AUTH_LOGIN_ERROR, locale ) );
-            errors.put( PARTNER_CONFIG__AUTH_PASS, i18n.getMessage( PARTNER_CONFIG__AUTH_PASS_ERROR, locale ) );
+            errors.put( CONTRACT_CONFIG__CREDITOR_ID, this.i18n.getMessage( CONTRACT_CONFIG__CREDITOR_ID_ERROR, locale ) );
+            errors.put( PARTNER_CONFIG__AUTH_LOGIN, this.i18n.getMessage( PARTNER_CONFIG__AUTH_LOGIN_ERROR, locale ) );
+            errors.put( PARTNER_CONFIG__AUTH_PASS, this.i18n.getMessage( PARTNER_CONFIG__AUTH_PASS_ERROR, locale ) );
         }
 
         return errors;

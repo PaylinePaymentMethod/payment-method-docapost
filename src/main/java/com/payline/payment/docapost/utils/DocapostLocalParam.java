@@ -1,5 +1,9 @@
 package com.payline.payment.docapost.utils;
 
+import com.payline.pmapi.bean.payment.request.PaymentRequest;
+
+import static com.payline.payment.docapost.utils.DocapostConstants.*;
+
 public class DocapostLocalParam {
 
     private static DocapostLocalParam INSTANCE;
@@ -57,6 +61,26 @@ public class DocapostLocalParam {
 
     public void setOrderStatus(String orderStatus) {
         this.orderStatus = orderStatus;
+    }
+
+    public void restoreFromPaylineRequest(PaymentRequest request) {
+
+        String requestContextMandateRum = request.getRequestContext().getRequestData().get(CONTEXT_DATA__MANDATE_RUM);
+        String requestContextTransactionId = request.getRequestContext().getRequestData().get(CONTEXT_DATA__TRANSACTION_ID);
+        String requestContextSignatureId = request.getRequestContext().getRequestData().get(CONTEXT_DATA__SIGNATURE_ID);
+
+        if (!DocapostUtils.isEmpty(requestContextMandateRum)) {
+            this.mandateRum = requestContextMandateRum;
+        }
+
+        if (!DocapostUtils.isEmpty(requestContextTransactionId)) {
+            this.transactionId = requestContextTransactionId;
+        }
+
+        if (!DocapostUtils.isEmpty(requestContextSignatureId)) {
+            this.signatureId = requestContextSignatureId;
+        }
+
     }
 
 }
