@@ -42,6 +42,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         merchantName.setLabel(CONTRACT_CONFIG__CREDITOR_ID_PROPERTY_LABEL);
         merchantName.setDescription(CONTRACT_CONFIG__CREDITOR_ID_PROPERTY_DESCRIPTION);
         merchantName.setRequired(true);
+        parameters.add(merchantName);
 
         // Auth login
         final InputParameter authLogin = new InputParameter();
@@ -49,6 +50,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         authLogin.setLabel(PARTNER_CONFIG__AUTH_LOGIN_PROPERTY_LABEL);
         authLogin.setDescription(PARTNER_CONFIG__AUTH_LOGIN_PROPERTY_DESCRIPTION);
         authLogin.setRequired(true);
+        parameters.add(authLogin);
 
         // Auth pwd
         final InputParameter authPwd = new InputParameter();
@@ -56,6 +58,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         authPwd.setLabel(PARTNER_CONFIG__AUTH_PASS_PROPERTY_LABEL);
         authPwd.setDescription(PARTNER_CONFIG__AUTH_PASS_PROPERTY_DESCRIPTION);
         authPwd.setRequired(true);
+        parameters.add(authPwd);
 
         return parameters;
     }
@@ -126,7 +129,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             if ( mandateCreateResponse != null && mandateCreateResponse.getCode() == HTTP_OK && mandateCreateResponse.getContent() != null ) {
 
             } else {
-                String message = "Can't read a correct response from TSI server.";
+                String message = "Can't read a correct response from Docapost server.";
                 if( mandateCreateResponse != null ){
                     message += " HTTP status: " + mandateCreateResponse.getCode();
                 }

@@ -1,5 +1,10 @@
 package com.payline.payment.docapost.utils;
 
+import com.payline.pmapi.bean.paymentform.bean.field.FieldIcon;
+import com.payline.pmapi.bean.paymentform.bean.field.InputType;
+
+import java.util.regex.Pattern;
+
 /**
  * Created by Thales on 29/08/2018.
  */
@@ -65,6 +70,14 @@ public class DocapostConstants {
     public static final String OTP_FORM__CHECKBOX_ACCEPT_CONDITION  = "form.otp.checkbox.acceptCondition";
     public static final String OTP_FORM__CHECKBOX_SAVE_MANDATE      = "form.otp.checkbox.saveMandate";
 
+    public static final Pattern OTP_FORM_VALIDATION     = Pattern.compile("\\d{6}");;
+    public static final String OTP_FORM_REQUIRED_ERROR_MESSAGE     = "Otp_Required_message";
+    public static final String OTP_FORM_KEY    = "Otp_Key";
+    public static final String OTP_FORM_VALUE    = "Otp_Value";
+    public static final String OTP_FORM_LABEL   = "Otp_Label";
+    public static final String OTP_FORM_PLACEHOLDER  = "123456";
+    public static final String OTP_FORM_VALIDATION_ERROR_MESSAGE  = "Otp_Validation_Error_message";
+
     public static final String SIGNATURE_WS_REQUEST_FIELD__CREDITOR_ID      = "creditorId";
     public static final String SIGNATURE_WS_REQUEST_FIELD__MANDATE_RUM      = "mandateRum";
     public static final String SIGNATURE_WS_REQUEST_FIELD__TRANSACTION_ID   = "transactionId";
@@ -88,6 +101,57 @@ public class DocapostConstants {
     public static final String MANDATE_WS_XML__WS_SDD_ORDER_DTO     = "<WSDDOrderDTO>";
     public static final String MANDATE_WS_XML__WS_SCT_ORDER_DTO     = "<WSCTOrderDTO>";
 
+
     public static final int HTTP_OK = 200;
+
+    //Data used by the PaymentFormConfiguration noField Form
+    public static final boolean NOFIELDFORM_DISPLAY_PAYMENT_BUTTON     = true;
+    public static final String NOFIELDFORM_BUTTON_TEXT     = "Button_text";
+    public static final String NOFIELDFORM_BUTTON_DESCRIPTION    = "Button_description";
+
+    //Data used by the IbanForm Object
+    public static final String IBAN_TEXT     = "Iban_text";
+    public static final String IBAN_KEY    = "Button_description";
+    public static final boolean IBAN_REQUIRED    = false;
+    public static final String IBAN_REQUIRED_ERROR_MESSAGE   = "IBAN_Required_message";
+
+    //Data used by the phoneForm Object
+    public static final FieldIcon PHONE_FIELD_ICON              = FieldIcon.PHONE;
+    public static final String PHONE_KEY                        = "Phone_key";
+    public static final String PHONE_LABEL                      = "Phone_Label";
+    public static final boolean PHONE_REQUIRED                  = true;
+    public static final String PHONE_REQUIRED_ERROR_MESSAGE     = "PHONE_Required_message";
+    public static final boolean PHONE_SECURED                   = false;
+    public static final String PHONE_VALIDATION_MESSAGE         = "PHONE_Validation_message";
+    public static final String PHONE_PLACEHOLDER                = "0606060606";
+    public static final InputType INPUT_TYPE                    = InputType.TEL;
+    //PATTERN TO DEFINE
+    public static Pattern PHONE_VALIDATION                      = Pattern.compile("\\d{10}|(?:\\d{3}-){2}\\d{4}|\\(\\d{3}\\)\\d{3}-?\\d{4}");
+
+    //Data used by the CustomForm Object
+    public static final String CUSTOMFORM_TEXT   = "customForm_key";
+    public static final String CUSTOMFORM_DESCRIPTION    = "CustomForm Description";
+    public static final boolean DISPLAY_CUSTOMFORM_BUTTON     = true;
+
+
+    public static final String SAVE_MANDATE_KEY    = "save_mandate_key";
+    public static final boolean SAVE_MANDATE_REQUIRED     = true;
+    public static final boolean SAVE_MANDATE_PRECHECKED     = true;
+    public static final boolean SAVE_MANDATE_SECURED   = true;
+    public static final String SAVE_MANDATE_REQUIRED_ERROR_MESSAGE     = "accept_Required_message";
+
+    public static final boolean ACCEPT_CONDITION_REQUIRED     = true;
+    public static final boolean ACCEPT_CONDITION_PRECHECKED     = true;
+    public static final String ACCEPT_CONDITION_KEY    = "accept_key";
+    public static final boolean ACCEPT_CONDITION_SECURED   = true;
+    public static final String ACCEPT_CONDITION_REQUIRED_ERROR_MESSAGE     = "accept_Required_message";
+
+
+
+
+
+
+
+
 
 }

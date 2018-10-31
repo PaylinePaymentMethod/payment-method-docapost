@@ -14,6 +14,8 @@ import com.payline.pmapi.bean.paymentform.response.configuration.impl.PaymentFor
 import com.payline.pmapi.bean.paymentform.response.logo.PaymentFormLogoResponse;
 import com.payline.pmapi.service.PaymentFormConfigurationService;
 
+import static com.payline.payment.docapost.utils.DocapostConstants.*;
+
 public class PaymentFormConfigurationServiceImpl implements PaymentFormConfigurationService {
 
     private static final Logger logger = LogManager.getLogger( PaymentFormConfigurationServiceImpl.class );
@@ -24,10 +26,10 @@ public class PaymentFormConfigurationServiceImpl implements PaymentFormConfigura
         final NoFieldForm noFieldForm = NoFieldForm
                 .NoFieldFormBuilder
                 .aNoFieldForm()
-                // FIXME : Add fields ?
-                //.withDisplayButton()
-                //.withButtonText()
-                //.withDescription()
+                // FIXME : get text to define this fields which are mandatory ?
+                .withDisplayButton(NOFIELDFORM_DISPLAY_PAYMENT_BUTTON)
+                .withButtonText(NOFIELDFORM_BUTTON_TEXT)
+                .withDescription(NOFIELDFORM_BUTTON_DESCRIPTION)
                 .build();
 
         return PaymentFormConfigurationResponseSpecific

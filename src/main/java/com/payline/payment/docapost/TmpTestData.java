@@ -65,7 +65,8 @@ public class TmpTestData {
         this.debtorComplement2 = null;
         this.debtorPostalCode = "13130";
         this.debtorTown = "Berre";
-        this.debtorPhoneNumber = "0628692878";
+//        this.debtorPhoneNumber = "0628692878";
+        this.debtorPhoneNumber = "0623737719";
         this.debtorCountryCode = "FR";
 
     }

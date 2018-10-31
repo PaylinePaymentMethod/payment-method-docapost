@@ -1,6 +1,7 @@
 package com.payline.payment.docapost.service.impl;
 
 import com.payline.payment.docapost.bean.PaymentResponseSuccessAdditionalData;
+import com.payline.payment.docapost.bean.rest.common.BuyerPaymentIdImpl;
 import com.payline.payment.docapost.bean.rest.request.RequestBuilderFactory;
 import com.payline.payment.docapost.bean.rest.request.mandate.MandateCreateRequest;
 import com.payline.payment.docapost.bean.rest.request.mandate.SddOrderCreateRequest;
@@ -133,11 +134,11 @@ public class PaymentServiceImpl implements PaymentService {
                 PaymentFormInputFieldIban ibanForm = PaymentFormInputFieldIban
                         .IbanFieldBuilder
                         .anIbanField()
-                        // FIXME : Add fields ?
-                        //.withKey()
-                        //.withLabel()
-                        //.withRequired()
-                        //.withRequiredErrorMessage()
+                        // FIXME : Define fields text on DocaPostConstant?
+                        .withKey(IBAN_KEY)
+                        .withLabel(IBAN_TEXT)
+                        .withRequired(IBAN_REQUIRED)
+                        .withRequiredErrorMessage(IBAN_REQUIRED_ERROR_MESSAGE)
                         .build();
 
                 PaymentFormDisplayFieldText inputPhone = PaymentFormDisplayFieldText
@@ -150,16 +151,17 @@ public class PaymentServiceImpl implements PaymentService {
                         .PaymentFormFieldTextBuilder
                         .aPaymentFormFieldText()
                         .withInputType(InputType.TEL)
-                        // FIXME : Add fields ?
-                        //.withFieldIcon()
-                        //.withKey()
-                        //.withLabel()
-                        //.withPlaceholder()
-                        //.withRequired()
-                        //.withRequiredErrorMessage()
-                        //.withSecured()
-                        //.withValidation()
-                        //.withValidationErrorMessage()
+                        // FIXME : Define fields text on DocaPostConstant?
+                        .withFieldIcon(PHONE_FIELD_ICON)
+                        .withKey(PHONE_KEY)
+                        .withLabel(PHONE_LABEL)
+                        .withPlaceholder(PHONE_PLACEHOLDER)
+                        .withRequired(PHONE_REQUIRED)
+                        .withRequiredErrorMessage(PHONE_REQUIRED_ERROR_MESSAGE)
+                        .withSecured(PHONE_SECURED)
+                        .withValidation(PHONE_VALIDATION)
+                        .withValidationErrorMessage(PHONE_VALIDATION_MESSAGE)
+                        .withInputType(INPUT_TYPE)
                         //.withValue()
                         .build();
 
@@ -179,10 +181,10 @@ public class PaymentServiceImpl implements PaymentService {
                 CustomForm customForm = CustomForm
                         .builder()
                         .withCustomFields(customFields)
-                        // FIXME : Add fields ?
-                        //.withButtonText()
-                        //.withDescription()
-                        //.withDisplayButton()
+                        // FIXME : Define fields text on DocaPostConstant?
+                        .withButtonText(CUSTOMFORM_TEXT)
+                        .withDescription(CUSTOMFORM_DESCRIPTION)
+                        .withDisplayButton(DISPLAY_CUSTOMFORM_BUTTON)
                         .build();
 
                 PaymentFormConfigurationResponse paymentFormConfigurationResponse = PaymentFormConfigurationResponseSpecific
@@ -196,12 +198,15 @@ public class PaymentServiceImpl implements PaymentService {
                 Map<String, String> requestContextMap = new HashMap<>();
                 requestContextMap.put(CONTEXT_DATA__STEP, CONTEXT_DATA__STEP_IBAN_PHONE);
 
+                //Get sensitiveRequestContext from Payment request
+                Map<String, String> requestSensitiveContext = paymentRequest.getRequestContext().getSensitiveRequestData();
                 RequestContext requestContext = RequestContext
                         .RequestContextBuilder
                         .aRequestContext()
                         .withRequestData(requestContextMap)
                         // FIXME : Add fields ?
-                        //.withSensitiveRequestContext()
+                        .withSensitiveRequestData(requestSensitiveContext)
+//                        .withSensitiveRequestContext(requestSensitiveContext)
                         .build();
 
                 response =  PaymentResponseFormUpdated
@@ -444,7 +449,8 @@ public class PaymentServiceImpl implements PaymentService {
                         ))
                         .withName(this.i18n.getMessage( OTP_FORM__LINK_DOWNLOAD_MANDATE, locale ))
                         // FIXME : Add fields ?
-                        //.withTitle()
+                        .withTitle("form.otp.link.downloadMandate")
+//                        .withUrl("")
                         .build();
 
                 PaymentFormDisplayFieldText otpText = PaymentFormDisplayFieldText
@@ -464,17 +470,19 @@ public class PaymentServiceImpl implements PaymentService {
                         .aPaymentFormFieldText()
                         .withInputType(InputType.NUMBER)
                         // FIXME : Add fields ?
-                        //.withFieldIcon()
-                        //.withKey()
-                        //.withLabel()
-                        //.withPlaceholder()
-                        //.withRequired()
-                        //.withRequiredErrorMessage()
-                        //.withSecured()
-                        //.withValidation()
-                        //.withValidationErrorMessage()
-                        //.withValue()
+                        //FIXME define value of fields
+                        .withFieldIcon(FieldIcon.PHONE)
+                        .withKey(OTP_FORM_KEY)
+                        .withLabel(OTP_FORM_LABEL)
+                        .withPlaceholder(OTP_FORM_PLACEHOLDER)
+                        .withRequired(false)
+                        .withRequiredErrorMessage(OTP_FORM_REQUIRED_ERROR_MESSAGE)
+                        .withSecured(false)
+                        .withValidation(OTP_FORM_VALIDATION)
+                        .withValidationErrorMessage(OTP_FORM_VALIDATION_ERROR_MESSAGE)
+                        .withValue(OTP_FORM_VALUE)
                         .build();
+/*
 
                 PaymentFormDisplayFieldLink resendOtpLink = PaymentFormDisplayFieldLink
                         .PaymentFormDisplayFieldLinkBuilder
@@ -487,8 +495,9 @@ public class PaymentServiceImpl implements PaymentService {
                         ))
                         .withName(this.i18n.getMessage( OTP_FORM__TEXT_RESEND_OTP, locale ))
                         // FIXME : Add fields ?
-                        //.withTitle()
+                        .withTitle("resend Otp")
                         .build();
+*/
 
                 PaymentFormInputFieldCheckbox acceptCondition = PaymentFormInputFieldCheckbox
                         .PaymentFormFieldCheckboxBuilder
@@ -496,22 +505,23 @@ public class PaymentServiceImpl implements PaymentService {
                         .withRequired(true)
                         .withLabel(this.i18n.getMessage( OTP_FORM__CHECKBOX_ACCEPT_CONDITION, locale ))
                         // FIXME : Add fields ?
-                        //.withRequiredErrorMessage()
-                        //.withKey()
-                        //.withPrechecked()
-                        //.withSecured()
+                        .withRequiredErrorMessage(ACCEPT_CONDITION_REQUIRED_ERROR_MESSAGE)
+                        .withKey(ACCEPT_CONDITION_KEY)
+                        .withPrechecked(ACCEPT_CONDITION_PRECHECKED)
+                        .withSecured(ACCEPT_CONDITION_SECURED)
                         .build();
 
                 PaymentFormInputFieldCheckbox saveMandate = PaymentFormInputFieldCheckbox
                         .PaymentFormFieldCheckboxBuilder
                         .aPaymentFormFieldCheckbox()
-                        .withRequired(true)
+                        .withRequired(SAVE_MANDATE_REQUIRED)
                         .withLabel(this.i18n.getMessage( OTP_FORM__CHECKBOX_SAVE_MANDATE, locale ))
                         // FIXME : Add fields ?
-                        //.withRequiredErrorMessage()
-                        //.withKey()
-                        //.withPrechecked()
-                        //.withSecured()
+                        //TODO Define value of fields
+                        .withRequiredErrorMessage(SAVE_MANDATE_REQUIRED_ERROR_MESSAGE)
+                        .withKey(SAVE_MANDATE_KEY)
+                        .withPrechecked(SAVE_MANDATE_PRECHECKED)
+                        .withSecured(SAVE_MANDATE_SECURED)
                         .build();
 
                 List<PaymentFormField> customFields = new ArrayList<>();
@@ -520,13 +530,16 @@ public class PaymentServiceImpl implements PaymentService {
                 customFields.add(otpText);
                 customFields.add(setOtpText);
                 customFields.add(otpForm);
-                customFields.add(resendOtpLink);
+//                customFields.add(resendOtpLink);
                 customFields.add(acceptCondition);
                 customFields.add(saveMandate);
 
                 CustomForm customForm = CustomForm
                         .builder()
                         .withCustomFields(customFields)
+                        //TODO define description
+                        .withDescription(CUSTOMFORM_TEXT)
+                        .withButtonText(CUSTOMFORM_DESCRIPTION)
                         .build();
 
                 PaymentFormConfigurationResponse paymentFormConfigurationResponse = PaymentFormConfigurationResponseSpecific
@@ -546,12 +559,14 @@ public class PaymentServiceImpl implements PaymentService {
                 requestContextMap.put(CONTEXT_DATA__TRANSACTION_ID, this.docapostLocalParam.getTransactionId());
                 requestContextMap.put(CONTEXT_DATA__SIGNATURE_ID, this.docapostLocalParam.getSignatureId());
 
+                Map<String, String> sensitiveRequestContextMap = new HashMap<>();
+
                 RequestContext requestContext = RequestContext
                         .RequestContextBuilder
                         .aRequestContext()
                         .withRequestData(requestContextMap)
                         // FIXME : Add fields ?
-                        //.withSensitiveRequestContext()
+                        .withSensitiveRequestData(sensitiveRequestContextMap)
                         .build();
 
                 response =  PaymentResponseFormUpdated
@@ -788,7 +803,9 @@ public class PaymentServiceImpl implements PaymentService {
                         .withStatusCode(this.docapostLocalParam.getOrderStatus())
                         // FIXME : Add fields ?
                         //.withMessage()
-                        //.withTransactionDetails()
+                        //FIXME : Mandatory  find utility of BuyerPaymentId
+                        //mock
+                        .withTransactionDetails(new BuyerPaymentIdImpl())
                         .build();
 
             }
