@@ -103,20 +103,6 @@ public class MandateCreateRequest extends AbstractXmlRequest {
         return debtor;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder result = new StringBuilder();
-
-        result.append("***** MandateCreateRequest info\n");
-
-        result.append("creditorId : " + creditorId + "\n");
-        result.append("rum : " + rum + "\n");
-        result.append("recurrent : " + recurrent + "\n");
-        result.append("language : " + language + "\n");
-        result.append(debtor.toString() + "\n");
-
-        return result.toString();
-    }
 
     //******************************************************************************************************************
     //***** BUILDER
