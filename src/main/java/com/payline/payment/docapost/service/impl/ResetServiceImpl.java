@@ -11,7 +11,6 @@ import com.payline.payment.docapost.service.AbstractResetHttpService;
 import com.payline.payment.docapost.utils.DocapostUtils;
 import com.payline.payment.docapost.utils.config.ConfigEnvironment;
 import com.payline.payment.docapost.utils.config.ConfigProperties;
-import com.payline.payment.docapost.utils.http.DocapostHttpClient;
 import com.payline.payment.docapost.utils.http.StringResponse;
 import com.payline.payment.docapost.utils.type.WSRequestResultEnum;
 import com.payline.pmapi.bean.common.FailureCause;
@@ -30,7 +29,9 @@ import static com.payline.payment.docapost.utils.DocapostConstants.*;
 
 public class ResetServiceImpl extends AbstractResetHttpService<ResetRequest> implements ResetService {
 
-    private static final Logger logger = LogManager.getLogger( ResetServiceImpl.class );
+    private static final Logger LOGGER = LogManager.getLogger(ResetServiceImpl.class);
+
+    public static final String URL_DELIMITER = "/";
 
     /**
      * Constructeur
@@ -50,17 +51,19 @@ public class ResetServiceImpl extends AbstractResetHttpService<ResetRequest> imp
         // Initialisation de la requete Docapost
         SddOrderCancelRequest sddOrderCancelRequest = RequestBuilderFactory.buildSddOrderCancelRequest(resetRequest);
 
-        ConfigEnvironment env = Boolean.FALSE.equals( resetRequest.getEnvironment().isSandbox() ) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
-        String scheme = ConfigProperties.get(CONFIG__SCHEME, env);
-        String host = ConfigProperties.get(CONFIG__HOST, env);
-        String path = ConfigProperties.get(CONFIG__PATH_WSMANDATE_ORDER_CANCEL)
-                + "/" + sddOrderCancelRequest.getCreditorId()
-                + "/" + sddOrderCancelRequest.getRum()
-                + "/" + sddOrderCancelRequest.getE2eId();
+        ConfigEnvironment env = Boolean.FALSE.equals(resetRequest.getEnvironment().isSandbox()) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
+        String scheme = ConfigProperties.get(CONFIG_SCHEME, env);
+        String host = ConfigProperties.get(CONFIG_HOST, env);
+        String path = ConfigProperties.get(CONFIG_PATH_WSMANDATE_ORDER_CANCEL)
+                + URL_DELIMITER + sddOrderCancelRequest.getCreditorId()
+                + URL_DELIMITER + sddOrderCancelRequest.getRum()
+                + URL_DELIMITER + sddOrderCancelRequest.getE2eId();
 
+
+        LOGGER.info("Path {}", path);
         // Recuperation des donnees necessaires pour la generation du Header Basic credentials des appels WS
-        String authLogin = resetRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG__AUTH_LOGIN);
-        String authPass = resetRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG__AUTH_PASS);
+        String authLogin = resetRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG_AUTH_LOGIN);
+        String authPass = resetRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG_AUTH_PASS);
 
         return this.httpClient.doGet(
                 scheme,
@@ -71,13 +74,15 @@ public class ResetServiceImpl extends AbstractResetHttpService<ResetRequest> imp
     }
 
     @Override
-    public ResetResponse processResponse(StringResponse response) throws IOException {
+    public ResetResponse processResponse(StringResponse response) {
 
         AbstractXmlResponse orderCancelXmlResponse = getOrderCancelResponse(response.getContent().trim());
 
         if (orderCancelXmlResponse != null) {
 
             if (orderCancelXmlResponse.isResultOk()) {
+
+                LOGGER.info("orderCancelXmlResponse ok");
 
                 WSDDOrderDTOResponse orderCancelResponse = (WSDDOrderDTOResponse) orderCancelXmlResponse;
 
@@ -88,35 +93,37 @@ public class ResetServiceImpl extends AbstractResetHttpService<ResetRequest> imp
                         .withPartnerTransactionId(orderCancelResponse.getE2eId())
                         .build();
 
-            } else {
-
-                XmlErrorResponse xmlErrorResponse = (XmlErrorResponse) orderCancelXmlResponse;
-
-                WSRequestResultEnum wsRequestResult = WSRequestResultEnum.fromDocapostErrorCode(xmlErrorResponse.getException().getCode());
-
-                return ResetResponseFailure
-                        .ResetResponseFailureBuilder
-                        .aResetResponseFailure()
-                        .withErrorCode(wsRequestResult.getDocapostErrorCode())
-                        .withFailureCause(wsRequestResult.getPaylineFailureCause())
-                        // FIXME : Add fields ?
-                        //.withTransactionId()
-                        .build();
-
             }
 
-        } else {
+
+            LOGGER.info("orderCancelXmlResponse ko");
+            XmlErrorResponse xmlErrorResponse = (XmlErrorResponse) orderCancelXmlResponse;
+
+            WSRequestResultEnum wsRequestResult = WSRequestResultEnum.fromDocapostErrorCode(xmlErrorResponse.getException().getCode());
 
             return ResetResponseFailure
                     .ResetResponseFailureBuilder
                     .aResetResponseFailure()
-                    .withErrorCode("XML RESPONSE PARSING FAILED")
-                    .withFailureCause(FailureCause.INVALID_DATA)
+                    .withErrorCode(wsRequestResult.getDocapostErrorCode())
+                    .withFailureCause(wsRequestResult.getPaylineFailureCause())
                     // FIXME : Add fields ?
                     //.withTransactionId()
                     .build();
 
+
         }
+
+        // case : orderCancelXmlResponse is null
+        LOGGER.info("null orderCancelXmlResponse");
+        return ResetResponseFailure
+                .ResetResponseFailureBuilder
+                .aResetResponseFailure()
+                .withErrorCode("XML RESPONSE PARSING FAILED")
+                .withFailureCause(FailureCause.INVALID_DATA)
+                // FIXME : Add fields ?
+                //.withTransactionId()
+                .build();
+
 
     }
 
@@ -132,15 +139,16 @@ public class ResetServiceImpl extends AbstractResetHttpService<ResetRequest> imp
 
     /**
      * Return a AbstractXmlResponse (WSDDOrderDTOResponse or XmlErrorResponse in case of error) based on a XML content
+     *
      * @param xmlResponse the XML content
      * @return the AbstractXmlResponse
      */
     private static AbstractXmlResponse getOrderCancelResponse(String xmlResponse) {
 
-        XmlErrorResponse xmlErrorResponse = null;
-        WSDDOrderDTOResponse orderCancelResponse = null;
+        XmlErrorResponse xmlErrorResponse;
+        WSDDOrderDTOResponse orderCancelResponse;
 
-        if (xmlResponse.contains(MANDATE_WS_XML__SEPALIA_ERROR)) {
+        if (xmlResponse.contains(MANDATE_WS_XML_SEPALIA_ERROR)) {
 
             xmlErrorResponse = ResponseBuilderFactory.buildXmlErrorResponse(xmlResponse);
 
@@ -150,7 +158,7 @@ public class ResetServiceImpl extends AbstractResetHttpService<ResetRequest> imp
 
         }
 
-        if (xmlResponse.contains(MANDATE_WS_XML__WS_SDD_ORDER_DTO)) {
+        if (xmlResponse.contains(MANDATE_WS_XML_WS_SDD_ORDER_DTO)) {
 
             orderCancelResponse = ResponseBuilderFactory.buildWsddOrderDTOResponse(xmlResponse);
 

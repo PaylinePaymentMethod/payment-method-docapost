@@ -1,36 +1,35 @@
 package com.payline.payment.docapost;
 
-import static com.payline.payment.docapost.utils.DocapostConstants.*;
-
 import com.payline.payment.docapost.bean.rest.request.mandate.MandateCreateRequest;
 import com.payline.payment.docapost.bean.rest.request.mandate.SddOrderCreateRequest;
 import com.payline.payment.docapost.bean.rest.request.signature.InitiateSignatureRequest;
 import com.payline.payment.docapost.bean.rest.request.signature.SendOtpRequest;
 import com.payline.payment.docapost.bean.rest.request.signature.SetCodeRequest;
 import com.payline.payment.docapost.bean.rest.request.signature.TerminateSignatureRequest;
-import com.payline.payment.docapost.bean.rest.response.mandate.AbstractXmlResponse;
 import com.payline.payment.docapost.bean.rest.response.error.XmlErrorResponse;
-import com.payline.payment.docapost.bean.rest.response.mandate.WSMandateDTOResponse;
+import com.payline.payment.docapost.bean.rest.response.mandate.AbstractXmlResponse;
 import com.payline.payment.docapost.bean.rest.response.mandate.WSDDOrderDTOResponse;
+import com.payline.payment.docapost.bean.rest.response.mandate.WSMandateDTOResponse;
 import com.payline.payment.docapost.bean.rest.response.signature.InitiateSignatureResponse;
 import com.payline.payment.docapost.bean.rest.response.signature.SendOtpResponse;
 import com.payline.payment.docapost.bean.rest.response.signature.SetCodeResponse;
 import com.payline.payment.docapost.bean.rest.response.signature.TerminateSignatureResponse;
-import com.payline.payment.docapost.exception.InvalidRequestException;
 import com.payline.payment.docapost.utils.DocapostUtils;
 import com.payline.payment.docapost.utils.config.ConfigEnvironment;
 import com.payline.payment.docapost.utils.config.ConfigProperties;
 import com.payline.payment.docapost.utils.http.DocapostHttpClient;
 import com.payline.payment.docapost.utils.http.StringResponse;
 
+import static com.payline.payment.docapost.utils.DocapostConstants.*;
+
 /**
  * Created by Thales on 30/08/2018.
  */
 public class Main {
 
-    public static void main( String[] args ) {
+    public static void main(String[] args) {
 
-        String requestBody = "";
+        String requestBody;
         String xmlResponse = "";
         String jsonResponse = "";
 
@@ -51,9 +50,9 @@ public class Main {
             System.out.println("MandateCreateRequest XML body :");
             System.out.println(requestBody);
 
-            String scheme = ConfigProperties.get(CONFIG__SCHEME, ConfigEnvironment.DEV);
-            String host = ConfigProperties.get(CONFIG__HOST, ConfigEnvironment.DEV);
-            String path = ConfigProperties.get(CONFIG__PATH_WSMANDATE_MANDATE_CREATE);
+            String scheme = ConfigProperties.get(CONFIG_SCHEME, ConfigEnvironment.DEV);
+            String host = ConfigProperties.get(CONFIG_HOST, ConfigEnvironment.DEV);
+            String path = ConfigProperties.get(CONFIG_PATH_WSMANDATE_MANDATE_CREATE);
 
             final StringResponse mandateCreateResponse = docapostHttpClient.doPost(
                     scheme,
@@ -69,8 +68,6 @@ public class Main {
 
             System.out.println(xmlResponse);
 
-        } catch (InvalidRequestException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -107,9 +104,9 @@ public class Main {
 
             System.out.println(initiateSignatureRequest.toString());
 
-            String scheme = ConfigProperties.get(CONFIG__SCHEME, ConfigEnvironment.DEV);
-            String host = ConfigProperties.get(CONFIG__HOST, ConfigEnvironment.DEV);
-            String path = ConfigProperties.get(CONFIG__PATH_WSSIGNATURE_INITIATE_SIGNATURE);
+            String scheme = ConfigProperties.get(CONFIG_SCHEME, ConfigEnvironment.DEV);
+            String host = ConfigProperties.get(CONFIG_HOST, ConfigEnvironment.DEV);
+            String path = ConfigProperties.get(CONFIG_PATH_WSSIGNATURE_INITIATE_SIGNATURE);
 
             final StringResponse initiateSignatureResponse = docapostHttpClient.doPost(
                     scheme,
@@ -125,8 +122,6 @@ public class Main {
 
             System.out.println(jsonResponse);
 
-        } catch (InvalidRequestException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -157,9 +152,9 @@ public class Main {
 
             System.out.println(sendOtpRequest.toString());
 
-            String scheme = ConfigProperties.get(CONFIG__SCHEME, ConfigEnvironment.DEV);
-            String host = ConfigProperties.get(CONFIG__HOST, ConfigEnvironment.DEV);
-            String path = ConfigProperties.get(CONFIG__PATH_WSSIGNATURE_SEND_OTP);
+            String scheme = ConfigProperties.get(CONFIG_SCHEME, ConfigEnvironment.DEV);
+            String host = ConfigProperties.get(CONFIG_HOST, ConfigEnvironment.DEV);
+            String path = ConfigProperties.get(CONFIG_PATH_WSSIGNATURE_SEND_OTP);
 
             final StringResponse sendOTPResponse = docapostHttpClient.doPost(
                     scheme,
@@ -175,8 +170,6 @@ public class Main {
 
             System.out.println(jsonResponse);
 
-        } catch (InvalidRequestException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -208,9 +201,9 @@ public class Main {
 
             System.out.println(setCodeRequest.toString());
 
-            String scheme = ConfigProperties.get(CONFIG__SCHEME, ConfigEnvironment.DEV);
-            String host = ConfigProperties.get(CONFIG__HOST, ConfigEnvironment.DEV);
-            String path = ConfigProperties.get(CONFIG__PATH_WSSIGNATURE_SET_CODE);
+            String scheme = ConfigProperties.get(CONFIG_SCHEME, ConfigEnvironment.DEV);
+            String host = ConfigProperties.get(CONFIG_HOST, ConfigEnvironment.DEV);
+            String path = ConfigProperties.get(CONFIG_PATH_WSSIGNATURE_SET_CODE);
 
             final StringResponse setCodeResponse = docapostHttpClient.doPost(
                     scheme,
@@ -226,8 +219,6 @@ public class Main {
 
             System.out.println(jsonResponse);
 
-        } catch (InvalidRequestException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -242,13 +233,13 @@ public class Main {
 
         if (!setCodeResponse.isResultOk()) {
 
-            TmpTestData.getInstance().signatureSuccess = new Boolean(false);
+            TmpTestData.getInstance().signatureSuccess = false;
 
             return;
 
         } else {
 
-            TmpTestData.getInstance().signatureSuccess = new Boolean(true);
+            TmpTestData.getInstance().signatureSuccess = true;
 
         }
 
@@ -260,9 +251,9 @@ public class Main {
 
             System.out.println(terminateSignatureRequest.toString());
 
-            String scheme = ConfigProperties.get(CONFIG__SCHEME, ConfigEnvironment.DEV);
-            String host = ConfigProperties.get(CONFIG__HOST, ConfigEnvironment.DEV);
-            String path = ConfigProperties.get(CONFIG__PATH_WSSIGNATURE_TERMINATE_SIGNATURE);
+            String scheme = ConfigProperties.get(CONFIG_SCHEME, ConfigEnvironment.DEV);
+            String host = ConfigProperties.get(CONFIG_HOST, ConfigEnvironment.DEV);
+            String path = ConfigProperties.get(CONFIG_PATH_WSSIGNATURE_TERMINATE_SIGNATURE);
 
             final StringResponse terminateSignatureResponse = docapostHttpClient.doPost(
                     scheme,
@@ -278,8 +269,6 @@ public class Main {
 
             System.out.println(jsonResponse);
 
-        } catch (InvalidRequestException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -296,10 +285,6 @@ public class Main {
 
             return;
 
-        } else {
-
-            // Empty
-
         }
 
         //##############################################################################################################
@@ -315,9 +300,9 @@ public class Main {
             System.out.println("SddOrderCreateRequest XML body :");
             System.out.println(requestBody);
 
-            String scheme = ConfigProperties.get(CONFIG__SCHEME, ConfigEnvironment.DEV);
-            String host = ConfigProperties.get(CONFIG__HOST, ConfigEnvironment.DEV);
-            String path = ConfigProperties.get(CONFIG__PATH_WSMANDATE_ORDER_CREATE);
+            String scheme = ConfigProperties.get(CONFIG_SCHEME, ConfigEnvironment.DEV);
+            String host = ConfigProperties.get(CONFIG_HOST, ConfigEnvironment.DEV);
+            String path = ConfigProperties.get(CONFIG_PATH_WSMANDATE_ORDER_CREATE);
 
             final StringResponse orderCreateResponse = docapostHttpClient.doPost(
                     scheme,
@@ -333,8 +318,6 @@ public class Main {
 
             System.out.println(xmlResponse);
 
-        } catch (InvalidRequestException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -351,7 +334,6 @@ public class Main {
 
             System.out.println(xmlErrorResponse.toString());
 
-            return;
 
         } else {
 
@@ -365,10 +347,10 @@ public class Main {
 
     private static AbstractXmlResponse getMandateCreateResponse(String xmlResponse) {
 
-        XmlErrorResponse xmlErrorResponse = null;
-        WSMandateDTOResponse mandateCreateResponse = null;
+        XmlErrorResponse xmlErrorResponse;
+        WSMandateDTOResponse mandateCreateResponse;
 
-        if (xmlResponse.contains(MANDATE_WS_XML__SEPALIA_ERROR)) {
+        if (xmlResponse.contains(MANDATE_WS_XML_SEPALIA_ERROR)) {
 
             xmlErrorResponse = new XmlErrorResponse.Builder().fromXml(xmlResponse);
 
@@ -378,7 +360,7 @@ public class Main {
 
         }
 
-        if (xmlResponse.contains(MANDATE_WS_XML__WS_MANDATE_DTO)) {
+        if (xmlResponse.contains(MANDATE_WS_XML_WS_MANDATE_DTO)) {
 
             mandateCreateResponse = new WSMandateDTOResponse.Builder().fromXml(xmlResponse);
 
@@ -394,10 +376,10 @@ public class Main {
 
     private static AbstractXmlResponse getOrderCreateResponse(String xmlResponse) {
 
-        XmlErrorResponse xmlErrorResponse = null;
-        WSDDOrderDTOResponse orderCreateResponse = null;
+        XmlErrorResponse xmlErrorResponse;
+        WSDDOrderDTOResponse orderCreateResponse;
 
-        if (xmlResponse.contains(MANDATE_WS_XML__SEPALIA_ERROR)) {
+        if (xmlResponse.contains(MANDATE_WS_XML_SEPALIA_ERROR)) {
 
             xmlErrorResponse = new XmlErrorResponse.Builder().fromXml(xmlResponse);
 
@@ -407,7 +389,7 @@ public class Main {
 
         }
 
-        if (xmlResponse.contains(MANDATE_WS_XML__WS_SDD_ORDER_DTO)) {
+        if (xmlResponse.contains(MANDATE_WS_XML_WS_SDD_ORDER_DTO)) {
 
             orderCreateResponse = new WSDDOrderDTOResponse.Builder().fromXml(xmlResponse);
 

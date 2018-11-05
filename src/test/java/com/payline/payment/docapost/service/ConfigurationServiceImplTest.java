@@ -24,7 +24,7 @@ import static com.payline.payment.docapost.utils.DocapostConstants.*;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.when;
 
-@RunWith( MockitoJUnitRunner.class )
+@RunWith(MockitoJUnitRunner.class)
 public class ConfigurationServiceImplTest {
 
 
@@ -44,30 +44,31 @@ public class ConfigurationServiceImplTest {
 
         //POST call is mocked for the request right now
         //TODO use valid Credentials and remove the mock ?
-        StringResponse  defaultResponse =  new StringResponse();
+        StringResponse defaultResponse = new StringResponse();
         defaultResponse.setCode(HTTP_OK);
         defaultResponse.setContent("post OK");
-        when((httpClient).doPost(anyString(), anyString(),anyString(),anyString(),anyString())).thenReturn(defaultResponse);
+        when((httpClient).doPost(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(defaultResponse);
 
         // when: checking configuration fields values
         ContractParametersCheckRequest contractParametersCheckRequest = createContractParametersCheckRequest();
-        Map<String,String> errors = service.check(contractParametersCheckRequest);
+        Map<String, String> errors = service.check(contractParametersCheckRequest);
 
         // then: result contains no error
-        Assert.assertEquals(0,errors.size());
+        Assert.assertEquals(0, errors.size());
     }
 
     @Test
-    public void testCheck_wrongAccountData(){
+    public void testCheck_wrongAccountData() {
         // given: invalid contract properties
         ContractParametersCheckRequest contractParametersCheckRequest = createContractParametersCheckRequest();
-        Map<String,String> errors = service.check(contractParametersCheckRequest);
+        Map<String, String> errors = service.check(contractParametersCheckRequest);
 
         // then: result contains  errors
         Assert.assertTrue(errors.size() > 0);
-        Assert.assertEquals(3,errors.size());
+        Assert.assertEquals(3, errors.size());
     }
-//
+
+    //
 //    @Test
 //    public void testCheck_unknownError(){
 //        // given: contract properties validation encounter an unexpected error (Server unavailable for example)
@@ -83,46 +84,47 @@ public class ConfigurationServiceImplTest {
 
         List<AbstractParameter> parameters = service.getParameters(Locale.FRANCE);
         //Assert we have 3 parameters
-        Assert.assertNotNull( parameters );
-        Assert.assertEquals(3,parameters.size());
-        Assert.assertEquals(CONTRACT_CONFIG__CREDITOR_ID ,parameters.get(0).getKey());
-        Assert.assertEquals(PARTNER_CONFIG__AUTH_LOGIN ,parameters.get(1).getKey());
-        Assert.assertEquals(PARTNER_CONFIG__AUTH_PASS ,parameters.get(2).getKey());
+        Assert.assertNotNull(parameters);
+        Assert.assertEquals(3, parameters.size());
+        Assert.assertEquals(CONTRACT_CONFIG_CREDITOR_ID, parameters.get(0).getKey());
+        Assert.assertEquals(PARTNER_CONFIG_AUTH_LOGIN, parameters.get(1).getKey());
+        Assert.assertEquals(PARTNER_CONFIG_AUTH_PASS, parameters.get(2).getKey());
 
     }
 
     @Test
-    public void testGetReleaseInformation_ok(){
+    public void testGetReleaseInformation_ok() {
         // when: getReleaseInformation method is called
         ReleaseInformation releaseInformation = service.getReleaseInformation();
 
         // then: result is not null
-        Assert.assertNotNull( releaseInformation );
+        Assert.assertNotNull(releaseInformation);
         // then: assert release version and release date are not null
-        Assert.assertNotNull( releaseInformation.getVersion() );
-        Assert.assertFalse( releaseInformation.getVersion().isEmpty() );
+        Assert.assertNotNull(releaseInformation.getVersion());
+        Assert.assertFalse(releaseInformation.getVersion().isEmpty());
 
-        Assert.assertNotNull( releaseInformation.getDate() );
+        Assert.assertNotNull(releaseInformation.getDate());
     }
-//
+
+    //
     @Test
-    public void testGetReleaseInformation_versionFormat(){
+    public void testGetReleaseInformation_versionFormat() {
         // when: getReleaseInformation method is called
         ReleaseInformation releaseInformation = service.getReleaseInformation();
 
         // then: the version has a valid format
-        Assert.assertNotNull( releaseInformation );
-        Assert.assertTrue( releaseInformation.getVersion().matches( "^\\d\\.\\d(\\.\\d)?$" ) );
+        Assert.assertNotNull(releaseInformation);
+        Assert.assertTrue(releaseInformation.getVersion().matches("^\\d\\.\\d(\\.\\d)?$"));
     }
 
     @Test
-    public void testGetName_notNull(){
+    public void testGetName_notNull() {
         // when: getReleaseInformation method is called
-        String name = service.getName( Locale.FRANCE );
+        String name = service.getName(Locale.FRANCE);
 
         // then: result is not null and not empty
-        Assert.assertNotNull( name );
-        Assert.assertFalse( name.isEmpty() );
+        Assert.assertNotNull(name);
+        Assert.assertFalse(name.isEmpty());
     }
 
 }

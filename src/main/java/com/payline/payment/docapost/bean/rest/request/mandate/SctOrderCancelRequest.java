@@ -1,15 +1,13 @@
 package com.payline.payment.docapost.bean.rest.request.mandate;
 
 import com.payline.payment.docapost.exception.InvalidRequestException;
-import com.payline.payment.docapost.utils.DocapostUtils;
+import com.payline.payment.docapost.utils.PluginUtils;
 import com.payline.pmapi.bean.payment.ContractProperty;
 import com.payline.pmapi.bean.reset.request.ResetRequest;
 
 import java.util.Map;
 
-import static com.payline.payment.docapost.utils.DocapostConstants.CONTRACT_CONFIG__CREDITOR_ID;
-import static com.payline.payment.docapost.utils.DocapostConstants.PARTNER_CONFIG__AUTH_LOGIN;
-import static com.payline.payment.docapost.utils.DocapostConstants.PARTNER_CONFIG__AUTH_PASS;
+import static com.payline.payment.docapost.utils.DocapostConstants.*;
 
 public class SctOrderCancelRequest {
 
@@ -20,7 +18,8 @@ public class SctOrderCancelRequest {
     /**
      * Public default constructor
      */
-    public SctOrderCancelRequest() { }
+    public SctOrderCancelRequest() {
+    }
 
     /**
      * Constructor
@@ -28,8 +27,8 @@ public class SctOrderCancelRequest {
     public SctOrderCancelRequest(String creditorId,
                                  String e2eId) {
 
-        this.creditorId     = creditorId;
-        this.e2eId          = e2eId;
+        this.creditorId = creditorId;
+        this.e2eId = e2eId;
 
     }
 
@@ -64,7 +63,7 @@ public class SctOrderCancelRequest {
             this.checkInputRequest(paylineRequest);
 
             SctOrderCancelRequest request = new SctOrderCancelRequest(
-                    paylineRequest.getContractConfiguration().getContractProperties().get( CONTRACT_CONFIG__CREDITOR_ID ).getValue(),
+                    paylineRequest.getContractConfiguration().getContractProperties().get(CONTRACT_CONFIG_CREDITOR_ID).getValue(),
                     paylineRequest.getPartnerTransactionId()
             );
 
@@ -72,34 +71,34 @@ public class SctOrderCancelRequest {
 
         }
 
-        private void checkInputRequest(ResetRequest paylineRequest) throws InvalidRequestException  {
-            if ( paylineRequest == null ) {
-                throw new InvalidRequestException( "Request must not be null" );
+        private void checkInputRequest(ResetRequest paylineRequest) throws InvalidRequestException {
+            if (paylineRequest == null) {
+                throw new InvalidRequestException("Request must not be null");
             }
 
-            if ( paylineRequest.getContractConfiguration() == null
-                    || paylineRequest.getContractConfiguration().getContractProperties() == null ) {
-                throw new InvalidRequestException( "Contract configuration properties object must not be null" );
+            if (paylineRequest.getContractConfiguration() == null
+                    || paylineRequest.getContractConfiguration().getContractProperties() == null) {
+                throw new InvalidRequestException("Contract configuration properties object must not be null");
             }
             Map<String, ContractProperty> contractProperties = paylineRequest.getContractConfiguration().getContractProperties();
-            if ( contractProperties.get( CONTRACT_CONFIG__CREDITOR_ID ) == null ) {
-                throw new InvalidRequestException( "Missing contract configuration property: creditor id" );
+            if (contractProperties.get(CONTRACT_CONFIG_CREDITOR_ID) == null) {
+                throw new InvalidRequestException("Missing contract configuration property: creditor id");
             }
 
-            if ( paylineRequest.getPartnerConfiguration() == null
-                    || paylineRequest.getPartnerConfiguration().getSensitiveProperties() == null ) {
-                throw new InvalidRequestException( "Partner configuration sensitive properties object must not be null" );
+            if (paylineRequest.getPartnerConfiguration() == null
+                    || paylineRequest.getPartnerConfiguration().getSensitiveProperties() == null) {
+                throw new InvalidRequestException("Partner configuration sensitive properties object must not be null");
             }
             Map<String, String> sensitiveProperties = paylineRequest.getPartnerConfiguration().getSensitiveProperties();
-            if ( sensitiveProperties.get( PARTNER_CONFIG__AUTH_LOGIN ) == null ) {
-                throw new InvalidRequestException( "Missing partner configuration property: auth login" );
+            if (sensitiveProperties.get(PARTNER_CONFIG_AUTH_LOGIN) == null) {
+                throw new InvalidRequestException("Missing partner configuration property: auth login");
             }
-            if ( sensitiveProperties.get( PARTNER_CONFIG__AUTH_PASS ) == null ) {
-                throw new InvalidRequestException( "Missing partner configuration property: auth pass" );
+            if (sensitiveProperties.get(PARTNER_CONFIG_AUTH_PASS) == null) {
+                throw new InvalidRequestException("Missing partner configuration property: auth pass");
             }
 
-            if ( DocapostUtils.isEmpty(paylineRequest.getPartnerTransactionId()) ) {
-                throw new InvalidRequestException( "Missing mandatory property: partner transaction id" );
+            if (PluginUtils.isEmpty(paylineRequest.getPartnerTransactionId())) {
+                throw new InvalidRequestException("Missing mandatory property: partner transaction id");
             }
 
         }

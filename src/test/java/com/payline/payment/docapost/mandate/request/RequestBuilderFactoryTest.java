@@ -23,9 +23,9 @@ public class RequestBuilderFactoryTest {
 
 
     @Before
-    public void setup(){
+    public void setup() {
 
-      request = createDefaultPaymentRequestStep2();
+        request = createDefaultPaymentRequestStep2();
 
     }
 
@@ -48,6 +48,7 @@ public class RequestBuilderFactoryTest {
         Assert.assertNotNull(mandateCreateRequest.getDebtor().getIban());
         Assert.assertNotNull(mandateCreateRequest.getDebtor().getPhoneNumber());
     }
+
     /*
         TEST create SDD order request
      */
@@ -63,6 +64,7 @@ public class RequestBuilderFactoryTest {
         Assert.assertNotNull(mandateCreateRequest.getAmount());
 
     }
+
     /*
         TEST cancel request
      */
@@ -94,7 +96,7 @@ public class RequestBuilderFactoryTest {
         Assert.assertNotNull(sctOrderRequest.getRum());
         Assert.assertNotNull(sctOrderRequest.getE2eId());
         Assert.assertEquals(refundRequest.getPartnerTransactionId(), sctOrderRequest.getE2eId());
-        Assert.assertEquals(refundRequest.getAmount().getAmountInSmallestUnit().floatValue(), sctOrderRequest.getAmount().floatValue(),0.01);
+        Assert.assertEquals(refundRequest.getAmount().getAmountInSmallestUnit().floatValue(), sctOrderRequest.getAmount(), 0.01);
 
     }
 
@@ -113,26 +115,26 @@ public class RequestBuilderFactoryTest {
     @Test
     public void testBuildInitiateSignatureRequest() throws InvalidRequestException {
         request = createDefaultPaymentRequestStep2();
-        DocapostLocalParam docapostLocalParam =  DocapostLocalParam.getInstance();
+        DocapostLocalParam docapostLocalParam = DocapostLocalParam.getInstance();
         docapostLocalParam.restoreFromPaylineRequest(request);
 
         InitiateSignatureRequest initiateSignatureRequest = RequestBuilderFactory.buildInitiateSignatureRequest(request, docapostLocalParam);
         Assert.assertNotNull(initiateSignatureRequest);
         Assert.assertNotNull(initiateSignatureRequest.getCreditorId());
-        Assert.assertEquals(docapostLocalParam.getMandateRum(),initiateSignatureRequest.getMandateRum());
+        Assert.assertEquals(docapostLocalParam.getMandateRum(), initiateSignatureRequest.getMandateRum());
 
     }
 
     @Test
     public void testBuildSendOtpRequest() throws InvalidRequestException {
         request = createDefaultPaymentRequestStep2();
-        DocapostLocalParam docapostLocalParam =  DocapostLocalParam.getInstance();
+        DocapostLocalParam docapostLocalParam = DocapostLocalParam.getInstance();
         docapostLocalParam.restoreFromPaylineRequest(request);
 
         SendOtpRequest sendOtpRequest = RequestBuilderFactory.buildSendOtpRequest(request, docapostLocalParam);
         Assert.assertNotNull(sendOtpRequest);
         Assert.assertNotNull(sendOtpRequest.getCreditorId());
-        Assert.assertEquals(docapostLocalParam.getMandateRum(),sendOtpRequest.getMandateRum());
+        Assert.assertEquals(docapostLocalParam.getMandateRum(), sendOtpRequest.getMandateRum());
     }
 
     @Test
@@ -144,25 +146,25 @@ public class RequestBuilderFactoryTest {
         Assert.assertNotNull(setCodeRequest.getOtp());
         Assert.assertNotNull(setCodeRequest.getMandateRum());
         Assert.assertNotNull(setCodeRequest.getTransactionId());
-        Assert.assertEquals(request.getTransactionId(),setCodeRequest.getTransactionId());
+        Assert.assertEquals(request.getTransactionId(), setCodeRequest.getTransactionId());
 
     }
 
     @Test
     public void testBuildTerminateSignatureRequest() throws InvalidRequestException {
         request = createDefaultPaymentRequestStep2();
-        DocapostLocalParam docapostLocalParam =  DocapostLocalParam.getInstance();
+        DocapostLocalParam docapostLocalParam = DocapostLocalParam.getInstance();
         docapostLocalParam.restoreFromPaylineRequest(request);
         docapostLocalParam.setSignatureSuccess(false);
 
 
-        TerminateSignatureRequest terminateSignatureRequest = RequestBuilderFactory.buildTerminateSignatureRequest(request,docapostLocalParam);
+        TerminateSignatureRequest terminateSignatureRequest = RequestBuilderFactory.buildTerminateSignatureRequest(request, docapostLocalParam);
         Assert.assertNotNull(terminateSignatureRequest);
         Assert.assertNotNull(terminateSignatureRequest.getCreditorId());
         Assert.assertNotNull(terminateSignatureRequest.getMandateRum());
         Assert.assertNotNull(terminateSignatureRequest.getTransactionId());
         Assert.assertNotNull(terminateSignatureRequest.getSuccess());
-        Assert.assertEquals(request.getTransactionId(),terminateSignatureRequest.getTransactionId());
+        Assert.assertEquals(request.getTransactionId(), terminateSignatureRequest.getTransactionId());
 
     }
 

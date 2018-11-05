@@ -23,11 +23,8 @@ public abstract class AbstractWSSignatureResponse {
      * @return true if result ok (no errors), false if result KO
      */
     public boolean isResultOk() {
-        boolean result = true;
-        if (this.errors != null && !this.errors.isEmpty()) {
-            result = false;
-        }
-        return result;
+
+        return !(this.errors != null && !this.errors.isEmpty());
     }
 
     @Override
@@ -36,7 +33,7 @@ public abstract class AbstractWSSignatureResponse {
 
         result.append("errors : \n");
 
-        for (int index=0 ; index<errors.size() ; index++) {
+        for (int index = 0; index < errors.size(); index++) {
             result.append(errors.toString() + "\n");
         }
 

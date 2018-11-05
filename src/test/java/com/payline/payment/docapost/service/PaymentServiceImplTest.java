@@ -13,20 +13,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
 import static com.payline.payment.docapost.TestUtils.createDefaultPaymentRequest;
 import static com.payline.payment.docapost.TestUtils.createDefaultPaymentRequestStep2;
 import static com.payline.payment.docapost.utils.DocapostConstants.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
 
-@RunWith( MockitoJUnitRunner.class )
+@RunWith(MockitoJUnitRunner.class)
 public class PaymentServiceImplTest {
 
     @InjectMocks
-    private PaymentServiceImpl paymentService = new PaymentServiceImpl ();
+    private PaymentServiceImpl paymentService = new PaymentServiceImpl();
 
     @Mock
     private DocapostHttpClient httpClient;
@@ -47,7 +42,7 @@ public class PaymentServiceImplTest {
 //TODO tester le format de downloadMandateLink
 
     @Test
-    public void testPaymentServiceImpl(){
+    public void testPaymentServiceImpl() {
         PaymentServiceImpl paymentService = new PaymentServiceImpl();
         //TODO improve this test
         Assert.assertNotNull(paymentService);
@@ -55,33 +50,33 @@ public class PaymentServiceImplTest {
     }
 
     @Test
-    public void testPaymentRequestStep1(){
+    public void testPaymentRequestStep1() {
         PaymentServiceImpl paymentService = new PaymentServiceImpl();
         //TODO improve this test
         Assert.assertNotNull(paymentService);
 
         PaymentRequest paymentRequestStep1 = createDefaultPaymentRequest();
         //assert step is null, STEP 0
-        String step = paymentRequestStep1.getRequestContext().getRequestData().get(CONTEXT_DATA__STEP);
+        String step = paymentRequestStep1.getRequestContext().getRequestData().get(CONTEXT_DATA_STEP);
         Assert.assertNotNull(paymentRequestStep1);
         Assert.assertNull(step);
 
         PaymentResponseFormUpdated paymentResponse = (PaymentResponseFormUpdated) paymentService.paymentRequest(paymentRequestStep1);
         //Check we are now on the next step : IBAN_PHONE
         Assert.assertNotNull(paymentResponse);
-        Assert.assertNotNull(paymentResponse.getRequestContext().getRequestData().get(CONTEXT_DATA__STEP));
-        Assert.assertEquals(CONTEXT_DATA__STEP_IBAN_PHONE,paymentResponse.getRequestContext().getRequestData().get(CONTEXT_DATA__STEP));
+        Assert.assertNotNull(paymentResponse.getRequestContext().getRequestData().get(CONTEXT_DATA_STEP));
+        Assert.assertEquals(CONTEXT_DATA_STEP_IBAN_PHONE, paymentResponse.getRequestContext().getRequestData().get(CONTEXT_DATA_STEP));
 
     }
 
     @Test
-    public void testPaymentRequestStep2() throws IOException, URISyntaxException {
+    public void testPaymentRequestStep2() {
 
         //TODO improve this test
         Assert.assertNotNull(paymentService);
 
         //TODO use valid Credentials and remove the mock ?
-        StringResponse defaultResponse =  new StringResponse();
+        StringResponse defaultResponse = new StringResponse();
         defaultResponse.setCode(HTTP_OK);
         //Mock de la reponse
         defaultResponse.setContent("<WSMandateDTO><creditorId>MARCHAND1</creditorId>\n" +
@@ -107,13 +102,12 @@ public class PaymentServiceImplTest {
                 "   <language>fr</language>\n</WSMandateDTO>");
 
 
-
 //        when((httpClient).doPost(anyString(), anyString(),anyString(),anyString(),anyString())).thenReturn(defaultResponse);
         PaymentRequest paymentRequestStep2 = createDefaultPaymentRequestStep2();
         //assert step is null, STEP 0
-        String step = paymentRequestStep2.getRequestContext().getRequestData().get(CONTEXT_DATA__STEP);
+        String step = paymentRequestStep2.getRequestContext().getRequestData().get(CONTEXT_DATA_STEP);
         Assert.assertNotNull(paymentRequestStep2);
-        Assert.assertEquals(CONTEXT_DATA__STEP_IBAN_PHONE,step);
+        Assert.assertEquals(CONTEXT_DATA_STEP_IBAN_PHONE, step);
 
         PaymentResponseFormUpdated paymentResponse = (PaymentResponseFormUpdated) paymentService.paymentRequest(paymentRequestStep2);
 //        PaymentResponse paymentResponse = paymentService.paymentRequest(paymentRequestStep2);
@@ -123,11 +117,10 @@ public class PaymentServiceImplTest {
 //        Assert.assertNotNull(paymentResponse);
         Class<? extends PaymentResponse> paymentResponseClass = paymentResponse.getClass();
         if (paymentResponseClass.isInstance(PaymentResponseFormUpdated.class)) {
-            Assert.assertEquals(CONTEXT_DATA__STEP_IBAN_PHONE, paymentResponse.getRequestContext().getRequestData().get(CONTEXT_DATA__STEP));
+            Assert.assertEquals(CONTEXT_DATA_STEP_IBAN_PHONE, paymentResponse.getRequestContext().getRequestData().get(CONTEXT_DATA_STEP));
         }
 
     }
-
 
 
 }

@@ -1,7 +1,7 @@
 package com.payline.payment.docapost.bean.rest.request.mandate;
 
 import com.payline.payment.docapost.exception.InvalidRequestException;
-import com.payline.payment.docapost.utils.DocapostUtils;
+import com.payline.payment.docapost.utils.PluginUtils;
 import com.payline.pmapi.bean.payment.ContractProperty;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 
@@ -44,7 +44,8 @@ public class SddOrderCreateRequest extends AbstractXmlRequest {
     /**
      * Public default constructor
      */
-    public SddOrderCreateRequest() { }
+    public SddOrderCreateRequest() {
+    }
 
     /**
      * Constructor
@@ -55,11 +56,11 @@ public class SddOrderCreateRequest extends AbstractXmlRequest {
                                  String label,
                                  String e2eId) {
 
-        this.creditorId     = creditorId;
-        this.rum            = rum;
-        this.amount         = amount;
-        this.label          = label;
-        this.e2eId          = e2eId;
+        this.creditorId = creditorId;
+        this.rum = rum;
+        this.amount = amount;
+        this.label = label;
+        this.e2eId = e2eId;
 
     }
 
@@ -108,8 +109,8 @@ public class SddOrderCreateRequest extends AbstractXmlRequest {
             this.checkInputRequest(paylineRequest);
 
             SddOrderCreateRequest request = new SddOrderCreateRequest(
-                    paylineRequest.getContractConfiguration().getContractProperties().get( CONTRACT_CONFIG__CREDITOR_ID ).getValue(),
-                    paylineRequest.getRequestContext().getRequestData().get( CONTEXT_DATA__MANDATE_RUM ),
+                    paylineRequest.getContractConfiguration().getContractProperties().get(CONTRACT_CONFIG_CREDITOR_ID).getValue(),
+                    paylineRequest.getRequestContext().getRequestData().get(CONTEXT_DATA_MANDATE_RUM),
                     paylineRequest.getOrder().getAmount().getAmountInSmallestUnit().floatValue(),
                     paylineRequest.getSoftDescriptor(),
                     paylineRequest.getTransactionId()
@@ -119,54 +120,54 @@ public class SddOrderCreateRequest extends AbstractXmlRequest {
 
         }
 
-        private void checkInputRequest(PaymentRequest paylineRequest) throws InvalidRequestException  {
-            if ( paylineRequest == null ) {
-                throw new InvalidRequestException( "Request must not be null" );
+        private void checkInputRequest(PaymentRequest paylineRequest) throws InvalidRequestException {
+            if (paylineRequest == null) {
+                throw new InvalidRequestException("Request must not be null");
             }
 
-            if ( paylineRequest.getContractConfiguration() == null
-                    || paylineRequest.getContractConfiguration().getContractProperties() == null ) {
-                throw new InvalidRequestException( "Contract configuration properties object must not be null" );
+            if (paylineRequest.getContractConfiguration() == null
+                    || paylineRequest.getContractConfiguration().getContractProperties() == null) {
+                throw new InvalidRequestException("Contract configuration properties object must not be null");
             }
             Map<String, ContractProperty> contractProperties = paylineRequest.getContractConfiguration().getContractProperties();
-            if ( contractProperties.get( CONTRACT_CONFIG__CREDITOR_ID ) == null ) {
-                throw new InvalidRequestException( "Missing contract configuration property: creditor id" );
+            if (contractProperties.get(CONTRACT_CONFIG_CREDITOR_ID) == null) {
+                throw new InvalidRequestException("Missing contract configuration property: creditor id");
             }
 
-            if ( paylineRequest.getRequestContext() == null
-                    || paylineRequest.getRequestContext().getRequestData() == null ) {
-                throw new InvalidRequestException( "Request context object must not be null" );
+            if (paylineRequest.getRequestContext() == null
+                    || paylineRequest.getRequestContext().getRequestData() == null) {
+                throw new InvalidRequestException("Request context object must not be null");
             }
             Map<String, String> requestContext = paylineRequest.getRequestContext().getRequestData();
-            if ( requestContext.get( CONTEXT_DATA__MANDATE_RUM ) == null ) {
-                throw new InvalidRequestException( "Missing context data: mandate rum" );
+            if (requestContext.get(CONTEXT_DATA_MANDATE_RUM) == null) {
+                throw new InvalidRequestException("Missing context data: mandate rum");
             }
 
-            if ( paylineRequest.getPartnerConfiguration() == null
-                    || paylineRequest.getPartnerConfiguration().getSensitiveProperties() == null ) {
-                throw new InvalidRequestException( "Partner configuration sensitive properties object must not be null" );
+            if (paylineRequest.getPartnerConfiguration() == null
+                    || paylineRequest.getPartnerConfiguration().getSensitiveProperties() == null) {
+                throw new InvalidRequestException("Partner configuration sensitive properties object must not be null");
             }
             Map<String, String> sensitiveProperties = paylineRequest.getPartnerConfiguration().getSensitiveProperties();
-            if ( sensitiveProperties.get( PARTNER_CONFIG__AUTH_LOGIN ) == null ) {
-                throw new InvalidRequestException( "Missing partner configuration property: auth login" );
+            if (sensitiveProperties.get(PARTNER_CONFIG_AUTH_LOGIN) == null) {
+                throw new InvalidRequestException("Missing partner configuration property: auth login");
             }
-            if ( sensitiveProperties.get( PARTNER_CONFIG__AUTH_PASS ) == null ) {
-                throw new InvalidRequestException( "Missing partner configuration property: auth pass" );
-            }
-
-            if ( DocapostUtils.isEmpty(paylineRequest.getTransactionId()) ) {
-                throw new InvalidRequestException( "Missing mandatory property: transaction id" );
+            if (sensitiveProperties.get(PARTNER_CONFIG_AUTH_PASS) == null) {
+                throw new InvalidRequestException("Missing partner configuration property: auth pass");
             }
 
-            if ( DocapostUtils.isEmpty(paylineRequest.getSoftDescriptor()) ) {
-                throw new InvalidRequestException( "Missing mandatory property: soft descriptor" );
+            if (PluginUtils.isEmpty(paylineRequest.getTransactionId())) {
+                throw new InvalidRequestException("Missing mandatory property: transaction id");
             }
 
-            if ( paylineRequest.getOrder() == null ) {
-                throw new InvalidRequestException( "Order object must not be null" );
+            if (PluginUtils.isEmpty(paylineRequest.getSoftDescriptor())) {
+                throw new InvalidRequestException("Missing mandatory property: soft descriptor");
             }
-            if ( paylineRequest.getOrder().getAmount() == null ) {
-                throw new InvalidRequestException( "Missing order property: amount" );
+
+            if (paylineRequest.getOrder() == null) {
+                throw new InvalidRequestException("Order object must not be null");
+            }
+            if (paylineRequest.getOrder().getAmount() == null) {
+                throw new InvalidRequestException("Missing order property: amount");
             }
 
         }

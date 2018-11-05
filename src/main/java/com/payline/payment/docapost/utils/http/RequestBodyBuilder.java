@@ -12,7 +12,9 @@ public class RequestBodyBuilder {
     /**
      * Default public constructor
      */
-    public RequestBodyBuilder() { }
+    public RequestBodyBuilder() {
+        // ras.
+    }
 
     public RequestBodyBuilder withFormData(Map<String, String> formData) {
         this.formData = formData;

@@ -51,7 +51,9 @@ public class WSDDOrderDTOResponse extends AbstractXmlResponse {
     /**
      * Public default constructor
      */
-    public WSDDOrderDTOResponse() { }
+    public WSDDOrderDTOResponse() {
+        // ras.
+    }
 
     public String getLabel() {
         return label;

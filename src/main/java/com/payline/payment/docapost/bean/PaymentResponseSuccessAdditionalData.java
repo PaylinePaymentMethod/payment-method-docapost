@@ -14,7 +14,9 @@ public class PaymentResponseSuccessAdditionalData {
     @SerializedName("signatureId")
     private String signatureId;
 
-    public PaymentResponseSuccessAdditionalData() { }
+    public PaymentResponseSuccessAdditionalData() {
+        // ras.
+    }
 
     public String getMandateRum() {
         return mandateRum;
@@ -75,9 +77,9 @@ public class PaymentResponseSuccessAdditionalData {
     //******************************************************************************************************************
     //***** BUILDER
     public static final class Builder {
-        public PaymentResponseSuccessAdditionalData fromJson( String jsonContent ) {
+        public PaymentResponseSuccessAdditionalData fromJson(String jsonContent) {
             Gson gson = new Gson();
-            return gson.fromJson( jsonContent, PaymentResponseSuccessAdditionalData.class );
+            return gson.fromJson(jsonContent, PaymentResponseSuccessAdditionalData.class);
         }
     }
     //***** BUILDER

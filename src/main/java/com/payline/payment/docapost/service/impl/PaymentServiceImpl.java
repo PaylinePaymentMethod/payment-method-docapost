@@ -21,6 +21,7 @@ import com.payline.payment.docapost.bean.rest.response.signature.TerminateSignat
 import com.payline.payment.docapost.exception.InvalidRequestException;
 import com.payline.payment.docapost.utils.DocapostLocalParam;
 import com.payline.payment.docapost.utils.DocapostUtils;
+import com.payline.payment.docapost.utils.PluginUtils;
 import com.payline.payment.docapost.utils.config.ConfigEnvironment;
 import com.payline.payment.docapost.utils.config.ConfigProperties;
 import com.payline.payment.docapost.utils.http.DocapostHttpClient;
@@ -40,7 +41,6 @@ import com.payline.pmapi.bean.paymentform.bean.form.CustomForm;
 import com.payline.pmapi.bean.paymentform.response.configuration.PaymentFormConfigurationResponse;
 import com.payline.pmapi.bean.paymentform.response.configuration.impl.PaymentFormConfigurationResponseSpecific;
 import com.payline.pmapi.service.PaymentService;
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -55,7 +55,7 @@ import static com.payline.payment.docapost.utils.DocapostConstants.*;
 
 public class PaymentServiceImpl implements PaymentService {
 
-    private static final Logger logger = LogManager.getLogger( PaymentServiceImpl.class );
+    private static final Logger LOGGER = LogManager.getLogger(PaymentServiceImpl.class);
 
     private static final String DEFAULT_ERROR_CODE = "no code transmitted";
 
@@ -70,18 +70,18 @@ public class PaymentServiceImpl implements PaymentService {
      */
     public PaymentServiceImpl() {
 
-        int connectTimeout  = Integer.parseInt( ConfigProperties.get(CONFIG__HTTP_CONNECT_TIMEOUT) );
-        int writeTimeout    = Integer.parseInt( ConfigProperties.get(CONFIG__HTTP_WRITE_TIMEOUT) );
-        int readTimeout     = Integer.parseInt( ConfigProperties.get(CONFIG__HTTP_READ_TIMEOUT) );
+        int connectTimeout = Integer.parseInt(ConfigProperties.get(CONFIG_HTTP_CONNECT_TIMEOUT));
+        int writeTimeout = Integer.parseInt(ConfigProperties.get(CONFIG_HTTP_WRITE_TIMEOUT));
+        int readTimeout = Integer.parseInt(ConfigProperties.get(CONFIG_HTTP_READ_TIMEOUT));
 
-        this.httpClient     = new DocapostHttpClient( connectTimeout, writeTimeout, readTimeout );
+        this.httpClient = new DocapostHttpClient(connectTimeout, writeTimeout, readTimeout);
 
         this.docapostLocalParam = DocapostLocalParam.getInstance();
 
     }
 
     @Override
-    public PaymentResponse paymentRequest( PaymentRequest paymentRequest ) {
+    public PaymentResponse paymentRequest(PaymentRequest paymentRequest) {
 
         Locale locale = paymentRequest.getLocale();
 
@@ -90,31 +90,31 @@ public class PaymentServiceImpl implements PaymentService {
             PaymentResponse response = null;
 
             // Recuperation des donnees necessaires pour la generation du Header Basic credentials des appels WS
-            String authLogin = paymentRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG__AUTH_LOGIN);
-            String authPass = paymentRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG__AUTH_PASS);
+            String authLogin = paymentRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG_AUTH_LOGIN);
+            String authPass = paymentRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG_AUTH_PASS);
 
             // On recharge en local les parametres contextuels de requete
             this.docapostLocalParam.restoreFromPaylineRequest(paymentRequest);
 
-            ConfigEnvironment env = Boolean.FALSE.equals( paymentRequest.getEnvironment().isSandbox() ) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
-            String scheme = StringUtils.EMPTY;
-            String host = StringUtils.EMPTY;
-            String path = StringUtils.EMPTY;
+            ConfigEnvironment env = Boolean.FALSE.equals(paymentRequest.getEnvironment().isSandbox()) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
+            String scheme;
+            String host;
+            String path;
 
-            String requestBody = StringUtils.EMPTY;
-            String responseBody = StringUtils.EMPTY;
+            String requestBody;
+            String responseBody;
 
             // Recuperation de l'information de step (etape du processus)
-            String step = paymentRequest.getRequestContext().getRequestData().get(CONTEXT_DATA__STEP);
+            String step = paymentRequest.getRequestContext().getRequestData().get(CONTEXT_DATA_STEP);
 
-            this.logger.debug("PaymentRequest step : " + step);
+            LOGGER.debug("PaymentRequest step : " + step);
 
             //----------------------------------------------------------------------------------------------------------
             //**********************************************************************************************************
             //**********************************************************************************************************
             //**********************************************************************************************************
             // Cas 1 : 1ere reception (contextData.get("step") = null ou vide
-            if (DocapostUtils.isEmpty(step)) {
+            if (PluginUtils.isEmpty(step)) {
 
                 // Pas de donnees à consommer ni appels WS a effectuer...
 
@@ -128,7 +128,7 @@ public class PaymentServiceImpl implements PaymentService {
                 PaymentFormDisplayFieldText inputIban = PaymentFormDisplayFieldText
                         .PaymentFormDisplayFieldTextBuilder
                         .aPaymentFormDisplayFieldText()
-                        .withContent(this.i18n.getMessage( OTP_IBAN_PHONE__TEXT_SET_IBAN, locale ))
+                        .withContent(this.i18n.getMessage(OTP_IBAN_PHONE_TEXT_SET_IBAN, locale))
                         .build();
 
                 PaymentFormInputFieldIban ibanForm = PaymentFormInputFieldIban
@@ -144,7 +144,7 @@ public class PaymentServiceImpl implements PaymentService {
                 PaymentFormDisplayFieldText inputPhone = PaymentFormDisplayFieldText
                         .PaymentFormDisplayFieldTextBuilder
                         .aPaymentFormDisplayFieldText()
-                        .withContent(this.i18n.getMessage( OTP_IBAN_PHONE__TEXT_SET_PHONE, locale ))
+                        .withContent(this.i18n.getMessage(OTP_IBAN_PHONE_TEXT_SET_PHONE, locale))
                         .build();
 
                 PaymentFormInputFieldText phoneForm = PaymentFormInputFieldText
@@ -168,7 +168,7 @@ public class PaymentServiceImpl implements PaymentService {
                 PaymentFormDisplayFieldText inputPhoneInfo = PaymentFormDisplayFieldText
                         .PaymentFormDisplayFieldTextBuilder
                         .aPaymentFormDisplayFieldText()
-                        .withContent(this.i18n.getMessage( OTP_IBAN_PHONE__TEXT_SET_PHONE_INFO, locale ))
+                        .withContent(this.i18n.getMessage(OTP_IBAN_PHONE_TEXT_SET_PHONE_INFO, locale))
                         .build();
 
                 List<PaymentFormField> customFields = new ArrayList<>();
@@ -196,7 +196,7 @@ public class PaymentServiceImpl implements PaymentService {
                 // Pour le step suivant, on doit envoyer :
                 // - Le step IBAN_PHONE
                 Map<String, String> requestContextMap = new HashMap<>();
-                requestContextMap.put(CONTEXT_DATA__STEP, CONTEXT_DATA__STEP_IBAN_PHONE);
+                requestContextMap.put(CONTEXT_DATA_STEP, CONTEXT_DATA_STEP_IBAN_PHONE);
 
                 //Get sensitiveRequestContext from Payment request
                 Map<String, String> requestSensitiveContext = paymentRequest.getRequestContext().getSensitiveRequestData();
@@ -209,7 +209,7 @@ public class PaymentServiceImpl implements PaymentService {
 //                        .withSensitiveRequestContext(requestSensitiveContext)
                         .build();
 
-                response =  PaymentResponseFormUpdated
+                response = PaymentResponseFormUpdated
                         .PaymentResponseFormUpdatedBuilder
                         .aPaymentResponseFormUpdated()
                         .withPaymentFormConfigurationResponse(paymentFormConfigurationResponse)
@@ -223,13 +223,13 @@ public class PaymentServiceImpl implements PaymentService {
             //**********************************************************************************************************
             //**********************************************************************************************************
             // Cas 2 : 2nde reception (contextData.get("step") = IBAN_PHONE
-            if (CONTEXT_DATA__STEP_IBAN_PHONE.equals(step)) {
+            if (CONTEXT_DATA_STEP_IBAN_PHONE.equals(step)) {
 
                 // On recupere le numero de telephone saisi par l'utilisateur a l'etape precedente
-                String phone = paymentRequest.getPaymentFormContext().getPaymentFormParameter().get(FORM_FIELD__PHONE);
+                String phone = paymentRequest.getPaymentFormContext().getPaymentFormParameter().get(FORM_FIELD_PHONE);
 
-                scheme = ConfigProperties.get(CONFIG__SCHEME, env);
-                host = ConfigProperties.get(CONFIG__HOST, env);
+                scheme = ConfigProperties.get(CONFIG_SCHEME, env);
+                host = ConfigProperties.get(CONFIG_HOST, env);
 
                 //######################################################################################################
                 //######################################################################################################
@@ -242,11 +242,10 @@ public class PaymentServiceImpl implements PaymentService {
                 // Generation des donnees du body de la requete
                 requestBody = mandateCreateRequest.buildBody();
 
-                this.logger.debug("MandateCreateRequest XML body :");
-                this.logger.debug(requestBody);
+                LOGGER.debug("MandateCreateRequest XML body : {}", requestBody);
 
                 // Execution de l'appel WS Docapost /api/mandate/create et recuperation de l'information "mandateRum"
-                path = ConfigProperties.get(CONFIG__PATH_WSMANDATE_MANDATE_CREATE);
+                path = ConfigProperties.get(CONFIG_PATH_WSMANDATE_MANDATE_CREATE);
                 final StringResponse mandateCreateStringResponse = this.httpClient.doPost(
                         scheme,
                         host,
@@ -255,19 +254,16 @@ public class PaymentServiceImpl implements PaymentService {
                         DocapostUtils.generateBasicCredentials(authLogin, authPass)
                 );
 
-                if ( mandateCreateStringResponse != null ) {
-                    this.logger.debug("MandateCreateRequest StringResponse :");
-                    this.logger.debug(mandateCreateStringResponse.toString());
+                if (mandateCreateStringResponse != null) {
+                    LOGGER.debug("MandateCreateRequest StringResponse  {}", mandateCreateStringResponse.toString());
                 } else {
-                    this.logger.debug("MandateCreateRequest StringResponse is null !");
+                    LOGGER.debug("MandateCreateRequest StringResponse is null !");
                 }
 
-                if ( mandateCreateStringResponse != null && mandateCreateStringResponse.getCode() == 200 && mandateCreateStringResponse.getContent() != null ) {
+                if (mandateCreateStringResponse != null && mandateCreateStringResponse.getCode() == 200 && mandateCreateStringResponse.getContent() != null) {
 
                     responseBody = mandateCreateStringResponse.getContent().trim();
 
-                    this.logger.debug("WSMandateDTOResponse XML body :");
-                    this.logger.debug(responseBody);
 
                     AbstractXmlResponse mandateCreateXmlResponse = getMandateCreateResponse(responseBody);
 
@@ -277,8 +273,7 @@ public class PaymentServiceImpl implements PaymentService {
 
                             WSMandateDTOResponse mandateCreateResponse = (WSMandateDTOResponse) mandateCreateXmlResponse;
 
-                            this.logger.debug("WSMandateDTOResponse :");
-                            this.logger.debug(mandateCreateResponse.toString());
+                            LOGGER.debug("WSMandateDTOResponse : {}", mandateCreateResponse.toString());
 
                             // Recuperation du parametre mandateRum
                             this.docapostLocalParam.setMandateRum(mandateCreateResponse.getRum());
@@ -287,25 +282,24 @@ public class PaymentServiceImpl implements PaymentService {
 
                             XmlErrorResponse xmlErrorResponse = (XmlErrorResponse) mandateCreateXmlResponse;
 
-                            this.logger.debug("WSMandateDTOResponse error :");
-                            this.logger.debug(xmlErrorResponse.toString());
+                            LOGGER.debug("WSMandateDTOResponse error : {}", xmlErrorResponse.toString());
 
                             WSRequestResultEnum wsRequestResult = WSRequestResultEnum.fromDocapostErrorCode(xmlErrorResponse.getException().getCode());
 
-                            return buildPaymentResponseFailure( wsRequestResult );
+                            return buildPaymentResponseFailure(wsRequestResult);
 
                         }
 
                     } else {
-                        return buildPaymentResponseFailure( "XML RESPONSE PARSING FAILED", FailureCause.INVALID_DATA );
+                        return buildPaymentResponseFailure("XML RESPONSE PARSING FAILED", FailureCause.INVALID_DATA);
                     }
 
-                } else if( mandateCreateStringResponse != null && mandateCreateStringResponse.getCode() != 200 ) {
-                    this.logger.error( "An HTTP error occurred while sending the request: " + mandateCreateStringResponse.getMessage() );
-                    return buildPaymentResponseFailure( Integer.toString( mandateCreateStringResponse.getCode() ), FailureCause.COMMUNICATION_ERROR );
+                } else if (mandateCreateStringResponse != null && mandateCreateStringResponse.getCode() != 200) {
+                    LOGGER.error("An HTTP error occurred while sending the request: " + mandateCreateStringResponse.getMessage());
+                    return buildPaymentResponseFailure(Integer.toString(mandateCreateStringResponse.getCode()), FailureCause.COMMUNICATION_ERROR);
                 } else {
-                    this.logger.error( "The HTTP response or its body is null and should not be" );
-                    return buildPaymentResponseFailure( DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR );
+                    LOGGER.error("The HTTP response or its body is null and should not be");
+                    return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
                 }
 
                 //######################################################################################################
@@ -317,7 +311,7 @@ public class PaymentServiceImpl implements PaymentService {
                 InitiateSignatureRequest initiateSignatureRequest = RequestBuilderFactory.buildInitiateSignatureRequest(paymentRequest, this.docapostLocalParam);
 
                 // Execution de l'appel WS Docapost /api/initiateSignature et recuperation de l'information "transactionId"
-                path = ConfigProperties.get(CONFIG__PATH_WSSIGNATURE_INITIATE_SIGNATURE);
+                path = ConfigProperties.get(CONFIG_PATH_WSSIGNATURE_INITIATE_SIGNATURE);
                 final StringResponse initiateSignatureStringResponse = this.httpClient.doPost(
                         scheme,
                         host,
@@ -326,45 +320,41 @@ public class PaymentServiceImpl implements PaymentService {
                         DocapostUtils.generateBasicCredentials(authLogin, authPass)
                 );
 
-                if ( initiateSignatureStringResponse != null ) {
-                    this.logger.debug("InitiateSignatureResponse StringResponse :");
-                    this.logger.debug(initiateSignatureStringResponse.toString());
+                if (initiateSignatureStringResponse != null) {
+                    LOGGER.debug("InitiateSignatureResponse StringResponse : {}", initiateSignatureStringResponse.toString());
                 } else {
-                    this.logger.debug("InitiateSignatureResponse StringResponse is null !");
+                    LOGGER.debug("InitiateSignatureResponse StringResponse is null !");
                 }
 
-                if ( initiateSignatureStringResponse != null && initiateSignatureStringResponse.getCode() == 200 && initiateSignatureStringResponse.getContent() != null ) {
+                if (initiateSignatureStringResponse != null && initiateSignatureStringResponse.getCode() == 200 && initiateSignatureStringResponse.getContent() != null) {
 
                     responseBody = initiateSignatureStringResponse.getContent().trim();
 
-                    this.logger.debug("InitiateSignatureResponse JSON body :");
-                    this.logger.debug(responseBody);
+                    LOGGER.debug("InitiateSignatureResponse JSON body : {}", responseBody);
 
                     InitiateSignatureResponse initiateSignatureResponse = ResponseBuilderFactory.buildInitiateSignatureResponse(responseBody);
 
                     if (initiateSignatureResponse.isResultOk()) {
 
-                        this.logger.debug("InitiateSignatureResponse :");
-                        this.logger.debug(initiateSignatureResponse.toString());
+                        LOGGER.debug("InitiateSignatureResponse : {}", initiateSignatureResponse.toString());
 
                         // Recuperation du parametre transactionId
                         this.docapostLocalParam.setTransactionId(initiateSignatureResponse.getTransactionId());
 
                     } else {
 
-                        this.logger.debug("InitiateSignatureResponse error :");
-                        this.logger.debug(initiateSignatureResponse.getErrors().get(0));
+                        LOGGER.debug("InitiateSignatureResponse error : {}", initiateSignatureResponse.getErrors().get(0));
 
-                        return buildPaymentResponseFailure( WSRequestResultEnum.PARTNER_UNKNOWN_ERROR );
+                        return buildPaymentResponseFailure(WSRequestResultEnum.PARTNER_UNKNOWN_ERROR);
 
                     }
 
-                } else if( initiateSignatureStringResponse != null && initiateSignatureStringResponse.getCode() != 200 ) {
-                    this.logger.error( "An HTTP error occurred while sending the request: " + initiateSignatureStringResponse.getMessage() );
-                    return buildPaymentResponseFailure( Integer.toString( initiateSignatureStringResponse.getCode() ), FailureCause.COMMUNICATION_ERROR );
+                } else if (initiateSignatureStringResponse != null && initiateSignatureStringResponse.getCode() != 200) {
+                    LOGGER.error("An HTTP error occurred while sending the request: " + initiateSignatureStringResponse.getMessage());
+                    return buildPaymentResponseFailure(Integer.toString(initiateSignatureStringResponse.getCode()), FailureCause.COMMUNICATION_ERROR);
                 } else {
-                    this.logger.error( "The HTTP response or its body is null and should not be" );
-                    return buildPaymentResponseFailure( DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR );
+                    LOGGER.error("The HTTP response or its body is null and should not be");
+                    return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
                 }
 
                 //######################################################################################################
@@ -376,7 +366,7 @@ public class PaymentServiceImpl implements PaymentService {
                 SendOtpRequest sendOtpRequest = RequestBuilderFactory.buildSendOtpRequest(paymentRequest, this.docapostLocalParam);
 
                 // Execution de l'appel WS Docapost /api/sendOTP et recuperation de l'information "signatureId"
-                path = ConfigProperties.get(CONFIG__PATH_WSSIGNATURE_SEND_OTP);
+                path = ConfigProperties.get(CONFIG_PATH_WSSIGNATURE_SEND_OTP);
                 final StringResponse sendOTPStringResponse = this.httpClient.doPost(
                         scheme,
                         host,
@@ -385,45 +375,41 @@ public class PaymentServiceImpl implements PaymentService {
                         DocapostUtils.generateBasicCredentials(authLogin, authPass)
                 );
 
-                if ( sendOTPStringResponse != null ) {
-                    this.logger.debug("SendOTPResponse StringResponse :");
-                    this.logger.debug(sendOTPStringResponse.toString());
+                if (sendOTPStringResponse != null) {
+                    LOGGER.debug("SendOTPResponse StringResponse : {}", sendOTPStringResponse.toString());
                 } else {
-                    this.logger.debug("SendOTPResponse StringResponse is null !");
+                    LOGGER.debug("SendOTPResponse StringResponse is null !");
                 }
 
-                if ( sendOTPStringResponse != null && sendOTPStringResponse.getCode() == 200 && sendOTPStringResponse.getContent() != null ) {
+                if (sendOTPStringResponse != null && sendOTPStringResponse.getCode() == 200 && sendOTPStringResponse.getContent() != null) {
 
                     responseBody = sendOTPStringResponse.getContent().trim();
 
-                    this.logger.debug("SendOTPResponse JSON body :");
-                    this.logger.debug(responseBody);
+                    LOGGER.debug("SendOTPResponse JSON body : {}", responseBody);
 
                     SendOtpResponse sendOtpResponse = ResponseBuilderFactory.buildSendOtpResponse(responseBody);
 
                     if (sendOtpResponse.isResultOk()) {
 
-                        this.logger.debug("SendOTPResponse :");
-                        this.logger.debug(sendOtpResponse.toString());
+                        LOGGER.debug("SendOTPResponse : {}", sendOtpResponse.toString());
 
                         // Recuperation du parametre transactionId
                         this.docapostLocalParam.setSignatureId(sendOtpResponse.getSignatureId());
 
                     } else {
 
-                        this.logger.debug("SendOTPResponse error :");
-                        this.logger.debug(sendOtpResponse.getErrors().get(0));
+                        LOGGER.debug("SendOTPResponse error : {}", sendOtpResponse.getErrors().get(0));
 
-                        return buildPaymentResponseFailure( WSRequestResultEnum.PARTNER_UNKNOWN_ERROR );
+                        return buildPaymentResponseFailure(WSRequestResultEnum.PARTNER_UNKNOWN_ERROR);
 
                     }
 
-                } else if( sendOTPStringResponse != null && sendOTPStringResponse.getCode() != 200 ) {
-                    this.logger.error( "An HTTP error occurred while sending the request: " + sendOTPStringResponse.getMessage() );
-                    return buildPaymentResponseFailure( Integer.toString( sendOTPStringResponse.getCode() ), FailureCause.COMMUNICATION_ERROR );
+                } else if (sendOTPStringResponse != null && sendOTPStringResponse.getCode() != 200) {
+                    LOGGER.error("An HTTP error occurred while sending the request: " + sendOTPStringResponse.getMessage());
+                    return buildPaymentResponseFailure(Integer.toString(sendOTPStringResponse.getCode()), FailureCause.COMMUNICATION_ERROR);
                 } else {
-                    this.logger.error( "The HTTP response or its body is null and should not be" );
-                    return buildPaymentResponseFailure( DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR );
+                    LOGGER.error("The HTTP response or its body is null and should not be");
+                    return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
                 }
 
                 /*
@@ -436,7 +422,7 @@ public class PaymentServiceImpl implements PaymentService {
                 PaymentFormDisplayFieldText downloadMandateText = PaymentFormDisplayFieldText
                         .PaymentFormDisplayFieldTextBuilder
                         .aPaymentFormDisplayFieldText()
-                        .withContent(this.i18n.getMessage( OTP_FORM__TEXT_DOWNLOAD_MANDATE, locale ))
+                        .withContent(this.i18n.getMessage(OTP_FORM_TEXT_DOWNLOAD_MANDATE, locale))
                         .build();
 
                 PaymentFormDisplayFieldLink downloadMandateLink = PaymentFormDisplayFieldLink
@@ -447,7 +433,7 @@ public class PaymentServiceImpl implements PaymentService {
                                 sendOtpRequest.getCreditorId(),
                                 this.docapostLocalParam.getMandateRum()
                         ))
-                        .withName(this.i18n.getMessage( OTP_FORM__LINK_DOWNLOAD_MANDATE, locale ))
+                        .withName(this.i18n.getMessage(OTP_FORM_LINK_DOWNLOAD_MANDATE, locale))
                         // FIXME : Add fields ?
                         .withTitle("form.otp.link.downloadMandate")
 //                        .withUrl("")
@@ -456,13 +442,13 @@ public class PaymentServiceImpl implements PaymentService {
                 PaymentFormDisplayFieldText otpText = PaymentFormDisplayFieldText
                         .PaymentFormDisplayFieldTextBuilder
                         .aPaymentFormDisplayFieldText()
-                        .withContent(this.i18n.getMessage( OTP_FORM__TEXT_OTP, locale ))
+                        .withContent(this.i18n.getMessage(OTP_FORM_TEXT_OTP, locale))
                         .build();
 
                 PaymentFormDisplayFieldText setOtpText = PaymentFormDisplayFieldText
                         .PaymentFormDisplayFieldTextBuilder
                         .aPaymentFormDisplayFieldText()
-                        .withContent(this.i18n.getMessage( OTP_FORM__TEXT_SET_OTP, locale ) + " " + phone)
+                        .withContent(this.i18n.getMessage(OTP_FORM_TEXT_SET_OTP, locale) + " " + phone)
                         .build();
 
                 PaymentFormInputFieldText otpForm = PaymentFormInputFieldText
@@ -503,7 +489,7 @@ public class PaymentServiceImpl implements PaymentService {
                         .PaymentFormFieldCheckboxBuilder
                         .aPaymentFormFieldCheckbox()
                         .withRequired(true)
-                        .withLabel(this.i18n.getMessage( OTP_FORM__CHECKBOX_ACCEPT_CONDITION, locale ))
+                        .withLabel(this.i18n.getMessage(OTP_FORM_CHECKBOX_ACCEPT_CONDITION, locale))
                         // FIXME : Add fields ?
                         .withRequiredErrorMessage(ACCEPT_CONDITION_REQUIRED_ERROR_MESSAGE)
                         .withKey(ACCEPT_CONDITION_KEY)
@@ -515,7 +501,7 @@ public class PaymentServiceImpl implements PaymentService {
                         .PaymentFormFieldCheckboxBuilder
                         .aPaymentFormFieldCheckbox()
                         .withRequired(SAVE_MANDATE_REQUIRED)
-                        .withLabel(this.i18n.getMessage( OTP_FORM__CHECKBOX_SAVE_MANDATE, locale ))
+                        .withLabel(this.i18n.getMessage(OTP_FORM_CHECKBOX_SAVE_MANDATE, locale))
                         // FIXME : Add fields ?
                         //TODO Define value of fields
                         .withRequiredErrorMessage(SAVE_MANDATE_REQUIRED_ERROR_MESSAGE)
@@ -554,10 +540,10 @@ public class PaymentServiceImpl implements PaymentService {
                 // - La valeur du transactionId obtenu lors de l'appel /api/initiateSignature
                 // - la valeur du signatureId obtenu lors de l'appel /api/sendOTP
                 Map<String, String> requestContextMap = new HashMap<>();
-                requestContextMap.put(CONTEXT_DATA__STEP, CONTEXT_DATA__STEP_OTP);
-                requestContextMap.put(CONTEXT_DATA__MANDATE_RUM, this.docapostLocalParam.getMandateRum());
-                requestContextMap.put(CONTEXT_DATA__TRANSACTION_ID, this.docapostLocalParam.getTransactionId());
-                requestContextMap.put(CONTEXT_DATA__SIGNATURE_ID, this.docapostLocalParam.getSignatureId());
+                requestContextMap.put(CONTEXT_DATA_STEP, CONTEXT_DATA_STEP_OTP);
+                requestContextMap.put(CONTEXT_DATA_MANDATE_RUM, this.docapostLocalParam.getMandateRum());
+                requestContextMap.put(CONTEXT_DATA_TRANSACTION_ID, this.docapostLocalParam.getTransactionId());
+                requestContextMap.put(CONTEXT_DATA_SIGNATURE_ID, this.docapostLocalParam.getSignatureId());
 
                 Map<String, String> sensitiveRequestContextMap = new HashMap<>();
 
@@ -569,7 +555,7 @@ public class PaymentServiceImpl implements PaymentService {
                         .withSensitiveRequestData(sensitiveRequestContextMap)
                         .build();
 
-                response =  PaymentResponseFormUpdated
+                response = PaymentResponseFormUpdated
                         .PaymentResponseFormUpdatedBuilder
                         .aPaymentResponseFormUpdated()
                         .withPaymentFormConfigurationResponse(paymentFormConfigurationResponse)
@@ -583,12 +569,12 @@ public class PaymentServiceImpl implements PaymentService {
             //**********************************************************************************************************
             //**********************************************************************************************************
             //*** Cas 3 : 3eme reception (contextData.get("step") = 3
-            if (CONTEXT_DATA__STEP_OTP.equals(step)) {
+            if (CONTEXT_DATA_STEP_OTP.equals(step)) {
 
-                scheme = ConfigProperties.get(CONFIG__SCHEME, env);
-                host = ConfigProperties.get(CONFIG__HOST, env);
+                scheme = ConfigProperties.get(CONFIG_SCHEME, env);
+                host = ConfigProperties.get(CONFIG_HOST, env);
 
-                this.docapostLocalParam.setSignatureSuccess(new Boolean(false));
+                this.docapostLocalParam.setSignatureSuccess(false);
 
                 //######################################################################################################
                 //######################################################################################################
@@ -599,7 +585,7 @@ public class PaymentServiceImpl implements PaymentService {
                 SetCodeRequest setCodeRequest = RequestBuilderFactory.buildSetCodeRequest(paymentRequest);
 
                 // Execution de l'appel WS Docapost /api/setCode
-                path = ConfigProperties.get(CONFIG__PATH_WSSIGNATURE_SET_CODE);
+                path = ConfigProperties.get(CONFIG_PATH_WSSIGNATURE_SET_CODE);
                 final StringResponse setCodeStringResponse = this.httpClient.doPost(
                         scheme,
                         host,
@@ -608,45 +594,41 @@ public class PaymentServiceImpl implements PaymentService {
                         DocapostUtils.generateBasicCredentials(authLogin, authPass)
                 );
 
-                if ( setCodeStringResponse != null ) {
-                    this.logger.debug("SetCodeResponse StringResponse :");
-                    this.logger.debug(setCodeStringResponse.toString());
+                if (setCodeStringResponse != null) {
+                    LOGGER.debug("SetCodeResponse StringResponse : {}", setCodeStringResponse.toString());
                 } else {
-                    this.logger.debug("SetCodeResponse StringResponse is null !");
+                    LOGGER.debug("SetCodeResponse StringResponse is null !");
                 }
 
-                if ( setCodeStringResponse != null && setCodeStringResponse.getCode() == 200 && setCodeStringResponse.getContent() != null ) {
+                if (setCodeStringResponse != null && setCodeStringResponse.getCode() == 200 && setCodeStringResponse.getContent() != null) {
 
                     responseBody = setCodeStringResponse.getContent().trim();
 
-                    this.logger.debug("SetCodeResponse JSON body :");
-                    this.logger.debug(responseBody);
+                    LOGGER.debug("SetCodeResponse JSON body : {}", responseBody);
 
                     SetCodeResponse setCodeResponse = ResponseBuilderFactory.buildSetCodeResponse(responseBody);
 
                     if (setCodeResponse.isResultOk()) {
 
-                        this.logger.debug("SetCodeResponse :");
-                        this.logger.debug(setCodeResponse.toString());
+                        LOGGER.debug("SetCodeResponse : {}", setCodeResponse.toString());
 
                         // Update du parametre success
-                        this.docapostLocalParam.setSignatureSuccess(new Boolean(true));
+                        this.docapostLocalParam.setSignatureSuccess(true);
 
                     } else {
 
-                        this.logger.debug("SetCodeResponse error :");
-                        this.logger.debug(setCodeResponse.getErrors().get(0));
+                        LOGGER.debug("SetCodeResponse error : {}", setCodeResponse.getErrors().get(0));
 
-                        return buildPaymentResponseFailure( WSRequestResultEnum.PARTNER_UNKNOWN_ERROR );
+                        return buildPaymentResponseFailure(WSRequestResultEnum.PARTNER_UNKNOWN_ERROR);
 
                     }
 
-                } else if( setCodeStringResponse != null && setCodeStringResponse.getCode() != 200 ) {
-                    this.logger.error( "An HTTP error occurred while sending the request: " + setCodeStringResponse.getMessage() );
-                    return buildPaymentResponseFailure( Integer.toString( setCodeStringResponse.getCode() ), FailureCause.COMMUNICATION_ERROR );
+                } else if (setCodeStringResponse != null && setCodeStringResponse.getCode() != 200) {
+                    LOGGER.error("An HTTP error occurred while sending the request: " + setCodeStringResponse.getMessage());
+                    return buildPaymentResponseFailure(Integer.toString(setCodeStringResponse.getCode()), FailureCause.COMMUNICATION_ERROR);
                 } else {
-                    this.logger.error( "The HTTP response or its body is null and should not be" );
-                    return buildPaymentResponseFailure( DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR );
+                    LOGGER.error("The HTTP response or its body is null and should not be");
+                    return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
                 }
 
                 //######################################################################################################
@@ -658,7 +640,7 @@ public class PaymentServiceImpl implements PaymentService {
                 TerminateSignatureRequest terminateSignatureRequest = RequestBuilderFactory.buildTerminateSignatureRequest(paymentRequest, this.docapostLocalParam);
 
                 // Execution de l'appel WS Docapost /api/terminateSignature
-                path = ConfigProperties.get(CONFIG__PATH_WSSIGNATURE_TERMINATE_SIGNATURE);
+                path = ConfigProperties.get(CONFIG_PATH_WSSIGNATURE_TERMINATE_SIGNATURE);
                 final StringResponse terminateSignatureStringResponse = this.httpClient.doPost(
                         scheme,
                         host,
@@ -667,44 +649,40 @@ public class PaymentServiceImpl implements PaymentService {
                         DocapostUtils.generateBasicCredentials(authLogin, authPass)
                 );
 
-                if ( terminateSignatureStringResponse != null ) {
-                    this.logger.debug("TerminateSignatureResponse StringResponse :");
-                    this.logger.debug(terminateSignatureStringResponse.toString());
+                if (terminateSignatureStringResponse != null) {
+                    LOGGER.debug("TerminateSignatureResponse StringResponse : {}", terminateSignatureStringResponse.toString());
                 } else {
-                    this.logger.debug("TerminateSignatureResponse StringResponse is null !");
+                    LOGGER.debug("TerminateSignatureResponse StringResponse is null !");
                 }
 
-                if ( terminateSignatureStringResponse != null && terminateSignatureStringResponse.getCode() == 200 && terminateSignatureStringResponse.getContent() != null ) {
+                if (terminateSignatureStringResponse != null && terminateSignatureStringResponse.getCode() == 200 && terminateSignatureStringResponse.getContent() != null) {
 
                     responseBody = terminateSignatureStringResponse.getContent().trim();
 
-                    this.logger.debug("TerminateSignatureResponse JSON body :");
-                    this.logger.debug(responseBody);
+                    LOGGER.debug("TerminateSignatureResponse JSON body : {}", responseBody);
 
                     TerminateSignatureResponse terminateSignatureResponse = ResponseBuilderFactory.buildTerminateSignatureResponse(responseBody);
 
                     if (terminateSignatureResponse.isResultOk()) {
 
-                        this.logger.debug("TerminateSignatureResponse :");
-                        this.logger.debug(terminateSignatureResponse.toString());
+                        LOGGER.debug("TerminateSignatureResponse : {}", terminateSignatureResponse.toString());
 
                         // Nothing to do
 
                     } else {
 
-                        this.logger.debug("TerminateSignatureResponse error :");
-                        this.logger.debug(terminateSignatureResponse.getErrors().get(0));
+                        LOGGER.debug("TerminateSignatureResponse error : {}", terminateSignatureResponse.getErrors().get(0));
 
-                        return buildPaymentResponseFailure( WSRequestResultEnum.PARTNER_UNKNOWN_ERROR );
+                        return buildPaymentResponseFailure(WSRequestResultEnum.PARTNER_UNKNOWN_ERROR);
 
                     }
 
-                } else if( terminateSignatureStringResponse != null && terminateSignatureStringResponse.getCode() != 200 ) {
-                    this.logger.error( "An HTTP error occurred while sending the request: " + terminateSignatureStringResponse.getMessage() );
-                    return buildPaymentResponseFailure( Integer.toString( terminateSignatureStringResponse.getCode() ), FailureCause.COMMUNICATION_ERROR );
+                } else if (terminateSignatureStringResponse != null && terminateSignatureStringResponse.getCode() != 200) {
+                    LOGGER.error("An HTTP error occurred while sending the request: " + terminateSignatureStringResponse.getMessage());
+                    return buildPaymentResponseFailure(Integer.toString(terminateSignatureStringResponse.getCode()), FailureCause.COMMUNICATION_ERROR);
                 } else {
-                    this.logger.error( "The HTTP response or its body is null and should not be" );
-                    return buildPaymentResponseFailure( DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR );
+                    LOGGER.error("The HTTP response or its body is null and should not be");
+                    return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
                 }
 
                 //######################################################################################################
@@ -718,11 +696,10 @@ public class PaymentServiceImpl implements PaymentService {
                 // Generation des donnees du body de la requete
                 requestBody = orderCreateRequest.buildBody();
 
-                this.logger.debug("SddOrderCreateRequest XML body :");
-                this.logger.debug(requestBody);
+                LOGGER.debug("SddOrderCreateRequest XML body : {}", requestBody);
 
                 // Execution de l'appel WS Docapost /api/order/create
-                path = ConfigProperties.get(CONFIG__PATH_WSMANDATE_ORDER_CREATE);
+                path = ConfigProperties.get(CONFIG_PATH_WSMANDATE_ORDER_CREATE);
                 final StringResponse orderCreateStringResponse = this.httpClient.doPost(
                         scheme,
                         host,
@@ -731,19 +708,17 @@ public class PaymentServiceImpl implements PaymentService {
                         DocapostUtils.generateBasicCredentials(authLogin, authPass)
                 );
 
-                if ( orderCreateStringResponse != null ) {
-                    this.logger.debug("SddOrderCreateRequest StringResponse :");
-                    this.logger.debug(orderCreateStringResponse.toString());
+                if (orderCreateStringResponse != null) {
+                    LOGGER.debug("SddOrderCreateRequest StringResponse : {}", orderCreateStringResponse.toString());
                 } else {
-                    this.logger.debug("SddOrderCreateRequest StringResponse is null !");
+                    LOGGER.debug("SddOrderCreateRequest StringResponse is null !");
                 }
 
-                if ( orderCreateStringResponse != null && orderCreateStringResponse.getCode() == 200 && orderCreateStringResponse.getContent() != null ) {
+                if (orderCreateStringResponse != null && orderCreateStringResponse.getCode() == 200 && orderCreateStringResponse.getContent() != null) {
 
                     responseBody = orderCreateStringResponse.getContent().trim();
 
-                    this.logger.debug("SddOrderCreateRequest XML body :");
-                    this.logger.debug(responseBody);
+                    LOGGER.debug("SddOrderCreateRequest XML body : {}", responseBody);
 
                     AbstractXmlResponse orderCreateXmlResponse = getOrderCreateResponse(responseBody);
 
@@ -753,8 +728,7 @@ public class PaymentServiceImpl implements PaymentService {
 
                             WSDDOrderDTOResponse orderCreateResponse = (WSDDOrderDTOResponse) orderCreateXmlResponse;
 
-                            this.logger.debug("SddOrderCreateRequest :");
-                            this.logger.debug(orderCreateResponse.toString());
+                            LOGGER.debug("SddOrderCreateRequest : {}", orderCreateResponse.toString());
 
                             // Nothing to do
                             this.docapostLocalParam.setOrderStatus(orderCreateResponse.getStatus());
@@ -763,25 +737,24 @@ public class PaymentServiceImpl implements PaymentService {
 
                             XmlErrorResponse xmlErrorResponse = (XmlErrorResponse) orderCreateXmlResponse;
 
-                            this.logger.debug("SddOrderCreateRequest error :");
-                            this.logger.debug(xmlErrorResponse.toString());
+                            LOGGER.debug("SddOrderCreateRequest error : {}", xmlErrorResponse.toString());
 
                             WSRequestResultEnum wsRequestResult = WSRequestResultEnum.fromDocapostErrorCode(xmlErrorResponse.getException().getCode());
 
-                            return buildPaymentResponseFailure( wsRequestResult );
+                            return buildPaymentResponseFailure(wsRequestResult);
 
                         }
 
                     } else {
-                        return buildPaymentResponseFailure( "XML RESPONSE PARSING FAILED", FailureCause.INVALID_DATA );
+                        return buildPaymentResponseFailure("XML RESPONSE PARSING FAILED", FailureCause.INVALID_DATA);
                     }
 
-                } else if( orderCreateStringResponse != null && orderCreateStringResponse.getCode() != 200 ) {
-                    this.logger.error( "An HTTP error occurred while sending the request: " + orderCreateStringResponse.getMessage() );
-                    return buildPaymentResponseFailure( Integer.toString( orderCreateStringResponse.getCode() ), FailureCause.COMMUNICATION_ERROR );
+                } else if (orderCreateStringResponse != null && orderCreateStringResponse.getCode() != 200) {
+                    LOGGER.error("An HTTP error occurred while sending the request: " + orderCreateStringResponse.getMessage());
+                    return buildPaymentResponseFailure(Integer.toString(orderCreateStringResponse.getCode()), FailureCause.COMMUNICATION_ERROR);
                 } else {
-                    this.logger.error( "The HTTP response or its body is null and should not be" );
-                    return buildPaymentResponseFailure( DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR );
+                    LOGGER.error("The HTTP response or its body is null and should not be");
+                    return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
                 }
 
                 /*
@@ -812,15 +785,15 @@ public class PaymentServiceImpl implements PaymentService {
 
             return response;
 
-        } catch( InvalidRequestException e ){
-            this.logger.error( "The input payment request is invalid: " + e.getMessage() );
-            return buildPaymentResponseFailure( DEFAULT_ERROR_CODE, FailureCause.INVALID_DATA );
-        } catch( IOException e ){
-            this.logger.error( "An IOException occurred while sending the HTTP request or receiving the response: " + e.getMessage() );
-            return buildPaymentResponseFailure( DEFAULT_ERROR_CODE, FailureCause.COMMUNICATION_ERROR );
-        } catch( Exception e ){
-            this.logger.error( "An unexpected error occurred: ", e );
-            return buildPaymentResponseFailure( DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR );
+        } catch (InvalidRequestException e) {
+            LOGGER.error("The input payment request is invalid: " + e.getMessage());
+            return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INVALID_DATA);
+        } catch (IOException e) {
+            LOGGER.error("An IOException occurred while sending the HTTP request or receiving the response: " + e.getMessage());
+            return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.COMMUNICATION_ERROR);
+        } catch (Exception e) {
+            LOGGER.error("An unexpected error occurred: ", e);
+            return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
         }
 
     }
@@ -828,10 +801,10 @@ public class PaymentServiceImpl implements PaymentService {
     /**
      * Generate the URL to download the mandate document
      *
-     * @param env
-     * @param creditorId
-     * @param mandateRum
-     * @return
+     * @param env        ConfigEnvironment
+     * @param creditorId creditor id
+     * @param mandateRum RUM
+     * @return URI Syntax Exception
      */
     private URL getDownloadMandateLinkUrl(ConfigEnvironment env, String creditorId, String mandateRum) {
 
@@ -839,22 +812,22 @@ public class PaymentServiceImpl implements PaymentService {
 
         try {
 
-            String strUrl = ConfigProperties.get(CONFIG__SCHEME, env)
+            String strUrl = ConfigProperties.get(CONFIG_SCHEME, env)
                     + "://"
-                    + ConfigProperties.get(CONFIG__HOST, env)
+                    + ConfigProperties.get(CONFIG_HOST, env)
                     + "/"
-                    + ConfigProperties.get(CONFIG__PATH_WSMANDATE_MANDATE_PDFTPL)
+                    + ConfigProperties.get(CONFIG_PATH_WSMANDATE_MANDATE_PDFTPL)
                     + "/"
                     + creditorId
                     + "/"
                     + mandateRum;
 
-            this.logger.debug("Mandate download URL : " + strUrl);
+            LOGGER.debug("Mandate download URL : " + strUrl);
 
             url = new URL(strUrl);
 
         } catch (MalformedURLException e) {
-            this.logger.error( "An unexpected error occurred: ", e );
+            LOGGER.error("An unexpected error occurred: ", e);
         }
 
         return url;
@@ -863,10 +836,11 @@ public class PaymentServiceImpl implements PaymentService {
 
     /**
      * Generate the URL to download the mandate document
-     * @return
+     *
+     * @return url
      */
     private URL getResendOtpLinkUrl(ConfigEnvironment env, String creditorId, String mandateRum, String transactionId) {
-
+// FIXME : string ?
         URL url = null;
 
         try {
@@ -877,22 +851,21 @@ public class PaymentServiceImpl implements PaymentService {
                     + "&"
                     + "transactionId" + transactionId;
 
-            String strUrl = ConfigProperties.get(CONFIG__SCHEME, env)
+            String strUrl = ConfigProperties.get(CONFIG_SCHEME, env)
                     + "://"
-                    + ConfigProperties.get(CONFIG__HOST, env)
+                    + ConfigProperties.get(CONFIG_HOST, env)
                     + "/"
-                    + ConfigProperties.get(CONFIG__PATH_WSSIGNATURE_SEND_OTP)
+                    + ConfigProperties.get(CONFIG_PATH_WSSIGNATURE_SEND_OTP)
                     + "?"
                     + URLEncoder.encode(query, "UTF8");
 
-            this.logger.debug("Mandate download URL : " + strUrl);
+            LOGGER.debug("Mandate download URL : " + strUrl);
 
             url = new URL(strUrl);
 
-        } catch (UnsupportedEncodingException e) {
-            this.logger.error( "An unexpected error occurred: ", e );
-        } catch (MalformedURLException e) {
-            this.logger.error( "An unexpected error occurred: ", e );
+        } catch (UnsupportedEncodingException | MalformedURLException e) {
+            LOGGER.error("An unexpected error occurred: ", e);
+
         }
 
         return url;
@@ -902,14 +875,14 @@ public class PaymentServiceImpl implements PaymentService {
     /**
      * Utility method to instantiate {@link PaymentResponseFailure} objects, using the class' builder.
      *
-     * @param errorCode The error code
+     * @param errorCode    The error code
      * @param failureCause The failure cause
      * @return The instantiated object
      */
-    protected PaymentResponseFailure buildPaymentResponseFailure(String errorCode, FailureCause failureCause ){
+    protected PaymentResponseFailure buildPaymentResponseFailure(String errorCode, FailureCause failureCause) {
         return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
-                .withFailureCause( failureCause )
-                .withErrorCode( errorCode )
+                .withFailureCause(failureCause)
+                .withErrorCode(errorCode)
                 .build();
     }
 
@@ -919,24 +892,25 @@ public class PaymentServiceImpl implements PaymentService {
      * @param wsRequestResult The enum representig the error code and the failure cause
      * @return The instantiated object
      */
-    protected PaymentResponseFailure buildPaymentResponseFailure(WSRequestResultEnum wsRequestResult ){
+    protected PaymentResponseFailure buildPaymentResponseFailure(WSRequestResultEnum wsRequestResult) {
         return PaymentResponseFailure.PaymentResponseFailureBuilder.aPaymentResponseFailure()
-                .withFailureCause( wsRequestResult.getPaylineFailureCause() )
-                .withErrorCode( wsRequestResult.getDocapostErrorCode() )
+                .withFailureCause(wsRequestResult.getPaylineFailureCause())
+                .withErrorCode(wsRequestResult.getDocapostErrorCode())
                 .build();
     }
 
     /**
      * Return a AbstractXmlResponse (WSDDOrderDTOResponse or XmlErrorResponse in case of error) based on a XML content
+     *
      * @param xmlResponse the XML content
      * @return the AbstractXmlResponse
      */
     private static AbstractXmlResponse getMandateCreateResponse(String xmlResponse) {
 
-        XmlErrorResponse xmlErrorResponse = null;
-        WSMandateDTOResponse mandateCreateResponse = null;
+        XmlErrorResponse xmlErrorResponse;
+        WSMandateDTOResponse mandateCreateResponse;
 
-        if (xmlResponse.contains(MANDATE_WS_XML__SEPALIA_ERROR)) {
+        if (xmlResponse.contains(MANDATE_WS_XML_SEPALIA_ERROR)) {
 
             xmlErrorResponse = ResponseBuilderFactory.buildXmlErrorResponse(xmlResponse);
 
@@ -946,7 +920,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         }
 
-        if (xmlResponse.contains(MANDATE_WS_XML__WS_MANDATE_DTO)) {
+        if (xmlResponse.contains(MANDATE_WS_XML_WS_MANDATE_DTO)) {
 
             mandateCreateResponse = ResponseBuilderFactory.buildWsMandateDTOResponse(xmlResponse);
 
@@ -962,15 +936,16 @@ public class PaymentServiceImpl implements PaymentService {
 
     /**
      * Return a AbstractXmlResponse (WSDDOrderDTOResponse or XmlErrorResponse in case of error) based on a XML content
+     *
      * @param xmlResponse the XML content
      * @return the AbstractXmlResponse
      */
     private static AbstractXmlResponse getOrderCreateResponse(String xmlResponse) {
 
-        XmlErrorResponse xmlErrorResponse = null;
-        WSDDOrderDTOResponse orderCreateResponse = null;
+        XmlErrorResponse xmlErrorResponse;
+        WSDDOrderDTOResponse orderCreateResponse;
 
-        if (xmlResponse.contains(MANDATE_WS_XML__SEPALIA_ERROR)) {
+        if (xmlResponse.contains(MANDATE_WS_XML_SEPALIA_ERROR)) {
 
             xmlErrorResponse = ResponseBuilderFactory.buildXmlErrorResponse(xmlResponse);
 
@@ -980,7 +955,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         }
 
-        if (xmlResponse.contains(MANDATE_WS_XML__WS_SDD_ORDER_DTO)) {
+        if (xmlResponse.contains(MANDATE_WS_XML_WS_SDD_ORDER_DTO)) {
 
             orderCreateResponse = ResponseBuilderFactory.buildWsddOrderDTOResponse(xmlResponse);
 

@@ -10,7 +10,9 @@ public class SetCodeResponse extends AbstractWSSignatureResponse {
     /**
      * Constructor
      */
-    public SetCodeResponse() { }
+    public SetCodeResponse() {
+        // ras.
+    }
 
     @Override
     public String toString() {
@@ -28,9 +30,9 @@ public class SetCodeResponse extends AbstractWSSignatureResponse {
     //******************************************************************************************************************
     //***** BUILDER
     public static final class Builder {
-        public SetCodeResponse fromJson(String jsonContent ) {
+        public SetCodeResponse fromJson(String jsonContent) {
             Gson gson = new Gson();
-            return gson.fromJson( jsonContent, SetCodeResponse.class );
+            return gson.fromJson(jsonContent, SetCodeResponse.class);
         }
     }
     //***** BUILDER

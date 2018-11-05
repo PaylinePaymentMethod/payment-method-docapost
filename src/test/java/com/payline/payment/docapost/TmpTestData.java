@@ -7,29 +7,29 @@ public class TmpTestData {
     public static final String AUTH_LOGIN = "payline@docapost.fr";
     public static final String AUTH_MDP = "J:[ef8dccma";
 
-    private String creditorId;
-    private String flowName;
-    private String rum;
-    private Boolean recurrent;
-    private String contextIdentifier;
-    private String language;
-    private String transactionId;
-    private String signatureId;
-    private String otp;
-    private Float amount;
-    private String label;
-    private Boolean signatureSuccess;
+    protected String creditorId;
+    protected String flowName;
+    protected String rum;
+    protected Boolean recurrent;
+    protected String contextIdentifier;
+    protected String language;
+    protected String transactionId;
+    protected String signatureId;
+    protected String otp;
+    protected Float amount;
+    protected String label;
+    protected Boolean signatureSuccess;
 
-    private String debtorLastName;
-    private String debtorFirstName;
-    private String debtorIban;
-    private String debtorStreet;
-    private String debtorComplement;
-    private String debtorComplement2;
-    private String debtorPostalCode;
-    private String debtorTown;
-    private String debtorPhoneNumber;
-    private String debtorCountryCode;
+    protected String debtorLastName;
+    protected String debtorFirstName;
+    protected String debtorIban;
+    protected String debtorStreet;
+    protected String debtorComplement;
+    protected String debtorComplement2;
+    protected String debtorPostalCode;
+    protected String debtorTown;
+    protected String debtorPhoneNumber;
+    protected String debtorCountryCode;
 
     public static synchronized TmpTestData getInstance() {
         if (INSTANCE == null) {

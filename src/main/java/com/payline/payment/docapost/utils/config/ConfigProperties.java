@@ -1,24 +1,25 @@
 package com.payline.payment.docapost.utils.config;
 
-import java.io.InputStream;
-import java.util.Properties;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.io.InputStream;
+import java.util.Properties;
 
 /**
  * Utility class which reads and provides config properties.
  */
 public class ConfigProperties {
 
-    private static final Logger logger = LogManager.getLogger( ConfigProperties.class );
+    private static final Logger logger = LogManager.getLogger(ConfigProperties.class);
 
     private static final String FILENAME = "config.properties";
 
     private static Properties properties;
 
     /* This class has only static methods: no need to instantiate it */
-    private ConfigProperties() { }
+    private ConfigProperties() {
+    }
 
     /**
      * Get a config property by its name.
@@ -27,27 +28,27 @@ public class ConfigProperties {
      * @param key The name of the property to recover
      * @return The property value. Can be null if the property has not been found.
      */
-    public static String get( String key ) {
-        if ( properties == null ) {
+    public static String get(String key) {
+        if (properties == null) {
             readProperties();
         }
-        return properties.getProperty( key );
+        return properties.getProperty(key);
         // TODO: if null, backup to a code-based default configuration ? (to avoid runtime exception)
     }
 
     /**
      * Get a environment-dependent config property by its name.
      *
-     * @param key The name of the property to recover
+     * @param key         The name of the property to recover
      * @param environment The runtime environment
      * @return The property value. Can be null if the property has not been found.
      */
-    public static String get( String key, ConfigEnvironment environment ) {
+    public static String get(String key, ConfigEnvironment environment) {
         String prefix = "";
-        if ( environment != null ) {
+        if (environment != null) {
             prefix += environment.getPrefix() + ".";
         }
-        return get( prefix + key );
+        return get(prefix + key);
     }
 
     /**
@@ -59,10 +60,10 @@ public class ConfigProperties {
 
         try {
 
-            InputStream inputStream = ConfigProperties.class.getClassLoader().getResourceAsStream( FILENAME );
-            properties.load( inputStream );
+            InputStream inputStream = ConfigProperties.class.getClassLoader().getResourceAsStream(FILENAME);
+            properties.load(inputStream);
 
-        } catch( Exception e ) {
+        } catch (Exception e) {
             logger.error("An error occurred reading the configuration properties file");
             // TODO: backup to a code-based default configuration ? (to avoid runtime exception)
         }

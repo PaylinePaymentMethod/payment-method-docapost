@@ -1,6 +1,7 @@
 package com.payline.payment.docapost.service;
 
 import com.payline.payment.docapost.exception.InvalidRequestException;
+import com.payline.payment.docapost.utils.ActionRequestResponse;
 import com.payline.payment.docapost.utils.config.ConfigProperties;
 import com.payline.payment.docapost.utils.http.DocapostHttpClient;
 import com.payline.payment.docapost.utils.http.StringResponse;
@@ -13,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.security.NoSuchAlgorithmException;
 
 import static com.payline.payment.docapost.utils.DocapostConstants.*;
 
@@ -24,17 +24,17 @@ import static com.payline.payment.docapost.utils.DocapostConstants.*;
  */
 public abstract class AbstractResetHttpService<T extends ResetRequest> {
 
-    private static final Logger logger = LogManager.getLogger( AbstractResetHttpService.class );
+    private static final Logger logger = LogManager.getLogger(AbstractResetHttpService.class);
 
     private static final String DEFAULT_ERROR_CODE = "no code transmitted";
 
     protected DocapostHttpClient httpClient;
 
     protected AbstractResetHttpService() {
-        int connectTimeout = Integer.parseInt( ConfigProperties.get(CONFIG__HTTP_CONNECT_TIMEOUT) );
-        int writeTimeout = Integer.parseInt( ConfigProperties.get(CONFIG__HTTP_WRITE_TIMEOUT) );
-        int readTimeout = Integer.parseInt( ConfigProperties.get(CONFIG__HTTP_READ_TIMEOUT) );
-        this.httpClient = new DocapostHttpClient( connectTimeout, writeTimeout, readTimeout );
+        int connectTimeout = Integer.parseInt(ConfigProperties.get(CONFIG_HTTP_CONNECT_TIMEOUT));
+        int writeTimeout = Integer.parseInt(ConfigProperties.get(CONFIG_HTTP_WRITE_TIMEOUT));
+        int readTimeout = Integer.parseInt(ConfigProperties.get(CONFIG_HTTP_READ_TIMEOUT));
+        this.httpClient = new DocapostHttpClient(connectTimeout, writeTimeout, readTimeout);
     }
 
     /**
@@ -42,10 +42,10 @@ public abstract class AbstractResetHttpService<T extends ResetRequest> {
      *
      * @param resetRequest The input request provided by Payline
      * @return The {@link StringResponse} from the HTTP call
-     * @throws IOException Can be thrown while sending the HTTP request
+     * @throws IOException             Can be thrown while sending the HTTP request
      * @throws InvalidRequestException Thrown if the input request in not valid
      */
-    public abstract StringResponse createSendRequest(T resetRequest ) throws IOException, InvalidRequestException, URISyntaxException;
+    public abstract StringResponse createSendRequest(T resetRequest) throws IOException, InvalidRequestException, URISyntaxException;
 
     /**
      * Process the response from the HTTP call.
@@ -53,9 +53,8 @@ public abstract class AbstractResetHttpService<T extends ResetRequest> {
      *
      * @param response The {@link StringResponse} from the HTTP call, which HTTP code is 200 and which body is not null.
      * @return The {@link ResetResponse}
-     * @throws IOException Can be thrown while reading the response body
      */
-    public abstract ResetResponse processResponse( StringResponse response ) throws IOException;
+    public abstract ResetResponse processResponse(StringResponse response);
 
     /**
      * Process a {@link ResetRequest} (or subclass), handling all the generic error cases
@@ -63,32 +62,34 @@ public abstract class AbstractResetHttpService<T extends ResetRequest> {
      * @param resetRequest The input request from Payline
      * @return The corresponding {@link ResetRequest}
      */
-    protected ResetResponse processRequest(T resetRequest ) {
+    protected ResetResponse processRequest(T resetRequest) {
         try {
 
             // Mandate the child class to create and send the request (which is specific to each implementation)
-            StringResponse response = this.createSendRequest( resetRequest );
+            StringResponse response = this.createSendRequest(resetRequest);
 
-            if ( response != null && response.getCode() == 200 && response.getContent() != null ) {
-                // Mandate the child class to process the request when it's OK (which is specific to each implementation)
-                return this.processResponse( response );
-            } else if( response != null && response.getCode() != 200 ) {
-                logger.error( "An HTTP error occurred while sending the request: " + response.getMessage() );
-                return buildResetResponseFailure( Integer.toString( response.getCode() ), FailureCause.COMMUNICATION_ERROR );
-            } else {
-                logger.error( "The HTTP response or its body is null and should not be" );
-                return buildResetResponseFailure( DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR );
+            switch (ActionRequestResponse.checkResponse(response)) {
+                case OK_200:
+                    // Mandate the child class to process the request when it's OK (which is specific to each implementation)
+                    return this.processResponse(response);
+                case OTHER_CODE:
+                    logger.error("An HTTP error occurred while sending the request: " + response.getMessage());
+                    return buildResetResponseFailure(Integer.toString(response.getCode()), FailureCause.COMMUNICATION_ERROR);
+                default:
+                    logger.error("The HTTP response or its body is null and should not be");
+                    return buildResetResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
+
             }
 
-        } catch( InvalidRequestException e ) {
-            logger.error( "The input payment request is invalid: " + e.getMessage() );
-            return buildResetResponseFailure( DEFAULT_ERROR_CODE, FailureCause.INVALID_DATA );
-        } catch( IOException e ) {
-            logger.error( "An IOException occurred while sending the HTTP request or receiving the response: " + e.getMessage() );
-            return buildResetResponseFailure( DEFAULT_ERROR_CODE, FailureCause.COMMUNICATION_ERROR );
-        } catch( Exception e ) {
-            logger.error( "An unexpected error occurred: ", e );
-            return buildResetResponseFailure( DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR );
+        } catch (InvalidRequestException e) {
+            logger.error("The input payment request is invalid: " + e.getMessage());
+            return buildResetResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INVALID_DATA);
+        } catch (IOException e) {
+            logger.error("An IOException occurred while sending the HTTP request or receiving the response: " + e.getMessage());
+            return buildResetResponseFailure(DEFAULT_ERROR_CODE, FailureCause.COMMUNICATION_ERROR);
+        } catch (Exception e) {
+            logger.error("An unexpected error occurred: ", e);
+            return buildResetResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
         }
 
     }
@@ -96,14 +97,14 @@ public abstract class AbstractResetHttpService<T extends ResetRequest> {
     /**
      * Utility method to instantiate {@link ResetResponseFailure} objects, using the class' builder.
      *
-     * @param errorCode The error code
+     * @param errorCode    The error code
      * @param failureCause The failure cause
      * @return The instantiated object
      */
-    protected ResetResponseFailure buildResetResponseFailure(String errorCode, FailureCause failureCause ){
+    protected ResetResponseFailure buildResetResponseFailure(String errorCode, FailureCause failureCause) {
         return ResetResponseFailure.ResetResponseFailureBuilder.aResetResponseFailure()
-                .withFailureCause( failureCause )
-                .withErrorCode( errorCode )
+                .withFailureCause(failureCause)
+                .withErrorCode(errorCode)
                 .build();
     }
 

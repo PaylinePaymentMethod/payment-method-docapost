@@ -1,4 +1,4 @@
-package com.payline.payment.docapost.exception;
+package com.payline.payment.docapost.bean.rest.response.error;
 
 import javax.xml.bind.annotation.*;
 

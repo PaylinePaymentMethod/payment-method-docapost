@@ -11,6 +11,10 @@ import com.payline.payment.docapost.bean.rest.response.signature.TerminateSignat
 
 public class ResponseBuilderFactory {
 
+    private ResponseBuilderFactory() {
+        // ras.
+    }
+
     public static XmlErrorResponse buildXmlErrorResponse(String xmlResponse) {
         return new XmlErrorResponse.Builder().fromXml(xmlResponse);
     }

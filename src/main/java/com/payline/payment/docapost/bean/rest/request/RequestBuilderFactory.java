@@ -13,6 +13,10 @@ import com.payline.pmapi.bean.reset.request.ResetRequest;
 
 public class RequestBuilderFactory {
 
+    private RequestBuilderFactory() {
+        // ras.
+    }
+
     public static MandateCreateRequest buildMandateCreateRequest(PaymentRequest request) throws InvalidRequestException {
         return new MandateCreateRequest.Builder().fromPaylineRequest(request);
     }

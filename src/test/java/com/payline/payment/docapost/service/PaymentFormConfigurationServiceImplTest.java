@@ -18,7 +18,7 @@ import java.util.Locale;
 
 import static org.mockito.Mockito.mock;
 
-@RunWith( MockitoJUnitRunner.class )
+@RunWith(MockitoJUnitRunner.class)
 public class PaymentFormConfigurationServiceImplTest {
 
 
@@ -26,30 +26,31 @@ public class PaymentFormConfigurationServiceImplTest {
     private PaymentFormConfigurationService service = new PaymentFormConfigurationServiceImpl();
 
     @Test
-    public void testGetPaymentFormConfiguration(){
+    public void testGetPaymentFormConfiguration() {
 
         PaymentFormConfigurationRequest paymentFormConfigurationRequest = TestUtils.createDefaultPaymentFormConfigurationRequest();
-        PaymentFormConfigurationResponse  paymentFormConfigurationResponse = service.getPaymentFormConfiguration(paymentFormConfigurationRequest);
+        PaymentFormConfigurationResponse paymentFormConfigurationResponse = service.getPaymentFormConfiguration(paymentFormConfigurationRequest);
 
         Assert.assertNotNull(paymentFormConfigurationResponse);
         //Assert Form contains Button and text ?
     }
 
     @Test
-    public void testGetPaymentFormLogo(){
+    public void testGetPaymentFormLogo() {
 
         PaymentFormLogoRequest paymentFormLogoRequest = mock(PaymentFormLogoRequest.class);
         PaymentFormLogoResponse paymentFormLogoResponse = service.getPaymentFormLogo(paymentFormLogoRequest);
 
         //TODO implement method
-        Assert.assertEquals(null,paymentFormLogoResponse);
+        Assert.assertNull(paymentFormLogoResponse);
     }
+
     @Test
-    public void testGetLogo(){
-        String paymentMethodIdentifier= "Docapost" ;
+    public void testGetLogo() {
+        String paymentMethodIdentifier = "Docapost";
         PaymentFormLogo paymentFormLogo = service.getLogo(paymentMethodIdentifier, Locale.FRANCE);
         //TODO implement method
-        Assert.assertEquals(null,paymentFormLogo);
+        Assert.assertNull(paymentFormLogo);
 
     }
 

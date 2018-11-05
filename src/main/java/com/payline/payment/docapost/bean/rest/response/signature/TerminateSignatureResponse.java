@@ -10,7 +10,9 @@ public class TerminateSignatureResponse extends AbstractWSSignatureResponse {
     /**
      * Constructor
      */
-    public TerminateSignatureResponse() { }
+    public TerminateSignatureResponse() {
+        //ras.
+    }
 
     @Override
     public String toString() {
@@ -28,9 +30,9 @@ public class TerminateSignatureResponse extends AbstractWSSignatureResponse {
     //******************************************************************************************************************
     //***** BUILDER
     public static final class Builder {
-        public TerminateSignatureResponse fromJson(String jsonContent ) {
+        public TerminateSignatureResponse fromJson(String jsonContent) {
             Gson gson = new Gson();
-            return gson.fromJson( jsonContent, TerminateSignatureResponse.class );
+            return gson.fromJson(jsonContent, TerminateSignatureResponse.class);
         }
     }
     //***** BUILDER

@@ -2,7 +2,6 @@ package com.payline.payment.docapost.Integration;
 
 import com.payline.payment.docapost.TestUtils;
 import com.payline.payment.docapost.service.impl.PaymentServiceImpl;
-import com.payline.payment.docapost.service.impl.PaymentWithRedirectionServiceImpl;
 import com.payline.pmapi.bean.payment.ContractProperty;
 import com.payline.pmapi.bean.payment.PaymentFormContext;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
@@ -24,11 +23,12 @@ import java.util.Scanner;
 import static com.payline.payment.docapost.TestUtils.*;
 import static com.payline.payment.docapost.utils.DocapostConstants.*;
 
+
 public class TestIt extends AbstractPaymentIntegration {
 
 
     private PaymentServiceImpl paymentService = new PaymentServiceImpl();
-    private PaymentWithRedirectionServiceImpl paymentWithRedirectionService = new PaymentWithRedirectionServiceImpl();
+    //    private PaymentWithRedirectionServiceImpl paymentWithRedirectionService = new PaymentWithRedirectionServiceImpl();
     public static final String GOOD_CREDITOR_ID = "MARCHAND1";
     //Todo  find a better way to do it
     public Map<String, String> requestContext;
@@ -40,7 +40,7 @@ public class TestIt extends AbstractPaymentIntegration {
     @Override
     protected Map<String, ContractProperty> generateParameterContract() {
         Map<String, ContractProperty> parameterContract = new HashMap<>();
-        parameterContract.put(CONTRACT_CONFIG__CREDITOR_ID, new ContractProperty(GOOD_CREDITOR_ID));
+        parameterContract.put(CONTRACT_CONFIG_CREDITOR_ID, new ContractProperty(GOOD_CREDITOR_ID));
         return parameterContract;
     }
 
@@ -90,7 +90,7 @@ public class TestIt extends AbstractPaymentIntegration {
         request = createDefaultPaymentRequest();
         transactionID = request.getTransactionId();
 
-        this.fullRedirectionPayment(request, paymentService, paymentWithRedirectionService);
+//        this.fullRedirectionPayment(request, paymentService, paymentWithRedirectionService);
     }
 
     @Override
@@ -102,7 +102,7 @@ public class TestIt extends AbstractPaymentIntegration {
 
         requestContext = paymentResponseStep2.getRequestContext().getRequestData();
         formConfigutationResponse = paymentResponseStep2.getPaymentFormConfigurationResponse();
-        step = paymentResponseStep2.getRequestContext().getRequestData().get(CONTEXT_DATA__STEP);
+        step = paymentResponseStep2.getRequestContext().getRequestData().get(CONTEXT_DATA_STEP);
         //TODO REQUEST WITH PAYMENT RESPONSE STEP2 doesn't work on Unit test
         //Saisir OTP
         Scanner keyboardUser = new Scanner(System.in);
@@ -141,7 +141,7 @@ public class TestIt extends AbstractPaymentIntegration {
         PaymentResponse paymentResponseFromPaymentRequest = paymentService.paymentRequest(paymentRequest);
 //        this.checkPaymentResponseIsNotFailure(paymentResponseFromPaymentRequest);
         PaymentResponseFormUpdated paymentResponseRedirect = (PaymentResponseFormUpdated) paymentResponseFromPaymentRequest;
-        String step = paymentResponseRedirect.getRequestContext().getRequestData().get(CONTEXT_DATA__STEP);
+        String step = paymentResponseRedirect.getRequestContext().getRequestData().get(CONTEXT_DATA_STEP);
 
         //    String redirectionUrl = this.payOnPartnerWebsite(partnerUrl);
         //    String redirectionUrl = this.payOnPartnerWebsite(step);
@@ -149,13 +149,13 @@ public class TestIt extends AbstractPaymentIntegration {
         //TODO return an URL to OTP form and check step is different than previous step
         String linkOTP = this.payOnPartnerWebsite(step);
         Assertions.assertNotNull(linkOTP);
-        String nextStep = requestContext.get(CONTEXT_DATA__STEP);
+        String nextStep = requestContext.get(CONTEXT_DATA_STEP);
 
         Assertions.assertNotNull(linkOTP);
         //Assert we moving to the next step
         Assert.assertNotEquals(nextStep, step);
         //Assert we moving to  step sign OTP
-        Assert.assertEquals( CONTEXT_DATA__STEP_OTP, nextStep);
+        Assert.assertEquals(CONTEXT_DATA_STEP_OTP, nextStep);
 
         //Finalize here ?? or confirm
 

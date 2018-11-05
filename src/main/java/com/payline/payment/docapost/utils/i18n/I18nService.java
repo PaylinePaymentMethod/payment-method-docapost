@@ -1,23 +1,24 @@
 package com.payline.payment.docapost.utils.i18n;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import static com.payline.payment.docapost.utils.DocapostConstants.*;
+import static com.payline.payment.docapost.utils.DocapostConstants.I18N_SERVICE_DEFAULT_LOCALE;
+import static com.payline.payment.docapost.utils.DocapostConstants.RESOURCE_BUNDLE_BASE_NAME;
 
 public class I18nService {
 
-    private static final Logger logger = LogManager.getLogger( I18nService.class );
+    private static final Logger logger = LogManager.getLogger(I18nService.class);
 
     /**
      * Private constructor
      */
-    private I18nService(){
-        Locale.setDefault( new Locale( I18N_SERVICE_DEFAULT_LOCALE ) );
+    private I18nService() {
+        Locale.setDefault(new Locale(I18N_SERVICE_DEFAULT_LOCALE));
     }
 
     /**
@@ -37,13 +38,12 @@ public class I18nService {
         return SingletonHolder.instance;
     }
 
-    public String getMessage( final String key, final Locale locale ){
-        ResourceBundle messages = ResourceBundle.getBundle( RESOURCE_BUNDLE_BASE_NAME, locale );
+    public String getMessage(final String key, final Locale locale) {
+        ResourceBundle messages = ResourceBundle.getBundle(RESOURCE_BUNDLE_BASE_NAME, locale);
         try {
-            return messages.getString( key );
-        }
-        catch( MissingResourceException e ){
-            logger.error( "Trying to get a message with a key that does not exist: " + key + " (language: " + locale.getLanguage() + ")" );
+            return messages.getString(key);
+        } catch (MissingResourceException e) {
+            logger.error("Trying to get a message with a key that does not exist: " + key + " (language: " + locale.getLanguage() + ")");
             return "???" + locale + "." + key + "???";
         }
     }

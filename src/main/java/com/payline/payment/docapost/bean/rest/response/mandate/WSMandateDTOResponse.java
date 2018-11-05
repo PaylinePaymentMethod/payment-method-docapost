@@ -1,11 +1,11 @@
 package com.payline.payment.docapost.bean.rest.response.mandate;
 
+import com.payline.payment.docapost.bean.rest.common.Debtor;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import com.payline.payment.docapost.bean.rest.common.Debtor;
 
 /**
  * Created by Thales on 29/08/2018.
@@ -47,7 +47,9 @@ public class WSMandateDTOResponse extends AbstractXmlResponse {
     /**
      * Public default constructor
      */
-    public WSMandateDTOResponse() { }
+    public WSMandateDTOResponse() {
+        // ras.
+    }
 
     public String getCreditorId() {
         return creditorId;

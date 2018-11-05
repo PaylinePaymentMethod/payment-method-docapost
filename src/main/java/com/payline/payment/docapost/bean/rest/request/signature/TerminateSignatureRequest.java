@@ -1,14 +1,11 @@
 package com.payline.payment.docapost.bean.rest.request.signature;
 
-import com.payline.payment.docapost.TmpTestData;
 import com.payline.payment.docapost.bean.rest.request.WSSignature;
 import com.payline.payment.docapost.exception.InvalidRequestException;
 import com.payline.payment.docapost.utils.DocapostLocalParam;
-import com.payline.payment.docapost.utils.DocapostUtils;
 import com.payline.pmapi.bean.payment.ContractProperty;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,8 +29,8 @@ public class TerminateSignatureRequest extends WSSignatureRequest implements WSS
 
         super(creditorId, mandateRum);
 
-        this.transactionId  = transactionId;
-        this.success        = success;
+        this.transactionId = transactionId;
+        this.success = success;
 
     }
 
@@ -50,10 +47,10 @@ public class TerminateSignatureRequest extends WSSignatureRequest implements WSS
 
         Map<String, String> bodyMap = new HashMap<>();
 
-        bodyMap.put(SIGNATURE_WS_REQUEST_FIELD__CREDITOR_ID, this.getCreditorId());
-        bodyMap.put(SIGNATURE_WS_REQUEST_FIELD__MANDATE_RUM, this.getMandateRum());
-        bodyMap.put(SIGNATURE_WS_REQUEST_FIELD__TRANSACTION_ID, this.getTransactionId());
-        bodyMap.put(SIGNATURE_WS_REQUEST_FIELD__SUCCESS, String.valueOf(this.getSuccess().booleanValue()));
+        bodyMap.put(SIGNATURE_WS_REQUEST_FIELD_CREDITOR_ID, this.getCreditorId());
+        bodyMap.put(SIGNATURE_WS_REQUEST_FIELD_MANDATE_RUM, this.getMandateRum());
+        bodyMap.put(SIGNATURE_WS_REQUEST_FIELD_TRANSACTION_ID, this.getTransactionId());
+        bodyMap.put(SIGNATURE_WS_REQUEST_FIELD_SUCCESS, String.valueOf(this.getSuccess().booleanValue()));
 
         return bodyMap;
 
@@ -83,9 +80,9 @@ public class TerminateSignatureRequest extends WSSignatureRequest implements WSS
             this.checkInputRequest(paylineRequest, docapostLocalParam);
 
             TerminateSignatureRequest request = new TerminateSignatureRequest(
-                    paylineRequest.getContractConfiguration().getContractProperties().get( CONTRACT_CONFIG__CREDITOR_ID ).getValue(),
-                    paylineRequest.getRequestContext().getRequestData().get( CONTEXT_DATA__MANDATE_RUM ),
-                    paylineRequest.getRequestContext().getRequestData().get( CONTEXT_DATA__TRANSACTION_ID ),
+                    paylineRequest.getContractConfiguration().getContractProperties().get(CONTRACT_CONFIG_CREDITOR_ID).getValue(),
+                    paylineRequest.getRequestContext().getRequestData().get(CONTEXT_DATA_MANDATE_RUM),
+                    paylineRequest.getRequestContext().getRequestData().get(CONTEXT_DATA_TRANSACTION_ID),
                     docapostLocalParam.getSignatureSuccess()
             );
 
@@ -93,47 +90,47 @@ public class TerminateSignatureRequest extends WSSignatureRequest implements WSS
 
         }
 
-        private void checkInputRequest(PaymentRequest paylineRequest, DocapostLocalParam docapostLocalParam) throws InvalidRequestException  {
-            if ( paylineRequest == null ) {
-                throw new InvalidRequestException( "Request must not be null" );
+        private void checkInputRequest(PaymentRequest paylineRequest, DocapostLocalParam docapostLocalParam) throws InvalidRequestException {
+            if (paylineRequest == null) {
+                throw new InvalidRequestException("Request must not be null");
             }
 
-            if ( paylineRequest.getContractConfiguration() == null
-                    || paylineRequest.getContractConfiguration().getContractProperties() == null ) {
-                throw new InvalidRequestException( "Contract configuration properties object must not be null" );
+            if (paylineRequest.getContractConfiguration() == null
+                    || paylineRequest.getContractConfiguration().getContractProperties() == null) {
+                throw new InvalidRequestException("Contract configuration properties object must not be null");
             }
             Map<String, ContractProperty> contractProperties = paylineRequest.getContractConfiguration().getContractProperties();
-            if ( contractProperties.get( CONTRACT_CONFIG__CREDITOR_ID ) == null ) {
-                throw new InvalidRequestException( "Missing contract configuration property: creditor id" );
+            if (contractProperties.get(CONTRACT_CONFIG_CREDITOR_ID) == null) {
+                throw new InvalidRequestException("Missing contract configuration property: creditor id");
             }
 
-            if ( paylineRequest.getRequestContext() == null
-                    || paylineRequest.getRequestContext().getRequestData() == null ) {
-                throw new InvalidRequestException( "Request context data object must not be null" );
+            if (paylineRequest.getRequestContext() == null
+                    || paylineRequest.getRequestContext().getRequestData() == null) {
+                throw new InvalidRequestException("Request context data object must not be null");
             }
             Map<String, String> requestContext = paylineRequest.getRequestContext().getRequestData();
-            if ( requestContext.get( CONTEXT_DATA__MANDATE_RUM ) == null ) {
-                throw new InvalidRequestException( "Missing request context data: mandate rum" );
+            if (requestContext.get(CONTEXT_DATA_MANDATE_RUM) == null) {
+                throw new InvalidRequestException("Missing request context data: mandate rum");
             }
-            if ( requestContext.get( CONTEXT_DATA__TRANSACTION_ID) == null ) {
-                throw new InvalidRequestException( "Missing request context data: transaction id" );
+            if (requestContext.get(CONTEXT_DATA_TRANSACTION_ID) == null) {
+                throw new InvalidRequestException("Missing request context data: transaction id");
             }
 
-            if ( paylineRequest.getPartnerConfiguration() == null
-                    || paylineRequest.getPartnerConfiguration().getSensitiveProperties() == null ) {
-                throw new InvalidRequestException( "Partner configuration sensitive properties object must not be null" );
+            if (paylineRequest.getPartnerConfiguration() == null
+                    || paylineRequest.getPartnerConfiguration().getSensitiveProperties() == null) {
+                throw new InvalidRequestException("Partner configuration sensitive properties object must not be null");
             }
             Map<String, String> sensitiveProperties = paylineRequest.getPartnerConfiguration().getSensitiveProperties();
-            if ( sensitiveProperties.get( PARTNER_CONFIG__AUTH_LOGIN ) == null ) {
-                throw new InvalidRequestException( "Missing partner configuration property: auth login" );
+            if (sensitiveProperties.get(PARTNER_CONFIG_AUTH_LOGIN) == null) {
+                throw new InvalidRequestException("Missing partner configuration property: auth login");
             }
-            if ( sensitiveProperties.get( PARTNER_CONFIG__AUTH_PASS ) == null ) {
-                throw new InvalidRequestException( "Missing partner configuration property: auth pass" );
+            if (sensitiveProperties.get(PARTNER_CONFIG_AUTH_PASS) == null) {
+                throw new InvalidRequestException("Missing partner configuration property: auth pass");
             }
 
-            if ( docapostLocalParam == null
-                    || docapostLocalParam.getSignatureSuccess() == null ) {
-                throw new InvalidRequestException( "Missing mandatory property: signature success" );
+            if (docapostLocalParam == null
+                    || docapostLocalParam.getSignatureSuccess() == null) {
+                throw new InvalidRequestException("Missing mandatory property: signature success");
             }
 
         }

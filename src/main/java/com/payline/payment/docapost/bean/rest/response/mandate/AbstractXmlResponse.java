@@ -1,6 +1,8 @@
 package com.payline.payment.docapost.bean.rest.response.mandate;
 
 import com.payline.payment.docapost.bean.rest.response.error.XmlErrorResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -12,9 +14,9 @@ import java.io.StringReader;
  */
 public abstract class AbstractXmlResponse {
 
-    public static Object parse(Class clazz, String xmlContent) {
+    private static final Logger LOGGER = LogManager.getLogger(AbstractXmlResponse.class);
 
-        Object result = null;
+    public static Object parse(Class clazz, String xmlContent) {
 
         try {
 
@@ -24,22 +26,18 @@ public abstract class AbstractXmlResponse {
 
             StringReader reader = new StringReader(xmlContent);
 
-            result = unmarshaller.unmarshal(reader);
+            return unmarshaller.unmarshal(reader);
 
         } catch (JAXBException e) {
-            e.printStackTrace();
+            LOGGER.error("XML parsing exception", e);
         }
 
-        return result;
+        return null;
 
     }
 
     public boolean isResultOk() {
-        boolean result = true;
-        if (this instanceof XmlErrorResponse) {
-            result = false;
-        }
-        return result;
+        return !(this instanceof XmlErrorResponse);
     }
 
 }
