@@ -1,5 +1,6 @@
 package com.payline.payment.docapost.bean.rest.request.mandate;
 
+import com.payline.payment.docapost.bean.rest.common.DocapostBean;
 import com.payline.payment.docapost.exception.InvalidRequestException;
 import com.payline.payment.docapost.utils.PluginUtils;
 import com.payline.pmapi.bean.payment.ContractProperty;
@@ -9,7 +10,7 @@ import java.util.Map;
 
 import static com.payline.payment.docapost.utils.DocapostConstants.*;
 
-public class SctOrderCancelRequest {
+public class SctOrderCancelRequest extends DocapostBean {
 
     private String creditorId;
 
@@ -40,18 +41,6 @@ public class SctOrderCancelRequest {
         return e2eId;
     }
 
-
-    @Override
-    public String toString() {
-        final StringBuilder result = new StringBuilder();
-
-        result.append("***** SctOrderCancelRequest info\n");
-
-        result.append("creditorId : " + creditorId + "\n");
-        result.append("e2eId : " + e2eId + "\n");
-
-        return result.toString();
-    }
 
     //******************************************************************************************************************
     //***** BUILDER
