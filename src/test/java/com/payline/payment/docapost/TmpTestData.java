@@ -7,29 +7,29 @@ public class TmpTestData {
     public static final String AUTH_LOGIN = "payline@docapost.fr";
     public static final String AUTH_MDP = "J:[ef8dccma";
 
-    public String   creditorId;
-    public String   flowName;
-    public String   rum;
-    public Boolean  recurrent;
-    public String   contextIdentifier;
-    public String   language;
-    public String   transactionId;
-    public String   signatureId;
-    public String   otp;
-    public Float    amount;
-    public String   label;
-    public Boolean  signatureSuccess;
+    private String creditorId;
+    private String flowName;
+    private String rum;
+    private Boolean recurrent;
+    private String contextIdentifier;
+    private String language;
+    private String transactionId;
+    private String signatureId;
+    private String otp;
+    private Float amount;
+    private String label;
+    private Boolean signatureSuccess;
 
-    public String   debtorLastName;
-    public String   debtorFirstName;
-    public String   debtorIban;
-    public String   debtorStreet;
-    public String   debtorComplement;
-    public String   debtorComplement2;
-    public String   debtorPostalCode;
-    public String   debtorTown;
-    public String   debtorPhoneNumber;
-    public String   debtorCountryCode;
+    private String debtorLastName;
+    private String debtorFirstName;
+    private String debtorIban;
+    private String debtorStreet;
+    private String debtorComplement;
+    private String debtorComplement2;
+    private String debtorPostalCode;
+    private String debtorTown;
+    private String debtorPhoneNumber;
+    private String debtorCountryCode;
 
     public static synchronized TmpTestData getInstance() {
         if (INSTANCE == null) {
@@ -47,13 +47,13 @@ public class TmpTestData {
         this.creditorId = "MARCHAND1";
         this.flowName = null;
         this.rum = "RUM123ZXR987";
-        this.recurrent = new Boolean(false);
+        this.recurrent = false;
         this.contextIdentifier = null;
         this.language = "fr";
         this.transactionId = null;
         this.signatureId = null;
         this.otp = null;
-        this.amount = new Float(100);
+        this.amount = 100f;
         this.label = "A simple order";
         this.signatureSuccess = null;
 

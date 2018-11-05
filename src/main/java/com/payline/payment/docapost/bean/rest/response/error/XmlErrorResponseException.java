@@ -1,4 +1,4 @@
-package com.payline.payment.docapost.bean.rest.response.error;
+package com.payline.payment.docapost.exception;
 
 import javax.xml.bind.annotation.*;
 
@@ -18,7 +18,9 @@ public class XmlErrorResponseException {
     /**
      * Public default constructor
      */
-    public XmlErrorResponseException() { }
+    public XmlErrorResponseException() {
+        // ras.
+    }
 
     public String getValue() {
         return value;
