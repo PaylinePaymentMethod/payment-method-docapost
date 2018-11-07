@@ -455,7 +455,6 @@ public class PaymentServiceImpl implements PaymentService {
                         .PaymentFormFieldTextBuilder
                         .aPaymentFormFieldText()
                         .withInputType(InputType.NUMBER)
-                        // FIXME : Add fields ?
                         //FIXME define value of fields
                         .withFieldIcon(FieldIcon.PHONE)
                         .withKey(OTP_FORM_KEY)
