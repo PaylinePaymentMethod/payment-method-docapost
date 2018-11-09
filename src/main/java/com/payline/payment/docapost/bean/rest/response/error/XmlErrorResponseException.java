@@ -1,5 +1,7 @@
 package com.payline.payment.docapost.bean.rest.response.error;
 
+import com.payline.payment.docapost.bean.rest.common.DocapostBean;
+
 import javax.xml.bind.annotation.*;
 
 /**
@@ -7,7 +9,7 @@ import javax.xml.bind.annotation.*;
  */
 @XmlRootElement(name = "exception")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class XmlErrorResponseException {
+public class XmlErrorResponseException  extends DocapostBean {
 
     @XmlValue
     private String value;
@@ -38,14 +40,5 @@ public class XmlErrorResponseException {
         this.code = code;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder result = new StringBuilder();
-
-        result.append("value : " + value + "\n");
-        result.append("code : " + code + "\n");
-
-        return result.toString();
-    }
 
 }

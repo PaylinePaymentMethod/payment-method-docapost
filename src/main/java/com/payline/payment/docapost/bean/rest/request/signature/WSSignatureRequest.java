@@ -1,9 +1,11 @@
 package com.payline.payment.docapost.bean.rest.request.signature;
 
+import com.payline.payment.docapost.bean.rest.common.DocapostBean;
+
 /**
  * Created by Thales on 05/09/2018.
  */
-public abstract class WSSignatureRequest {
+public abstract class WSSignatureRequest extends DocapostBean {
 
     protected String creditorId;
 

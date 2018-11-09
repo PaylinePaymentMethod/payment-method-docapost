@@ -84,21 +84,6 @@ public class SddOrderCreateRequest extends AbstractXmlRequest {
         return e2eId;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder result = new StringBuilder();
-
-        result.append("***** SddOrderCreateRequest info\n");
-
-        result.append("creditorId : " + creditorId + "\n");
-        result.append("rum : " + rum + "\n");
-        result.append("amount : " + amount + "\n");
-        result.append("label : " + label + "\n");
-        result.append("e2eId : " + e2eId + "\n");
-
-        return result.toString();
-    }
-
     //******************************************************************************************************************
     //***** BUILDER
     public static final class Builder {
@@ -108,7 +93,7 @@ public class SddOrderCreateRequest extends AbstractXmlRequest {
             // Check the input request for NPEs and mandatory fields
             this.checkInputRequest(paylineRequest);
 
-            SddOrderCreateRequest request = new SddOrderCreateRequest(
+            return  new SddOrderCreateRequest(
                     paylineRequest.getContractConfiguration().getContractProperties().get(CONTRACT_CONFIG_CREDITOR_ID).getValue(),
                     paylineRequest.getRequestContext().getRequestData().get(CONTEXT_DATA_MANDATE_RUM),
                     paylineRequest.getOrder().getAmount().getAmountInSmallestUnit().floatValue(),
@@ -116,7 +101,6 @@ public class SddOrderCreateRequest extends AbstractXmlRequest {
                     paylineRequest.getTransactionId()
             );
 
-            return request;
 
         }
 

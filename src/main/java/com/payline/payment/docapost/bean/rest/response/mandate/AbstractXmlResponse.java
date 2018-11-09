@@ -1,5 +1,6 @@
 package com.payline.payment.docapost.bean.rest.response.mandate;
 
+import com.payline.payment.docapost.bean.rest.common.DocapostBean;
 import com.payline.payment.docapost.bean.rest.response.error.XmlErrorResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,7 +13,7 @@ import java.io.StringReader;
 /**
  * Created by Thales on 05/09/2018.
  */
-public abstract class AbstractXmlResponse {
+public abstract class AbstractXmlResponse extends DocapostBean {
 
     private static final Logger LOGGER = LogManager.getLogger(AbstractXmlResponse.class);
 

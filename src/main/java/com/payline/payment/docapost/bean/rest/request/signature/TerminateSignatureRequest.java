@@ -79,14 +79,12 @@ public class TerminateSignatureRequest extends WSSignatureRequest implements WSS
             // Check the input request for NPEs and mandatory fields
             this.checkInputRequest(paylineRequest, docapostLocalParam);
 
-            TerminateSignatureRequest request = new TerminateSignatureRequest(
+            return new TerminateSignatureRequest(
                     paylineRequest.getContractConfiguration().getContractProperties().get(CONTRACT_CONFIG_CREDITOR_ID).getValue(),
                     paylineRequest.getRequestContext().getRequestData().get(CONTEXT_DATA_MANDATE_RUM),
                     paylineRequest.getRequestContext().getRequestData().get(CONTEXT_DATA_TRANSACTION_ID),
                     docapostLocalParam.getSignatureSuccess()
             );
-
-            return request;
 
         }
 

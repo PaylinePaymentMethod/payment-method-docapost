@@ -80,14 +80,14 @@ public class RefundServiceImpl extends AbstractRefundHttpService<RefundRequest> 
 
             if (sctOrderCreateXmlResponse.isResultOk()) {
 
-                WSCTOrderDTOResponse sctorderCreateResponse = (WSCTOrderDTOResponse) sctOrderCreateXmlResponse;
+                WSCTOrderDTOResponse sctOrderCreateResponse = (WSCTOrderDTOResponse) sctOrderCreateXmlResponse;
 
                 LOGGER.info("sctOrderCreateXmlResponse ok");
                 return RefundResponseSuccess
                         .RefundResponseSuccessBuilder
                         .aRefundResponseSuccess()
-                        .withStatusCode(sctorderCreateResponse.getStatus())
-                        .withPartnerTransactionId(sctorderCreateResponse.getE2eId())
+                        .withStatusCode(sctOrderCreateResponse.getStatus())
+                        .withPartnerTransactionId(sctOrderCreateResponse.getE2eId())
                         .build();
 
             }
@@ -103,10 +103,8 @@ public class RefundServiceImpl extends AbstractRefundHttpService<RefundRequest> 
                     .aRefundResponseFailure()
                     .withErrorCode(wsRequestResult.getDocapostErrorCode())
                     .withFailureCause(wsRequestResult.getPaylineFailureCause())
-                    // FIXME : Add fields ?
-                    //.withTransactionId()
+//                    .withPartnerTransactionId()
                     .build();
-
 
         }
 
@@ -117,8 +115,6 @@ public class RefundServiceImpl extends AbstractRefundHttpService<RefundRequest> 
                 .aRefundResponseFailure()
                 .withErrorCode("XML RESPONSE PARSING FAILED")
                 .withFailureCause(FailureCause.INVALID_DATA)
-                // FIXME : Add fields ?
-                //.withTransactionId()
                 .build();
 
 

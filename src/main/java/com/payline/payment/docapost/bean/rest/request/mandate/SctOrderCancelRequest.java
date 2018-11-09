@@ -51,13 +51,10 @@ public class SctOrderCancelRequest extends DocapostBean {
             // Check the input request for NPEs and mandatory fields
             this.checkInputRequest(paylineRequest);
 
-            SctOrderCancelRequest request = new SctOrderCancelRequest(
+            return new SctOrderCancelRequest(
                     paylineRequest.getContractConfiguration().getContractProperties().get(CONTRACT_CONFIG_CREDITOR_ID).getValue(),
                     paylineRequest.getPartnerTransactionId()
             );
-
-            return request;
-
         }
 
         private void checkInputRequest(ResetRequest paylineRequest) throws InvalidRequestException {

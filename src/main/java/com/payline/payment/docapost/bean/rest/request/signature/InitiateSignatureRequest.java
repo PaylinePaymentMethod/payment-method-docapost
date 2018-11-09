@@ -65,12 +65,10 @@ public class InitiateSignatureRequest extends WSSignatureRequest implements WSSi
             // Check the input request for NPEs and mandatory fields
             this.checkInputRequest(paylineRequest, docapostLocalParam);
 
-            InitiateSignatureRequest request = new InitiateSignatureRequest(
+            return new InitiateSignatureRequest(
                     paylineRequest.getContractConfiguration().getContractProperties().get(CONTRACT_CONFIG_CREDITOR_ID).getValue(),
                     docapostLocalParam.getMandateRum()
             );
-
-            return request;
 
         }
 

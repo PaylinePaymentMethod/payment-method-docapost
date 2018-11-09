@@ -6,7 +6,6 @@ import com.payline.payment.docapost.utils.http.StringResponse;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFormUpdated;
-import com.payline.pmapi.bean.paymentform.response.configuration.PaymentFormConfigurationResponse;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,8 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static com.payline.payment.docapost.TestUtils.createDefaultPaymentRequest;
-import static com.payline.payment.docapost.TestUtils.createDefaultPaymentRequestStep2;
 import java.util.Map;
 
 import static com.payline.payment.docapost.TestUtils.*;
@@ -124,11 +121,11 @@ public class PaymentServiceImplTest {
         if (paymentResponseClass.isInstance(PaymentResponseFormUpdated.class)) {
             Assert.assertEquals(CONTEXT_DATA_STEP_IBAN_PHONE, paymentResponse.getRequestContext().getRequestData().get(CONTEXT_DATA_STEP));
         }
-        Assert.assertEquals(CONTEXT_DATA__STEP_IBAN_PHONE, paymentResponse.getRequestContext().getRequestData().get(CONTEXT_DATA__STEP));
+        Assert.assertEquals(CONTEXT_DATA_STEP_IBAN_PHONE, paymentResponse.getRequestContext().getRequestData().get(CONTEXT_DATA_STEP));
 
     }
 
-    }
+
     @Test
     public void testPaymentRequestStepOTP() {
         PaymentServiceImpl paymentServiceMain = new PaymentServiceImpl();
@@ -136,7 +133,7 @@ public class PaymentServiceImplTest {
         PaymentRequest paymentRequestStep2 = createDefaultPaymentRequestStep2();
         PaymentResponseFormUpdated paymentResponseStep2 = (PaymentResponseFormUpdated) paymentServiceMain.paymentRequest(paymentRequestStep2);
         Map <String,String> requestContext = paymentResponseStep2.getRequestContext().getRequestData();
-        PaymentRequest paymentRequestStepOTP = createCustomPaymentRequestStep3(requestContext, CONTEXT_DATA__STEP_OTP);
+        PaymentRequest paymentRequestStepOTP = createCustomPaymentRequestStep3(requestContext, CONTEXT_DATA_STEP_OTP);
 
         Assert.assertNotNull(paymentRequestStepOTP);
         Assert.assertNotNull(paymentRequestStepOTP.getPaymentFormContext().getPaymentFormParameter().get("formDebtorPhone"));

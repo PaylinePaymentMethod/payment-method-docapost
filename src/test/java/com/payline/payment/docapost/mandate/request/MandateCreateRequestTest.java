@@ -18,5 +18,7 @@ public class MandateCreateRequestTest {
 
         Assert.assertNotNull(result);
         Assert.assertTrue(result.contains("creditorId"));
+        Assert.assertTrue(result.contains("fr"));
+        Assert.assertFalse(mandateCreateRequest.isRecurrent());
     }
 }

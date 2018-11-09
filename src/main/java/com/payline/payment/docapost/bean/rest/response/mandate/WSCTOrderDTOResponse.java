@@ -195,32 +195,6 @@ public class WSCTOrderDTOResponse extends AbstractXmlResponse {
         this.cancelDate = cancelDate;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder result = new StringBuilder();
-
-        result.append("***** WSCTOrderDTOResponse info\n");
-
-        result.append("label : " + label + "\n");
-        result.append("reference : " + reference + "\n");
-        result.append("dueDate : " + dueDate + "\n");
-        result.append("e2eId : " + e2eId + "\n");
-        result.append("remitDate : " + remitDate + "\n");
-        result.append("sequence : " + sequence + "\n");
-        result.append("identifier : " + identifier + "\n");
-        result.append("rum : " + rum + "\n");
-        result.append("creditorId : " + creditorId + "\n");
-        result.append("creditorAccountName : " + creditorAccountName + "\n");
-        result.append("status : " + status + "\n");
-        result.append("statusDate : " + statusDate + "\n");
-        result.append("amount : " + amount + "\n");
-        result.append("receiverName : " + receiverName + "\n");
-        result.append("receiverIban : " + receiverIban + "\n");
-        result.append("cancelDate : " + cancelDate + "\n");
-
-        return result.toString();
-    }
-
     //******************************************************************************************************************
     //***** BUILDER
     public static final class Builder {

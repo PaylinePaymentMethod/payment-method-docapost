@@ -30,10 +30,12 @@ public class ConfigProperties {
      */
     public static String get(String key) {
         if (properties == null) {
+            // TODO: if null, backup to a code-based default configuration ? (to avoid runtime exception)
+            logger.error("Property "+ key + " doesn't exist");
             readProperties();
+
         }
         return properties.getProperty(key);
-        // TODO: if null, backup to a code-based default configuration ? (to avoid runtime exception)
     }
 
     /**

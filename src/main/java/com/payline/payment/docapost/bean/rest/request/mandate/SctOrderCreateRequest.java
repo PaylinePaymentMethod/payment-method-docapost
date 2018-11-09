@@ -85,20 +85,6 @@ public class SctOrderCreateRequest extends AbstractXmlRequest {
         return e2eId;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder result = new StringBuilder();
-
-        result.append("***** SctOrderCreateRequest info\n");
-
-        result.append("creditorId : " + creditorId + "\n");
-        result.append("rum : " + rum + "\n");
-        result.append("amount : " + amount + "\n");
-        result.append("label : " + label + "\n");
-        result.append("e2eId : " + e2eId + "\n");
-
-        return result.toString();
-    }
 
     //******************************************************************************************************************
     //***** BUILDER
@@ -109,15 +95,13 @@ public class SctOrderCreateRequest extends AbstractXmlRequest {
             // Check the input request for NPEs and mandatory fields
             this.checkInputRequest(paylineRequest);
 
-            SctOrderCreateRequest request = new SctOrderCreateRequest(
+            return new SctOrderCreateRequest(
                     paylineRequest.getContractConfiguration().getContractProperties().get(CONTRACT_CONFIG_CREDITOR_ID).getValue(),
                     new PaymentResponseSuccessAdditionalData.Builder().fromJson(paylineRequest.getTransactionAdditionalData()).getMandateRum(),
                     paylineRequest.getOrder().getAmount().getAmountInSmallestUnit().floatValue(),
                     paylineRequest.getSoftDescriptor(),
                     paylineRequest.getPartnerTransactionId()
             );
-
-            return request;
 
         }
 

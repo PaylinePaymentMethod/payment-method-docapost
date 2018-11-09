@@ -124,14 +124,12 @@ public class MandateCreateRequest extends AbstractXmlRequest {
                     .phoneNumber(paylineRequest.getPaymentFormContext().getPaymentFormParameter().get(FORM_FIELD_PHONE))
                     .iban(paylineRequest.getPaymentFormContext().getSensitivePaymentFormParameter().get(FORM_FIELD_IBAN));
 
-            MandateCreateRequest request = new MandateCreateRequest(
+           return  new MandateCreateRequest(
                     paylineRequest.getContractConfiguration().getContractProperties().get(CONTRACT_CONFIG_CREDITOR_ID).getValue(),
                     DocapostUtils.generateMandateRum(),
                     paylineRequest.getLocale().getLanguage(),
                     debtor
             );
-
-            return request;
 
         }
 

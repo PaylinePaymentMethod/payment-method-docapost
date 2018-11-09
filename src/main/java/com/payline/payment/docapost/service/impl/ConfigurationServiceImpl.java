@@ -13,6 +13,7 @@ import com.payline.pmapi.bean.configuration.parameter.AbstractParameter;
 import com.payline.pmapi.bean.configuration.parameter.impl.InputParameter;
 import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 import com.payline.pmapi.service.ConfigurationService;
+import org.apache.http.HttpException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -117,14 +118,14 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                     DocapostUtils.generateBasicCredentials(authLogin, authPass)
             );
 
-            if (mandateCreateResponse != null && mandateCreateResponse.getCode() == HTTP_OK && mandateCreateResponse.getContent() != null) {
-                // FIXME ?!?
-            } else {
+            if (mandateCreateResponse == null || mandateCreateResponse.getCode() != HTTP_OK || mandateCreateResponse.getContent() == null) {
                 String message = "Can't read a correct response from Docapost server.";
                 if (mandateCreateResponse != null) {
                     message += " HTTP status: " + mandateCreateResponse.getCode();
                 }
-                throw new Exception(message);
+                throw new HttpException(message);
+
+
             }
 
         } catch (Exception e) {

@@ -106,8 +106,6 @@ public class ResetServiceImpl extends AbstractResetHttpService<ResetRequest> imp
                     .aResetResponseFailure()
                     .withErrorCode(wsRequestResult.getDocapostErrorCode())
                     .withFailureCause(wsRequestResult.getPaylineFailureCause())
-                    // FIXME : Add fields ?
-                    //.withTransactionId()
                     .build();
 
 
@@ -120,8 +118,6 @@ public class ResetServiceImpl extends AbstractResetHttpService<ResetRequest> imp
                 .aResetResponseFailure()
                 .withErrorCode("XML RESPONSE PARSING FAILED")
                 .withFailureCause(FailureCause.INVALID_DATA)
-                // FIXME : Add fields ?
-                //.withTransactionId()
                 .build();
 
 
