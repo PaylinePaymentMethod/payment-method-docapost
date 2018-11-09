@@ -1,8 +1,7 @@
-package com.payline.payment.docapost.mandate.response;
+package com.payline.payment.docapost.bean.rest.response;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.payline.payment.docapost.bean.rest.response.ResponseBuilderFactory;
 import com.payline.payment.docapost.bean.rest.response.error.XmlErrorResponse;
 import com.payline.payment.docapost.bean.rest.response.mandate.WSCTOrderDTOResponse;
 import com.payline.payment.docapost.bean.rest.response.mandate.WSDDOrderDTOResponse;
@@ -20,17 +19,17 @@ public class ResponseBuilderFactoryTest {
 
 
     @Test
-    public void testBuildXmlErrorResponse(){
-        xmlResponse ="<sepalia><exception>test error</exception></sepalia>";
+    public void testBuildXmlErrorResponse() {
+        xmlResponse = "<sepalia><exception>test error</exception></sepalia>";
 
         XmlErrorResponse xmlResp = ResponseBuilderFactory.buildXmlErrorResponse(xmlResponse);
         Assert.assertNotNull(xmlResp);
-        Assert.assertEquals("test error",xmlResp.getException().getValue());
+        Assert.assertEquals("test error", xmlResp.getException().getValue());
     }
 
     @Test
-    public void testBuildWsMandateDTOResponse(){
-         xmlResponse ="<WSMandateDTO>" +
+    public void testBuildWsMandateDTOResponse() {
+        xmlResponse = "<WSMandateDTO>" +
                 "<rum>123</rum>" +
                 "<creditorId>creditorId</creditorId>" +
                 "<creditorIcs>creditorIcs</creditorIcs>" +
@@ -46,12 +45,12 @@ public class ResponseBuilderFactoryTest {
 
         WSMandateDTOResponse xmlResp = ResponseBuilderFactory.buildWsMandateDTOResponse(xmlResponse);
         Assert.assertNotNull(xmlResp);
-        Assert.assertEquals("123",xmlResp.getRum());
-        Assert.assertEquals("creditorId",xmlResp.getCreditorId());
-        Assert.assertEquals("creditorIcs",xmlResp.getCreditorIcs());
-        Assert.assertEquals("flow00",xmlResp.getFlowName());
-        Assert.assertEquals("testmode",xmlResp.getMode());
-        Assert.assertEquals("Ok",xmlResp.getStatus());
+        Assert.assertEquals("123", xmlResp.getRum());
+        Assert.assertEquals("creditorId", xmlResp.getCreditorId());
+        Assert.assertEquals("creditorIcs", xmlResp.getCreditorIcs());
+        Assert.assertEquals("flow00", xmlResp.getFlowName());
+        Assert.assertEquals("testmode", xmlResp.getMode());
+        Assert.assertEquals("Ok", xmlResp.getStatus());
 
 
     }
@@ -59,7 +58,7 @@ public class ResponseBuilderFactoryTest {
     @Test
     public void testBuildWsddOrderDTOResponse() {
 
-         xmlResponse ="<WSDDOrderDTO>" +
+        xmlResponse = "<WSDDOrderDTO>" +
                 "<rum>123</rum>" +
                 "<creditorId>creditorId</creditorId>" +
                 "<creditorIcs>creditorIcs</creditorIcs>" +
@@ -74,18 +73,19 @@ public class ResponseBuilderFactoryTest {
                 "</WSDDOrderDTO>";
 
 
-    WSDDOrderDTOResponse xmlResp = ResponseBuilderFactory.buildWsddOrderDTOResponse(xmlResponse);
+        WSDDOrderDTOResponse xmlResp = ResponseBuilderFactory.buildWsddOrderDTOResponse(xmlResponse);
         Assert.assertNotNull(xmlResp);
-        Assert.assertEquals("123",xmlResp.getRum());
-        Assert.assertEquals("creditorId",xmlResp.getCreditorId());
-        Assert.assertEquals("reference",xmlResp.getReference());
-        Assert.assertEquals("Ok",xmlResp.getStatus());
-        Assert.assertEquals("",xmlResp.getIdentifier());
-        Assert.assertEquals("10.0",xmlResp.getAmount().toString());
+        Assert.assertEquals("123", xmlResp.getRum());
+        Assert.assertEquals("creditorId", xmlResp.getCreditorId());
+        Assert.assertEquals("reference", xmlResp.getReference());
+        Assert.assertEquals("Ok", xmlResp.getStatus());
+        Assert.assertEquals("", xmlResp.getIdentifier());
+        Assert.assertEquals("10.0", xmlResp.getAmount().toString());
 
     }
+
     @Test
-    public void  testBuildWsctOrderDTOResponse() {
+    public void testBuildWsctOrderDTOResponse() {
 
         xmlResponse = "<WSCTOrderDTO>" +
                 "<rum>123</rum>" +
@@ -123,11 +123,11 @@ public class ResponseBuilderFactoryTest {
     }
 
     @Test
-    public void  testBuildInitiateSignatureResponse() {
+    public void testBuildInitiateSignatureResponse() {
 
         JsonObject jsonElement = new JsonObject();
         jsonElement.getAsJsonObject().addProperty("transactionId", "1234");
-         String jsonResponse = jsonElement.toString();
+        String jsonResponse = jsonElement.toString();
         InitiateSignatureResponse initiateSignatureResponse = ResponseBuilderFactory.buildInitiateSignatureResponse(jsonResponse);
         Assert.assertNotNull(initiateSignatureResponse);
         Assert.assertEquals("1234", initiateSignatureResponse.getTransactionId());
@@ -154,7 +154,7 @@ public class ResponseBuilderFactoryTest {
 
         JsonObject jsonElement = new JsonObject();
         JsonArray errorList = new JsonArray();
-        jsonElement.getAsJsonObject().add("errors",  errorList);
+        jsonElement.getAsJsonObject().add("errors", errorList);
 
         String errors = jsonElement.toString();
         SetCodeResponse setCodeResponse = ResponseBuilderFactory.buildSetCodeResponse(errors);
@@ -168,8 +168,8 @@ public class ResponseBuilderFactoryTest {
     public void testBuildTerminateSignatureResponse() {
 
         JsonObject jsonElement = new JsonObject();
-        JsonArray errors= new JsonArray();
-        jsonElement.getAsJsonObject().add("errors",  errors);
+        JsonArray errors = new JsonArray();
+        jsonElement.getAsJsonObject().add("errors", errors);
 
         String jsonResponse = jsonElement.toString();
         TerminateSignatureResponse terminateSignatureResponse = ResponseBuilderFactory.buildTerminateSignatureResponse(jsonResponse);

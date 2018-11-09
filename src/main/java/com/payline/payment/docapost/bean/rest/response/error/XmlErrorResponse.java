@@ -1,5 +1,6 @@
 package com.payline.payment.docapost.bean.rest.response.error;
 
+import com.google.gson.Gson;
 import com.payline.payment.docapost.bean.rest.response.mandate.AbstractXmlResponse;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -34,13 +35,9 @@ public class XmlErrorResponse extends AbstractXmlResponse {
 
     @Override
     public String toString() {
-        final StringBuilder result = new StringBuilder();
 
-        result.append("***** XmlErrorResponse info\n");
-
-        result.append(exception.toString() + "\n");
-
-        return result.toString();
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 
     //******************************************************************************************************************

@@ -22,27 +22,13 @@ public class InitiateSignatureResponse extends AbstractWSSignatureResponse {
         return transactionId;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder result = new StringBuilder();
-
-        result.append("***** InitiateSignatureResponse info\n");
-
-        result.append("transactionId : " + transactionId + "\n");
-
-        if (errors != null && !errors.isEmpty()) {
-            result.append(errors.toString() + "\n");
-        }
-
-        return result.toString();
-    }
 
     //******************************************************************************************************************
     //***** BUILDER
     public static final class Builder {
-        public InitiateSignatureResponse fromJson(String jsonContent ) {
+        public InitiateSignatureResponse fromJson(String jsonContent) {
             Gson gson = new Gson();
-            return gson.fromJson( jsonContent, InitiateSignatureResponse.class );
+            return gson.fromJson(jsonContent, InitiateSignatureResponse.class);
         }
     }
     //***** BUILDER

@@ -1,10 +1,9 @@
-package com.payline.payment.docapost.mandate.request;
+package com.payline.payment.docapost.bean.rest.request.mandate;
 
-import com.payline.payment.docapost.bean.rest.request.mandate.SctOrderCancelRequest;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class SctOrderCancelRequestTest {
+public class SctOrderCancelRequestTest2 {
 
     @Test
     public void toStringTest() {

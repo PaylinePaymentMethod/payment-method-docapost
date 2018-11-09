@@ -1,6 +1,7 @@
 package com.payline.payment.docapost.bean.rest.request.mandate;
 
 import com.payline.payment.docapost.bean.PaymentResponseSuccessAdditionalData;
+import com.payline.payment.docapost.bean.rest.common.DocapostBean;
 import com.payline.payment.docapost.exception.InvalidRequestException;
 import com.payline.payment.docapost.utils.PluginUtils;
 import com.payline.pmapi.bean.payment.ContractProperty;
@@ -10,7 +11,7 @@ import java.util.Map;
 
 import static com.payline.payment.docapost.utils.DocapostConstants.*;
 
-public class SddOrderCancelRequest {
+public class SddOrderCancelRequest extends DocapostBean {
 
     private String creditorId;
 
@@ -49,18 +50,6 @@ public class SddOrderCancelRequest {
         return e2eId;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder result = new StringBuilder();
-
-        result.append("***** SddOrderCancelRequest info\n");
-
-        result.append("creditorId : " + creditorId + "\n");
-        result.append("rum : " + rum + "\n");
-        result.append("e2eId : " + e2eId + "\n");
-
-        return result.toString();
-    }
 
     //******************************************************************************************************************
     //***** BUILDER
@@ -71,13 +60,11 @@ public class SddOrderCancelRequest {
             // Check the input request for NPEs and mandatory fields
             this.checkInputRequest(paylineRequest);
 
-            SddOrderCancelRequest request = new SddOrderCancelRequest(
+            return new SddOrderCancelRequest(
                     paylineRequest.getContractConfiguration().getContractProperties().get(CONTRACT_CONFIG_CREDITOR_ID).getValue(),
                     new PaymentResponseSuccessAdditionalData.Builder().fromJson(paylineRequest.getTransactionAdditionalData()).getMandateRum(),
                     paylineRequest.getPartnerTransactionId()
             );
-
-            return request;
 
         }
 

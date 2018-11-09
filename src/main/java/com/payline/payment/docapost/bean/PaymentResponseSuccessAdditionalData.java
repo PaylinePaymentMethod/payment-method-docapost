@@ -2,8 +2,9 @@ package com.payline.payment.docapost.bean;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import com.payline.payment.docapost.bean.rest.common.DocapostBean;
 
-public class PaymentResponseSuccessAdditionalData {
+public class PaymentResponseSuccessAdditionalData extends DocapostBean {
 
     @SerializedName("mandateRum")
     private String mandateRum;
@@ -55,19 +56,6 @@ public class PaymentResponseSuccessAdditionalData {
     public PaymentResponseSuccessAdditionalData signatureId(String signatureId) {
         this.signatureId = signatureId;
         return this;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder result = new StringBuilder();
-
-        result.append("***** PaymentResponseSuccessAdditionalData info\n");
-
-        result.append("mandateRum : " + mandateRum + "\n");
-        result.append("transactionId : " + transactionId + "\n");
-        result.append("signatureId : " + signatureId + "\n");
-
-        return result.toString();
     }
 
     public String toJson() {

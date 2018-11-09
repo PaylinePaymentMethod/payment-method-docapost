@@ -36,7 +36,7 @@ public class MandateCreateRequest extends AbstractXmlRequest {
     private String rum;
 
     @XmlElement(name = "recurrent")
-    private Boolean recurrent;
+    private Boolean recurrent = Boolean.FALSE;
 
     @XmlElement(name = "language")
     private String language;
@@ -55,29 +55,15 @@ public class MandateCreateRequest extends AbstractXmlRequest {
      */
     public MandateCreateRequest(String creditorId,
                                 String rum,
-                                String language,
-                                Debtor debtor) {
-
-        this.creditorId = creditorId;
-        this.rum = rum;
-        this.recurrent = false;
-        this.language = language;
-        this.debtor = debtor;
-
-    }
-
-    /**
-     * Constructor
-     */
-    public MandateCreateRequest(String creditorId,
-                                String rum,
                                 Boolean recurrent,
                                 String language,
                                 Debtor debtor) {
 
         this.creditorId = creditorId;
         this.rum = rum;
-        this.recurrent = recurrent;
+        if (recurrent != null) {
+            this.recurrent = recurrent;
+        }
         this.language = language;
         this.debtor = debtor;
 
@@ -91,7 +77,7 @@ public class MandateCreateRequest extends AbstractXmlRequest {
         return rum;
     }
 
-    public boolean isRecurrent() {
+    public Boolean isRecurrent() {
         return recurrent;
     }
 
@@ -124,14 +110,13 @@ public class MandateCreateRequest extends AbstractXmlRequest {
                     .phoneNumber(paylineRequest.getPaymentFormContext().getPaymentFormParameter().get(FORM_FIELD_PHONE))
                     .iban(paylineRequest.getPaymentFormContext().getSensitivePaymentFormParameter().get(FORM_FIELD_IBAN));
 
-            MandateCreateRequest request = new MandateCreateRequest(
+            return new MandateCreateRequest(
                     paylineRequest.getContractConfiguration().getContractProperties().get(CONTRACT_CONFIG_CREDITOR_ID).getValue(),
                     DocapostUtils.generateMandateRum(),
+                    null,
                     paylineRequest.getLocale().getLanguage(),
                     debtor
             );
-
-            return request;
 
         }
 

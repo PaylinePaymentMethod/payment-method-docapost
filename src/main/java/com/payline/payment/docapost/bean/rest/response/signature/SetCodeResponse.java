@@ -14,18 +14,6 @@ public class SetCodeResponse extends AbstractWSSignatureResponse {
         // ras.
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder result = new StringBuilder();
-
-        result.append("***** SetCodeResponse info\n");
-
-        if (errors != null && !errors.isEmpty()) {
-            result.append(errors.toString() + "\n");
-        }
-
-        return result.toString();
-    }
 
     //******************************************************************************************************************
     //***** BUILDER

@@ -75,12 +75,12 @@ public class DocapostConstants {
     public static final String OTP_FORM_CHECKBOX_SAVE_MANDATE = "form.otp.checkbox.saveMandate";
 
     public static final Pattern OTP_FORM_VALIDATION = Pattern.compile("\\d{6}");
-    public static final String OTP_FORM_REQUIRED_ERROR_MESSAGE = "Otp_Required_message";
+    public static final String OTP_FORM_REQUIRED_ERROR_MESSAGE = "form.otp.text.requiredErrorMessage";
     public static final String OTP_FORM_KEY = "Otp_Key";
     public static final String OTP_FORM_VALUE = "Otp_Value";
     public static final String OTP_FORM_LABEL = "Otp_Label";
     public static final String OTP_FORM_PLACEHOLDER = "123456";
-    public static final String OTP_FORM_VALIDATION_ERROR_MESSAGE = "Otp_Validation_Error_message";
+    public static final String OTP_FORM_VALIDATION_ERROR_MESSAGE = "form.otp.text.validationErrorMessage";
 
     public static final String SIGNATURE_WS_REQUEST_FIELD_CREDITOR_ID = "creditorId";
     public static final String SIGNATURE_WS_REQUEST_FIELD_MANDATE_RUM = "mandateRum";
@@ -110,31 +110,31 @@ public class DocapostConstants {
 
     //Data used by the PaymentFormConfiguration noField Form
     public static final boolean NOFIELDFORM_DISPLAY_PAYMENT_BUTTON = true;
-    public static final String NOFIELDFORM_BUTTON_TEXT = "Button_text";
+    public static final String NOFIELDFORM_BUTTON_TEXT = "button_text";
     public static final String NOFIELDFORM_BUTTON_DESCRIPTION = "Button_description";
 
     //Data used by the IbanForm Object
-    public static final String IBAN_TEXT = "Iban_text";
-    public static final String IBAN_KEY = "Button_description";
+    public static final String IBAN_TEXT = "form.iban.phone.text.setIban";
+    public static final String IBAN_KEY = "button_description";
     public static final boolean IBAN_REQUIRED = false;
-    public static final String IBAN_REQUIRED_ERROR_MESSAGE = "IBAN_Required_message";
+    public static final String IBAN_REQUIRED_ERROR_MESSAGE = "form.iban.phone.text.ibanRequiredErrorMessage";
 
     //Data used by the phoneForm Object
     public static final FieldIcon PHONE_FIELD_ICON = FieldIcon.PHONE;
-    public static final String PHONE_KEY = "Phone_key";
-    public static final String PHONE_LABEL = "Phone_Label";
+    public static final String PHONE_KEY = "phone_key";
+    public static final String PHONE_LABEL = "form.iban.phone.text.setPhone";
     public static final boolean PHONE_REQUIRED = true;
-    public static final String PHONE_REQUIRED_ERROR_MESSAGE = "PHONE_Required_message";
+    public static final String PHONE_REQUIRED_ERROR_MESSAGE = "form.iban.phone.text.phoneRequiredErrorMessage";
     public static final boolean PHONE_SECURED = false;
-    public static final String PHONE_VALIDATION_MESSAGE = "PHONE_Validation_message";
+    public static final String PHONE_VALIDATION_MESSAGE = "form.iban.phone.text.phoneValidationMessage";
     public static final String PHONE_PLACEHOLDER = "0606060606";
     public static final InputType INPUT_TYPE = InputType.TEL;
     //PATTERN TO DEFINE
     public static final Pattern PHONE_VALIDATION = Pattern.compile("\\d{10}|(?:\\d{3}-){2}\\d{4}|\\(\\d{3}\\)\\d{3}-?\\d{4}");
 
     //Data used by the CustomForm Object
-    public static final String CUSTOMFORM_TEXT = "customForm_key";
-    public static final String CUSTOMFORM_DESCRIPTION = "CustomForm Description";
+    public static final String CUSTOMFORM_TEXT = "form.customForm.text.buttonText";
+    public static final String CUSTOMFORM_DESCRIPTION = "form.customForm.text.description";
     public static final boolean DISPLAY_CUSTOMFORM_BUTTON = true;
 
 
@@ -142,13 +142,15 @@ public class DocapostConstants {
     public static final boolean SAVE_MANDATE_REQUIRED = true;
     public static final boolean SAVE_MANDATE_PRECHECKED = true;
     public static final boolean SAVE_MANDATE_SECURED = true;
-    public static final String SAVE_MANDATE_REQUIRED_ERROR_MESSAGE = "accept_Required_message";
+    public static final String SAVE_MANDATE_REQUIRED_ERROR_MESSAGE = "form.saveMandate.text.requiredErrorMessage";
 
     public static final boolean ACCEPT_CONDITION_REQUIRED = true;
     public static final boolean ACCEPT_CONDITION_PRECHECKED = true;
-    public static final String ACCEPT_CONDITION_KEY = "accept_key";
+    public static final String ACCEPT_CONDITION_KEY = "acceptCondition_key";
     public static final boolean ACCEPT_CONDITION_SECURED = true;
-    public static final String ACCEPT_CONDITION_REQUIRED_ERROR_MESSAGE = "accept_Required_message";
+    public static final String ACCEPT_CONDITION_REQUIRED_ERROR_MESSAGE = "form.acceptCondition.text.requiredErrorMessage";
+
+    public static final String PAYMENT_RESPONSE_SUCCESS_MESSAGE = "payment.response.success.message";
 
 
 }

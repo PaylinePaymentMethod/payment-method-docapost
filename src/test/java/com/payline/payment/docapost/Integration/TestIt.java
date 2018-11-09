@@ -2,8 +2,11 @@ package com.payline.payment.docapost.Integration;
 
 import com.google.gson.Gson;
 import com.payline.payment.docapost.TestUtils;
+import com.payline.payment.docapost.bean.PaymentResponseSuccessAdditionalData;
 import com.payline.payment.docapost.service.impl.PaymentServiceImpl;
 import com.payline.payment.docapost.service.impl.PaymentWithRedirectionServiceImpl;
+import com.payline.payment.docapost.utils.config.ConfigEnvironment;
+import com.payline.payment.docapost.utils.config.ConfigProperties;
 import com.payline.pmapi.bean.payment.ContractProperty;
 import com.payline.pmapi.bean.payment.PaymentFormContext;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
@@ -17,11 +20,8 @@ import com.payline.pmapi.service.PaymentWithRedirectionService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.openqa.selenium.Alert;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-import java.lang.reflect.Type;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -63,6 +63,7 @@ public class TestIt extends AbstractPaymentIntegration {
         PaymentRequest paymentRequestStep2 = createDefaultPaymentRequestStep2();
         PaymentResponseFormUpdated paymentResponseStep2 = (PaymentResponseFormUpdated) paymentServiceMain.paymentRequest(paymentRequestStep2);
 
+
         Map<String, String> requestContextMain = paymentResponseStep2.getRequestContext().getRequestData();
 //        PaymentFormConfigurationResponse formConfigurationResponse = paymentResponseStep2.getPaymentFormConfigurationResponse();
 
@@ -79,7 +80,6 @@ public class TestIt extends AbstractPaymentIntegration {
         //Step 3 confirm with  OTP
         PaymentRequest paymentRequestStep3 = createCustomPaymentRequestStep3(requestContextMain, otp);
         //TODO FIND WHAT IS BUYER PAYMENT ID
-//        PaymentResponse paymentResponseStep3 = paymentServiceMain.paymentRequest(paymentRequestStep3);
         PaymentResponseSuccess paymentResponseStep3 = (PaymentResponseSuccess) paymentServiceMain.paymentRequest(paymentRequestStep3);
 
         System.out.println(paymentResponseStep3);
@@ -91,15 +91,15 @@ public class TestIt extends AbstractPaymentIntegration {
         Gson gson = new Gson();
         PaymentResponseSuccessAdditionalData paymentResponseSuccessAdditionalData = gson.fromJson(additionalDataJson, PaymentResponseSuccessAdditionalData.class);
 
-        //Next step get mandate
+        //Next step : download mandate
         String creditorId = GOOD_CREDITOR_ID;
         String mandateRum = paymentResponseSuccessAdditionalData.getMandateRum();
 
-        String strUrl = ConfigProperties.get(CONFIG__SCHEME, ConfigEnvironment.DEV)
+        String strUrl = ConfigProperties.get(CONFIG_SCHEME, ConfigEnvironment.DEV)
                 + "://"
-                + ConfigProperties.get(CONFIG__HOST, ConfigEnvironment.DEV)
+                + ConfigProperties.get(CONFIG_HOST, ConfigEnvironment.DEV)
                 + "/"
-                + ConfigProperties.get(CONFIG__PATH_WSMANDATE_MANDATE_PDFTPL)
+                + ConfigProperties.get(CONFIG_PATH_WSMANDATE_MANDATE_PDFTPL)
                 + "/"
                 + creditorId
                 + "/"
@@ -114,7 +114,8 @@ public class TestIt extends AbstractPaymentIntegration {
 
     @Test
     public void fullPaymentTest() {
-        request = createDefaultPaymentRequest();
+//        request = createDefaultPaymentRequest();
+        request = createDefaultPaymentRequestStep2();
         transactionID = request.getTransactionId();
 
 //        this.fullRedirectionPayment(request, paymentService, paymentWithRedirectionService);
@@ -129,12 +130,20 @@ public class TestIt extends AbstractPaymentIntegration {
 
         requestContext = paymentResponseStep2.getRequestContext().getRequestData();
         formConfigutationResponse = paymentResponseStep2.getPaymentFormConfigurationResponse();
-        step = paymentResponseStep2.getRequestContext().getRequestData().get(CONTEXT_DATA__STEP);
-        //TODO REQUEST WITH PAYMENT RESPONSE STEP2 console prompt doesn't work outside a main method
+        step = paymentResponseStep2.getRequestContext().getRequestData().get(CONTEXT_DATA_STEP);
+        //TODO open a window to enter the otp code
         //Saisir OTP
         //Get OTP from a' prompt ?
         String otp = "12345";
-
+        //TODO REQUEST WITH PAYMENT RESPONSE STEP2
+        //Saisir OTP
+        Scanner keyboardUser = new Scanner(System.in);
+        System.out.println("Enter your  OTP : ");
+         otp = keyboardUser.nextLine();
+        keyboardUser.close();
+        // Initialize a fake transaction request to check the validity of the contract parameters
+        System.out.print("You entered : ");
+        System.out.println(otp);
         //Step 3 confirm with  OTP
         //Create a third payment request with data from Config
         PaymentRequest paymentRequestStep3 = createCustomPaymentRequestStep3(requestContext, otp);
@@ -142,7 +151,7 @@ public class TestIt extends AbstractPaymentIntegration {
 //            PaymentResponseFormUpdated paymentResponseStep3 = (PaymentResponseFormUpdated) paymentService.paymentRequest(paymentRequestStep3);
         Assert.assertNotNull(paymentResponseStep3);
 
-//       todo generate mandate dOwnload url
+//       todo generate mandate download url
         String downloadmadateUrl = null;
 
         return downloadmadateUrl;
@@ -161,12 +170,13 @@ public class TestIt extends AbstractPaymentIntegration {
     }
 
 
+/*
     @Override
     public void fullRedirectionPayment(PaymentRequest paymentRequest, PaymentService paymentService, PaymentWithRedirectionService paymentWithRedirectionService) {
         PaymentResponse paymentResponseFromPaymentRequest = paymentService.paymentRequest(paymentRequest);
 //        this.checkPaymentResponseIsNotFailure(paymentResponseFromPaymentRequest);
         PaymentResponseFormUpdated paymentResponseRedirect = (PaymentResponseFormUpdated) paymentResponseFromPaymentRequest;
-        String step = paymentResponseRedirect.getRequestContext().getRequestData().get(CONTEXT_DATA__STEP);
+        String step = paymentResponseRedirect.getRequestContext().getRequestData().get(CONTEXT_DATA_STEP);
 
         //    String redirectionUrl = this.payOnPartnerWebsite(partnerUrl);
         //Return transactionID or response ??
@@ -186,24 +196,9 @@ public class TestIt extends AbstractPaymentIntegration {
         //Finalize here ?? or confirm
 
     }
+*/
 
 
-
-/*        PaymentResponse paymentResponseFromFinalize = this.handlePartnerResponse(paymentWithRedirectionService, paymentRequest, paymentResponseRedirect);
-//        this.checkPaymentResponseIsNotFailure(paymentResponseFromFinalize);
-//        this.checkPaymentResponseIsRightClass("redirectionPaymentRequest", paymentResponseFromFinalize, PaymentResponseSuccess.class);
-        PaymentResponseSuccess paymentResponseSuccess = (PaymentResponseSuccess)paymentResponseFromFinalize;
-        Assertions.assertNotNull(paymentResponseSuccess.getTransactionDetails());
-        Assertions.assertEquals(partnerTransactionId, paymentResponseSuccess.getPartnerTransactionId());
-    }
-    */
-
-//    private PaymentResponse handlePartnerResponse(PaymentWithRedirectionService paymentWithRedirectionService, PaymentRequest paymentRequest, PaymentResponseRedirect paymentResponseRedirect) {
-//        ContractConfiguration contractConfiguration = new ContractConfiguration("", this.generateParameterContract());
-//        Environment environment = new Environment("http://google.com/", "https://succesurl.com/", "http://localhost/cancelurl.com/", true);
-//        RedirectionPaymentRequest redirectionPaymentRequest = (RedirectionPaymentRequest) RedirectionPaymentRequest.builder().withContractConfiguration(contractConfiguration).withPaymentFormContext(this.generatePaymentFormContext()).withEnvironment(environment).withTransactionId(paymentRequest.getTransactionId()).withRequestContext(paymentResponseRedirect.getRequestContext()).withAmount(paymentRequest.getAmount()).build();
-//        return paymentWithRedirectionService.finalizeRedirectionPayment(redirectionPaymentRequest);
-//    }
 
 
 }

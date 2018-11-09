@@ -1,5 +1,7 @@
 package com.payline.payment.docapost.bean.rest.response.error;
 
+import com.google.gson.Gson;
+
 import javax.xml.bind.annotation.*;
 
 /**
@@ -40,12 +42,9 @@ public class XmlErrorResponseException {
 
     @Override
     public String toString() {
-        final StringBuilder result = new StringBuilder();
 
-        result.append("value : " + value + "\n");
-        result.append("code : " + code + "\n");
-
-        return result.toString();
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 
 }

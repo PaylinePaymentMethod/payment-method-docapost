@@ -1,7 +1,6 @@
 package com.payline.payment.docapost.service.impl;
 
 import com.payline.payment.docapost.bean.PaymentResponseSuccessAdditionalData;
-import com.payline.payment.docapost.bean.rest.common.BuyerPaymentIdImpl;
 import com.payline.payment.docapost.bean.rest.request.RequestBuilderFactory;
 import com.payline.payment.docapost.bean.rest.request.mandate.MandateCreateRequest;
 import com.payline.payment.docapost.bean.rest.request.mandate.SddOrderCreateRequest;
@@ -19,6 +18,7 @@ import com.payline.payment.docapost.bean.rest.response.signature.SendOtpResponse
 import com.payline.payment.docapost.bean.rest.response.signature.SetCodeResponse;
 import com.payline.payment.docapost.bean.rest.response.signature.TerminateSignatureResponse;
 import com.payline.payment.docapost.exception.InvalidRequestException;
+import com.payline.payment.docapost.utils.DocapostFormUtils;
 import com.payline.payment.docapost.utils.DocapostLocalParam;
 import com.payline.payment.docapost.utils.DocapostUtils;
 import com.payline.payment.docapost.utils.PluginUtils;
@@ -29,14 +29,15 @@ import com.payline.payment.docapost.utils.http.StringResponse;
 import com.payline.payment.docapost.utils.i18n.I18nService;
 import com.payline.payment.docapost.utils.type.WSRequestResultEnum;
 import com.payline.pmapi.bean.common.FailureCause;
+import com.payline.pmapi.bean.common.Message;
 import com.payline.pmapi.bean.payment.RequestContext;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
+import com.payline.pmapi.bean.payment.response.buyerpaymentidentifier.impl.EmptyTransactionDetails;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFailure;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFormUpdated;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseSuccess;
 import com.payline.pmapi.bean.paymentform.bean.field.*;
-import com.payline.pmapi.bean.paymentform.bean.field.specific.PaymentFormInputFieldIban;
 import com.payline.pmapi.bean.paymentform.bean.form.CustomForm;
 import com.payline.pmapi.bean.paymentform.response.configuration.PaymentFormConfigurationResponse;
 import com.payline.pmapi.bean.paymentform.response.configuration.impl.PaymentFormConfigurationResponseSpecific;
@@ -52,18 +53,24 @@ import java.net.URLEncoder;
 import java.util.*;
 
 import static com.payline.payment.docapost.utils.DocapostConstants.*;
+import static com.payline.pmapi.bean.common.Message.MessageType.SUCCESS;
 
-public class PaymentServiceImpl implements PaymentService {
+public class PaymentServiceImpl implements PaymentService   {
 
     private static final Logger LOGGER = LogManager.getLogger(PaymentServiceImpl.class);
 
     private static final String DEFAULT_ERROR_CODE = "no code transmitted";
+    private static final String HTTP_SENDING_ERROR_MESSAGE = "An HTTP error occurred while sending the request: " ;
+    private static final String HTTP_NULL_RESPONSE_ERROR_MESSAGE = "The HTTP response or its body is null and should not be" ;
+    private static final String UNEXPECTED_ERROR_MESSAGE = "An unexpected error occurred: " ;
 
     private I18nService i18n = I18nService.getInstance();
 
     private DocapostHttpClient httpClient;
 
     private DocapostLocalParam docapostLocalParam;
+
+    public DocapostLocalParam getDocapostLocalParam(){return docapostLocalParam;}
 
     /**
      * Constructeur
@@ -119,73 +126,12 @@ public class PaymentServiceImpl implements PaymentService {
                 // Pas de donnees à consommer ni appels WS a effectuer...
 
                 /*
-
                     On doit retourner une reponse de type PaymentResponseFormUpdated pour faire afficher un formulaire de saisie
                     avec un champ IBAN et un champ TELEPHONE
 
                  */
-
-                PaymentFormDisplayFieldText inputIban = PaymentFormDisplayFieldText
-                        .PaymentFormDisplayFieldTextBuilder
-                        .aPaymentFormDisplayFieldText()
-                        .withContent(this.i18n.getMessage(OTP_IBAN_PHONE_TEXT_SET_IBAN, locale))
-                        .build();
-
-                PaymentFormInputFieldIban ibanForm = PaymentFormInputFieldIban
-                        .IbanFieldBuilder
-                        .anIbanField()
-                        // FIXME : Define fields text on DocaPostConstant?
-                        .withKey(IBAN_KEY)
-                        .withLabel(IBAN_TEXT)
-                        .withRequired(IBAN_REQUIRED)
-                        .withRequiredErrorMessage(IBAN_REQUIRED_ERROR_MESSAGE)
-                        .build();
-
-                PaymentFormDisplayFieldText inputPhone = PaymentFormDisplayFieldText
-                        .PaymentFormDisplayFieldTextBuilder
-                        .aPaymentFormDisplayFieldText()
-                        .withContent(this.i18n.getMessage(OTP_IBAN_PHONE_TEXT_SET_PHONE, locale))
-                        .build();
-
-                PaymentFormInputFieldText phoneForm = PaymentFormInputFieldText
-                        .PaymentFormFieldTextBuilder
-                        .aPaymentFormFieldText()
-                        .withInputType(InputType.TEL)
-                        // FIXME : Define fields text on DocaPostConstant?
-                        .withFieldIcon(PHONE_FIELD_ICON)
-                        .withKey(PHONE_KEY)
-                        .withLabel(PHONE_LABEL)
-                        .withPlaceholder(PHONE_PLACEHOLDER)
-                        .withRequired(PHONE_REQUIRED)
-                        .withRequiredErrorMessage(PHONE_REQUIRED_ERROR_MESSAGE)
-                        .withSecured(PHONE_SECURED)
-                        .withValidation(PHONE_VALIDATION)
-                        .withValidationErrorMessage(PHONE_VALIDATION_MESSAGE)
-                        .withInputType(INPUT_TYPE)
-                        //.withValue()
-                        .build();
-
-                PaymentFormDisplayFieldText inputPhoneInfo = PaymentFormDisplayFieldText
-                        .PaymentFormDisplayFieldTextBuilder
-                        .aPaymentFormDisplayFieldText()
-                        .withContent(this.i18n.getMessage(OTP_IBAN_PHONE_TEXT_SET_PHONE_INFO, locale))
-                        .build();
-
-                List<PaymentFormField> customFields = new ArrayList<>();
-                customFields.add(inputIban);
-                customFields.add(ibanForm);
-                customFields.add(inputPhone);
-                customFields.add(phoneForm);
-                customFields.add(inputPhoneInfo);
-
-                CustomForm customForm = CustomForm
-                        .builder()
-                        .withCustomFields(customFields)
-                        // FIXME : Define fields text on DocaPostConstant?
-                        .withButtonText(CUSTOMFORM_TEXT)
-                        .withDescription(CUSTOMFORM_DESCRIPTION)
-                        .withDisplayButton(DISPLAY_CUSTOMFORM_BUTTON)
-                        .build();
+                // Création d'un formulaire de saisie d'un IBAN et numéro de téléphone
+                CustomForm customForm = DocapostFormUtils.createEmptyIbanPhonePaymentForm(locale);
 
                 PaymentFormConfigurationResponse paymentFormConfigurationResponse = PaymentFormConfigurationResponseSpecific
                         .PaymentFormConfigurationResponseSpecificBuilder
@@ -204,9 +150,7 @@ public class PaymentServiceImpl implements PaymentService {
                         .RequestContextBuilder
                         .aRequestContext()
                         .withRequestData(requestContextMap)
-                        // FIXME : Add fields ?
                         .withSensitiveRequestData(requestSensitiveContext)
-//                        .withSensitiveRequestContext(requestSensitiveContext)
                         .build();
 
                 response = PaymentResponseFormUpdated
@@ -295,10 +239,10 @@ public class PaymentServiceImpl implements PaymentService {
                     }
 
                 } else if (mandateCreateStringResponse != null && mandateCreateStringResponse.getCode() != 200) {
-                    LOGGER.error("An HTTP error occurred while sending the request: " + mandateCreateStringResponse.getMessage());
+                    LOGGER.error(HTTP_SENDING_ERROR_MESSAGE + mandateCreateStringResponse.getMessage());
                     return buildPaymentResponseFailure(Integer.toString(mandateCreateStringResponse.getCode()), FailureCause.COMMUNICATION_ERROR);
                 } else {
-                    LOGGER.error("The HTTP response or its body is null and should not be");
+                    LOGGER.error(HTTP_NULL_RESPONSE_ERROR_MESSAGE);
                     return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
                 }
 
@@ -350,10 +294,10 @@ public class PaymentServiceImpl implements PaymentService {
                     }
 
                 } else if (initiateSignatureStringResponse != null && initiateSignatureStringResponse.getCode() != 200) {
-                    LOGGER.error("An HTTP error occurred while sending the request: " + initiateSignatureStringResponse.getMessage());
+                    LOGGER.error(HTTP_SENDING_ERROR_MESSAGE + initiateSignatureStringResponse.getMessage());
                     return buildPaymentResponseFailure(Integer.toString(initiateSignatureStringResponse.getCode()), FailureCause.COMMUNICATION_ERROR);
                 } else {
-                    LOGGER.error("The HTTP response or its body is null and should not be");
+                    LOGGER.error(HTTP_NULL_RESPONSE_ERROR_MESSAGE);
                     return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
                 }
 
@@ -405,10 +349,10 @@ public class PaymentServiceImpl implements PaymentService {
                     }
 
                 } else if (sendOTPStringResponse != null && sendOTPStringResponse.getCode() != 200) {
-                    LOGGER.error("An HTTP error occurred while sending the request: " + sendOTPStringResponse.getMessage());
+                    LOGGER.error(HTTP_SENDING_ERROR_MESSAGE + sendOTPStringResponse.getMessage());
                     return buildPaymentResponseFailure(Integer.toString(sendOTPStringResponse.getCode()), FailureCause.COMMUNICATION_ERROR);
                 } else {
-                    LOGGER.error("The HTTP response or its body is null and should not be");
+                    LOGGER.error(HTTP_NULL_RESPONSE_ERROR_MESSAGE);
                     return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
                 }
 
@@ -418,114 +362,13 @@ public class PaymentServiceImpl implements PaymentService {
                     avec un champ OTP, des textes d'information, des liens (telechargement du mandat, renvoie du code OTP), des checkbox
 
                  */
-
-                PaymentFormDisplayFieldText downloadMandateText = PaymentFormDisplayFieldText
-                        .PaymentFormDisplayFieldTextBuilder
-                        .aPaymentFormDisplayFieldText()
-                        .withContent(this.i18n.getMessage(OTP_FORM_TEXT_DOWNLOAD_MANDATE, locale))
-                        .build();
-
-                PaymentFormDisplayFieldLink downloadMandateLink = PaymentFormDisplayFieldLink
-                        .PaymentFormDisplayFieldLinkBuilder
-                        .aPaymentFormDisplayFieldLink()
-                        .withUrl(this.getDownloadMandateLinkUrl(
-                                env,
-                                sendOtpRequest.getCreditorId(),
-                                this.docapostLocalParam.getMandateRum()
-                        ))
-                        .withName(this.i18n.getMessage(OTP_FORM_LINK_DOWNLOAD_MANDATE, locale))
-                        // FIXME : Add fields ?
-                        .withTitle("form.otp.link.downloadMandate")
-//                        .withUrl("")
-                        .build();
-
-                PaymentFormDisplayFieldText otpText = PaymentFormDisplayFieldText
-                        .PaymentFormDisplayFieldTextBuilder
-                        .aPaymentFormDisplayFieldText()
-                        .withContent(this.i18n.getMessage(OTP_FORM_TEXT_OTP, locale))
-                        .build();
-
-                PaymentFormDisplayFieldText setOtpText = PaymentFormDisplayFieldText
-                        .PaymentFormDisplayFieldTextBuilder
-                        .aPaymentFormDisplayFieldText()
-                        .withContent(this.i18n.getMessage(OTP_FORM_TEXT_SET_OTP, locale) + " " + phone)
-                        .build();
-
-                PaymentFormInputFieldText otpForm = PaymentFormInputFieldText
-                        .PaymentFormFieldTextBuilder
-                        .aPaymentFormFieldText()
-                        .withInputType(InputType.NUMBER)
-                        //FIXME define value of fields
-                        .withFieldIcon(FieldIcon.PHONE)
-                        .withKey(OTP_FORM_KEY)
-                        .withLabel(OTP_FORM_LABEL)
-                        .withPlaceholder(OTP_FORM_PLACEHOLDER)
-                        .withRequired(false)
-                        .withRequiredErrorMessage(OTP_FORM_REQUIRED_ERROR_MESSAGE)
-                        .withSecured(false)
-                        .withValidation(OTP_FORM_VALIDATION)
-                        .withValidationErrorMessage(OTP_FORM_VALIDATION_ERROR_MESSAGE)
-                        .withValue(OTP_FORM_VALUE)
-                        .build();
-/*
-
-                PaymentFormDisplayFieldLink resendOtpLink = PaymentFormDisplayFieldLink
-                        .PaymentFormDisplayFieldLinkBuilder
-                        .aPaymentFormDisplayFieldLink()
-                        .withUrl(this.getResendOtpLinkUrl(
-                                env,
-                                sendOtpRequest.getCreditorId(),
-                                this.docapostLocalParam.getMandateRum(),
-                                this.docapostLocalParam.getTransactionId()
-                        ))
-                        .withName(this.i18n.getMessage( OTP_FORM__TEXT_RESEND_OTP, locale ))
-                        // FIXME : Add fields ?
-                        .withTitle("resend Otp")
-                        .build();
-*/
-
-                PaymentFormInputFieldCheckbox acceptCondition = PaymentFormInputFieldCheckbox
-                        .PaymentFormFieldCheckboxBuilder
-                        .aPaymentFormFieldCheckbox()
-                        .withRequired(true)
-                        .withLabel(this.i18n.getMessage(OTP_FORM_CHECKBOX_ACCEPT_CONDITION, locale))
-                        // FIXME : Add fields ?
-                        .withRequiredErrorMessage(ACCEPT_CONDITION_REQUIRED_ERROR_MESSAGE)
-                        .withKey(ACCEPT_CONDITION_KEY)
-                        .withPrechecked(ACCEPT_CONDITION_PRECHECKED)
-                        .withSecured(ACCEPT_CONDITION_SECURED)
-                        .build();
-
-                PaymentFormInputFieldCheckbox saveMandate = PaymentFormInputFieldCheckbox
-                        .PaymentFormFieldCheckboxBuilder
-                        .aPaymentFormFieldCheckbox()
-                        .withRequired(SAVE_MANDATE_REQUIRED)
-                        .withLabel(this.i18n.getMessage(OTP_FORM_CHECKBOX_SAVE_MANDATE, locale))
-                        // FIXME : Add fields ?
-                        //TODO Define value of fields
-                        .withRequiredErrorMessage(SAVE_MANDATE_REQUIRED_ERROR_MESSAGE)
-                        .withKey(SAVE_MANDATE_KEY)
-                        .withPrechecked(SAVE_MANDATE_PRECHECKED)
-                        .withSecured(SAVE_MANDATE_SECURED)
-                        .build();
-
-                List<PaymentFormField> customFields = new ArrayList<>();
-                customFields.add(downloadMandateText);
-                customFields.add(downloadMandateLink);
-                customFields.add(otpText);
-                customFields.add(setOtpText);
-                customFields.add(otpForm);
-//                customFields.add(resendOtpLink);
-                customFields.add(acceptCondition);
-                customFields.add(saveMandate);
-
-                CustomForm customForm = CustomForm
-                        .builder()
-                        .withCustomFields(customFields)
-                        //TODO define description
-                        .withDescription(CUSTOMFORM_TEXT)
-                        .withButtonText(CUSTOMFORM_DESCRIPTION)
-                        .build();
+                /*
+                 * Creation d'un  customForm contenant
+                 * - link to download mandate
+                 * - link to resend otp code
+                 * - link to CGV
+                 */
+              CustomForm customForm =   DocapostFormUtils.createOTPPaymentForm(this, paymentRequest,sendOtpRequest);
 
                 PaymentFormConfigurationResponse paymentFormConfigurationResponse = PaymentFormConfigurationResponseSpecific
                         .PaymentFormConfigurationResponseSpecificBuilder
@@ -550,7 +393,6 @@ public class PaymentServiceImpl implements PaymentService {
                         .RequestContextBuilder
                         .aRequestContext()
                         .withRequestData(requestContextMap)
-                        // FIXME : Add fields ?
                         .withSensitiveRequestData(sensitiveRequestContextMap)
                         .build();
 
@@ -623,10 +465,10 @@ public class PaymentServiceImpl implements PaymentService {
                     }
 
                 } else if (setCodeStringResponse != null && setCodeStringResponse.getCode() != 200) {
-                    LOGGER.error("An HTTP error occurred while sending the request: " + setCodeStringResponse.getMessage());
+                    LOGGER.error(HTTP_SENDING_ERROR_MESSAGE + setCodeStringResponse.getMessage());
                     return buildPaymentResponseFailure(Integer.toString(setCodeStringResponse.getCode()), FailureCause.COMMUNICATION_ERROR);
                 } else {
-                    LOGGER.error("The HTTP response or its body is null and should not be");
+                    LOGGER.error(HTTP_NULL_RESPONSE_ERROR_MESSAGE);
                     return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
                 }
 
@@ -677,10 +519,10 @@ public class PaymentServiceImpl implements PaymentService {
                     }
 
                 } else if (terminateSignatureStringResponse != null && terminateSignatureStringResponse.getCode() != 200) {
-                    LOGGER.error("An HTTP error occurred while sending the request: " + terminateSignatureStringResponse.getMessage());
+                    LOGGER.error(HTTP_SENDING_ERROR_MESSAGE + terminateSignatureStringResponse.getMessage());
                     return buildPaymentResponseFailure(Integer.toString(terminateSignatureStringResponse.getCode()), FailureCause.COMMUNICATION_ERROR);
                 } else {
-                    LOGGER.error("The HTTP response or its body is null and should not be");
+                    LOGGER.error(HTTP_NULL_RESPONSE_ERROR_MESSAGE);
                     return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
                 }
 
@@ -749,10 +591,10 @@ public class PaymentServiceImpl implements PaymentService {
                     }
 
                 } else if (orderCreateStringResponse != null && orderCreateStringResponse.getCode() != 200) {
-                    LOGGER.error("An HTTP error occurred while sending the request: " + orderCreateStringResponse.getMessage());
+                    LOGGER.error(HTTP_SENDING_ERROR_MESSAGE + orderCreateStringResponse.getMessage());
                     return buildPaymentResponseFailure(Integer.toString(orderCreateStringResponse.getCode()), FailureCause.COMMUNICATION_ERROR);
                 } else {
-                    LOGGER.error("The HTTP response or its body is null and should not be");
+                    LOGGER.error(HTTP_NULL_RESPONSE_ERROR_MESSAGE);
                     return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
                 }
 
@@ -773,11 +615,8 @@ public class PaymentServiceImpl implements PaymentService {
                         .withPartnerTransactionId(this.docapostLocalParam.getTransactionId())
                         .withTransactionAdditionalData(paymentResponseSuccessAdditionalData.toJson())
                         .withStatusCode(this.docapostLocalParam.getOrderStatus())
-                        // FIXME : Add fields ?
-                        //.withMessage()
-                        //FIXME : Mandatory  find utility of BuyerPaymentId
-                        //mock
-                        .withTransactionDetails(new BuyerPaymentIdImpl())
+                        .withMessage(new Message(SUCCESS, this.i18n.getMessage(PAYMENT_RESPONSE_SUCCESS_MESSAGE, locale)))
+                        .withTransactionDetails(new EmptyTransactionDetails())
                         .build();
 
             }
@@ -791,7 +630,7 @@ public class PaymentServiceImpl implements PaymentService {
             LOGGER.error("An IOException occurred while sending the HTTP request or receiving the response: " + e.getMessage());
             return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.COMMUNICATION_ERROR);
         } catch (Exception e) {
-            LOGGER.error("An unexpected error occurred: ", e);
+            LOGGER.error(UNEXPECTED_ERROR_MESSAGE, e);
             return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
         }
 
@@ -805,7 +644,7 @@ public class PaymentServiceImpl implements PaymentService {
      * @param mandateRum RUM
      * @return URI Syntax Exception
      */
-    private URL getDownloadMandateLinkUrl(ConfigEnvironment env, String creditorId, String mandateRum) {
+    public URL getDownloadMandateLinkUrl(ConfigEnvironment env, String creditorId, String mandateRum) {
 
         URL url = null;
 
@@ -826,7 +665,7 @@ public class PaymentServiceImpl implements PaymentService {
             url = new URL(strUrl);
 
         } catch (MalformedURLException e) {
-            LOGGER.error("An unexpected error occurred: ", e);
+            LOGGER.error(UNEXPECTED_ERROR_MESSAGE, e);
         }
 
         return url;
@@ -838,7 +677,7 @@ public class PaymentServiceImpl implements PaymentService {
      *
      * @return url
      */
-    private URL getResendOtpLinkUrl(ConfigEnvironment env, String creditorId, String mandateRum, String transactionId) {
+    public URL getResendOtpLinkUrl(ConfigEnvironment env, String creditorId, String mandateRum, String transactionId) {
 // FIXME : string ?
         URL url = null;
 
@@ -863,7 +702,7 @@ public class PaymentServiceImpl implements PaymentService {
             url = new URL(strUrl);
 
         } catch (UnsupportedEncodingException | MalformedURLException e) {
-            LOGGER.error("An unexpected error occurred: ", e);
+            LOGGER.error(UNEXPECTED_ERROR_MESSAGE, e);
 
         }
 

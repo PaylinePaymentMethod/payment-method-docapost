@@ -269,7 +269,7 @@ public class TestUtils {
         final ContractConfiguration contractConfiguration = createContractConfiguration();
         String rum = createRUM();
         final String transactionID = createTransactionId();
-        final Environment environment = new Environment(NOTIFICATION_URL, SUCCESS_URL, CANCEL_URL, true);
+//        final Environment environment = new Environment(NOTIFICATION_URL, SUCCESS_URL, CANCEL_URL, true);
         PaymentResponseSuccessAdditionalData additionalData = new PaymentResponseSuccessAdditionalData().mandateRum(rum).transactionId(transactionID).signatureId("signature1");
         final Order order = createOrder(transactionID);
         final String softDescriptor = "softDescriptor";
@@ -282,10 +282,10 @@ public class TestUtils {
         return RefundRequest.RefundRequestBuilder
                 .aRefundRequest()
                 .withAmount(createAmount("EUR"))
-                .withOrder(createOrder(transactionID))
+                .withOrder(order)
                 .withBuyer(createDefaultBuyer())
                 .withTransactionId(transactionID)
-                .withSoftDescriptor("Refund request")
+                .withSoftDescriptor(softDescriptor)
                 .withContractConfiguration(contractConfiguration)
                 .withPartnerConfiguration(createDefaultPartnerConfiguration())
                 .withTransactionAdditionalData(additionalData.toJson())
@@ -456,4 +456,6 @@ public class TestUtils {
 
                 .build();
     }
+
+
 }

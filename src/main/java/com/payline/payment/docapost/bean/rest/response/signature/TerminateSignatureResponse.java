@@ -14,18 +14,6 @@ public class TerminateSignatureResponse extends AbstractWSSignatureResponse {
         //ras.
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder result = new StringBuilder();
-
-        result.append("***** TerminateSignatureResponse info\n");
-
-        if (errors != null && !errors.isEmpty()) {
-            result.append(errors.toString() + "\n");
-        }
-
-        return result.toString();
-    }
 
     //******************************************************************************************************************
     //***** BUILDER
