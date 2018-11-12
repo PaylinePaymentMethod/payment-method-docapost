@@ -6,11 +6,13 @@ import com.payline.payment.docapost.utils.http.StringResponse;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFormUpdated;
+import com.payline.pmapi.service.PaymentService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Map;
@@ -22,7 +24,7 @@ import static com.payline.payment.docapost.utils.DocapostConstants.*;
 public class PaymentServiceImplTest {
 
     @InjectMocks
-    private PaymentServiceImpl paymentService = new PaymentServiceImpl();
+    private PaymentService paymentService = new PaymentServiceImpl();
 
     @Mock
     private DocapostHttpClient httpClient;
@@ -71,7 +73,7 @@ public class PaymentServiceImplTest {
     }
 
     @Test
-    public void testPaymentRequestStepIbanPhone() {
+    public void testPaymentRequestStepIbanPhone() throws Exception {
 
         //TODO improve this test
         Assert.assertNotNull(paymentService);
@@ -103,14 +105,24 @@ public class PaymentServiceImplTest {
                 "   <language>fr</language>\n</WSMandateDTO>");
 
 
-
 //        when((httpClient).doPost(anyString(), anyString(),anyString(),anyString(),anyString())).thenReturn(defaultResponse);
         PaymentRequest paymentRequestStep2 = createDefaultPaymentRequestStep2();
         //assert step is null, STEP 0
         String step = paymentRequestStep2.getRequestContext().getRequestData().get(CONTEXT_DATA_STEP);
         Assert.assertNotNull(paymentRequestStep2);
         Assert.assertEquals(CONTEXT_DATA_STEP_IBAN_PHONE, step);
+        StringResponse stringResponse = new StringResponse();
+        stringResponse.setContent("<WSMandateDTO>test</WSMandateDTO>");
+        stringResponse.setCode(200);
 
+        Mockito.when(
+                httpClient.doPost(
+                        Mockito.anyString(),
+                        Mockito.anyString(),
+                        Mockito.anyString(),
+                        Mockito.anyString(),
+                        Mockito.anyString())
+        ).thenReturn(defaultResponse);
         PaymentResponseFormUpdated paymentResponse = (PaymentResponseFormUpdated) paymentService.paymentRequest(paymentRequestStep2);
 //        PaymentResponse paymentResponse = paymentService.paymentRequest(paymentRequestStep2);
 
@@ -132,7 +144,7 @@ public class PaymentServiceImplTest {
 
         PaymentRequest paymentRequestStep2 = createDefaultPaymentRequestStep2();
         PaymentResponseFormUpdated paymentResponseStep2 = (PaymentResponseFormUpdated) paymentServiceMain.paymentRequest(paymentRequestStep2);
-        Map <String,String> requestContext = paymentResponseStep2.getRequestContext().getRequestData();
+        Map<String, String> requestContext = paymentResponseStep2.getRequestContext().getRequestData();
         PaymentRequest paymentRequestStepOTP = createCustomPaymentRequestStep3(requestContext, CONTEXT_DATA_STEP_OTP);
 
         Assert.assertNotNull(paymentRequestStepOTP);

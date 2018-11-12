@@ -1,6 +1,10 @@
 package com.payline.payment.docapost.utils;
 
 import com.payline.payment.docapost.exception.InvalidRequestException;
+import com.payline.payment.docapost.utils.config.ConfigEnvironment;
+import com.payline.pmapi.bean.ActionRequest;
+import com.payline.pmapi.bean.Request;
+import com.payline.pmapi.bean.configuration.request.ContractParametersCheckRequest;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -8,6 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PluginUtils {
+
+
+    public static final String URL_DELIMITER = "/";
 
     private PluginUtils() {
         // ras.
@@ -27,6 +34,18 @@ public class PluginUtils {
 
     public static <T> T requireNonNull(Map map, String key, String err) throws InvalidRequestException {
         return PluginUtils.requireNonNull((T) map.get(key), err);
+    }
+
+    public static ConfigEnvironment getEnvironnement(ActionRequest actionRequest) {
+        return actionRequest.getEnvironment().isSandbox() ? ConfigEnvironment.DEV : ConfigEnvironment.PROD;
+    }
+
+    public static ConfigEnvironment getEnvironnement(Request request) {
+        return request.getEnvironment().isSandbox() ? ConfigEnvironment.DEV : ConfigEnvironment.PROD;
+    }
+
+    public static ConfigEnvironment getEnvironnement(ContractParametersCheckRequest contractParametersCheckRequest) {
+        return contractParametersCheckRequest.getEnvironment().isSandbox() ? ConfigEnvironment.DEV : ConfigEnvironment.PROD;
     }
 
     /**

@@ -1,9 +1,10 @@
 package com.payline.payment.docapost.utils;
 
 import com.payline.payment.docapost.bean.rest.request.signature.SendOtpRequest;
-import com.payline.payment.docapost.service.impl.PaymentServiceImpl;
 import com.payline.payment.docapost.utils.config.ConfigEnvironment;
+import com.payline.payment.docapost.utils.config.ConfigProperties;
 import com.payline.payment.docapost.utils.i18n.I18nService;
+import com.payline.pmapi.bean.ActionRequest;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.paymentform.bean.field.*;
 import com.payline.pmapi.bean.paymentform.bean.field.specific.PaymentFormInputFieldIban;
@@ -11,25 +12,31 @@ import com.payline.pmapi.bean.paymentform.bean.form.CustomForm;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import static com.payline.payment.docapost.utils.DocapostConstants.*;
+import static com.payline.payment.docapost.utils.PluginUtils.URL_DELIMITER;
 
 public class DocapostFormUtils {
 
     private I18nService i18n = I18nService.getInstance();
     private static final Logger LOGGER = LogManager.getLogger(DocapostFormUtils.class);
-    private static final String UNEXPECTED_ERROR_MESSAGE = "An unexpected error occurred: " ;
-
+    private static final String UNEXPECTED_ERROR_MESSAGE = "An unexpected error occurred: ";
 
 
     /**
      * Create a form to input phone number and iban
+     *
      * @return a CustomForm composed by a field PaymentFormInputFieldIban and a field PaymentFormDisplayFieldText
      */
-    public static CustomForm createEmptyIbanPhonePaymentForm (Locale locale){
+    public static CustomForm createEmptyIbanPhonePaymentForm(Locale locale) {
         I18nService i18n = I18nService.getInstance();
 
         PaymentFormDisplayFieldText inputIban = PaymentFormDisplayFieldText
@@ -92,6 +99,7 @@ public class DocapostFormUtils {
                 .build();
 
     }
+
     /**
      * Create a paymentForm with
      * - link to download mandate
@@ -100,12 +108,12 @@ public class DocapostFormUtils {
      *
      * @return a CustomForm composed by a field PaymentFormInputFieldIban and a field PaymentFormDisplayFieldText
      */
-    public static CustomForm  createOTPPaymentForm(PaymentServiceImpl paymentService, PaymentRequest request, SendOtpRequest sendOtpRequest){
+    public static CustomForm createOTPPaymentForm(DocapostLocalParam docapostLocalParam, PaymentRequest request, SendOtpRequest sendOtpRequest) {
 
         Locale locale = request.getLocale();
         I18nService i18n = I18nService.getInstance();
         String phone = request.getPaymentFormContext().getPaymentFormParameter().get(FORM_FIELD_PHONE);
-        ConfigEnvironment env = Boolean.FALSE.equals(request.getEnvironment().isSandbox()) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
+        ConfigEnvironment env = PluginUtils.getEnvironnement((ActionRequest) request);
 
 
         PaymentFormDisplayFieldText downloadMandateText = PaymentFormDisplayFieldText
@@ -117,10 +125,10 @@ public class DocapostFormUtils {
         PaymentFormDisplayFieldLink downloadMandateLink = PaymentFormDisplayFieldLink
                 .PaymentFormDisplayFieldLinkBuilder
                 .aPaymentFormDisplayFieldLink()
-                .withUrl(paymentService.getDownloadMandateLinkUrl(
+                .withUrl(getDownloadMandateLinkUrl(
                         env,
                         sendOtpRequest.getCreditorId(),
-                        paymentService.getDocapostLocalParam().getMandateRum()
+                        docapostLocalParam.getMandateRum()
                 ))
                 .withName(i18n.getMessage(OTP_FORM_LINK_DOWNLOAD_MANDATE, locale))
                 .withTitle(OTP_FORM_LINK_DOWNLOAD_MANDATE)
@@ -147,24 +155,24 @@ public class DocapostFormUtils {
                 .withLabel(OTP_FORM_LABEL)
                 .withPlaceholder(OTP_FORM_PLACEHOLDER)
                 .withRequired(false)
-                .withRequiredErrorMessage(i18n.getMessage(OTP_FORM_REQUIRED_ERROR_MESSAGE,locale))
+                .withRequiredErrorMessage(i18n.getMessage(OTP_FORM_REQUIRED_ERROR_MESSAGE, locale))
                 .withSecured(false)
                 .withValidation(OTP_FORM_VALIDATION)
-                .withValidationErrorMessage(i18n.getMessage(OTP_FORM_VALIDATION_ERROR_MESSAGE,locale))
+                .withValidationErrorMessage(i18n.getMessage(OTP_FORM_VALIDATION_ERROR_MESSAGE, locale))
                 .withValue(OTP_FORM_VALUE)
                 .build();
 
         PaymentFormDisplayFieldLink resendOtpLink = PaymentFormDisplayFieldLink
                 .PaymentFormDisplayFieldLinkBuilder
                 .aPaymentFormDisplayFieldLink()
-                .withUrl(paymentService.getResendOtpLinkUrl(
+                .withUrl(getResendOtpLinkUrl(
                         env,
                         sendOtpRequest.getCreditorId(),
-                        paymentService.getDocapostLocalParam().getMandateRum(),
-                        paymentService.getDocapostLocalParam().getTransactionId()
+                        docapostLocalParam.getMandateRum(),
+                        docapostLocalParam.getTransactionId()
                 ))
-                .withName(i18n.getMessage( OTP_FORM_TEXT_RESEND_OTP, locale ))
-                .withTitle(i18n.getMessage(OTP_FORM_TEXT_RESEND_OTP,locale))
+                .withName(i18n.getMessage(OTP_FORM_TEXT_RESEND_OTP, locale))
+                .withTitle(i18n.getMessage(OTP_FORM_TEXT_RESEND_OTP, locale))
                 .build();
 
         PaymentFormInputFieldCheckbox acceptCondition = PaymentFormInputFieldCheckbox
@@ -172,7 +180,7 @@ public class DocapostFormUtils {
                 .aPaymentFormFieldCheckbox()
                 .withRequired(true)
                 .withLabel(i18n.getMessage(OTP_FORM_CHECKBOX_ACCEPT_CONDITION, locale))
-                .withRequiredErrorMessage(i18n.getMessage(ACCEPT_CONDITION_REQUIRED_ERROR_MESSAGE,locale))
+                .withRequiredErrorMessage(i18n.getMessage(ACCEPT_CONDITION_REQUIRED_ERROR_MESSAGE, locale))
                 .withKey(ACCEPT_CONDITION_KEY)
                 .withPrechecked(ACCEPT_CONDITION_PRECHECKED)
                 .withSecured(ACCEPT_CONDITION_SECURED)
@@ -183,7 +191,7 @@ public class DocapostFormUtils {
                 .aPaymentFormFieldCheckbox()
                 .withRequired(SAVE_MANDATE_REQUIRED)
                 .withLabel(i18n.getMessage(OTP_FORM_CHECKBOX_SAVE_MANDATE, locale))
-                .withRequiredErrorMessage(i18n.getMessage(SAVE_MANDATE_REQUIRED_ERROR_MESSAGE,locale))
+                .withRequiredErrorMessage(i18n.getMessage(SAVE_MANDATE_REQUIRED_ERROR_MESSAGE, locale))
                 .withKey(SAVE_MANDATE_KEY)
                 .withPrechecked(SAVE_MANDATE_PRECHECKED)
                 .withSecured(SAVE_MANDATE_SECURED)
@@ -208,10 +216,82 @@ public class DocapostFormUtils {
                 .build();
 
 
-
     }
 
 
+    /**
+     * Generate the URL to download the mandate document
+     *
+     * @param env        ConfigEnvironment
+     * @param creditorId creditor id
+     * @param mandateRum RUM
+     * @return URI Syntax Exception
+     */
+    private static URL getDownloadMandateLinkUrl(ConfigEnvironment env, String creditorId, String mandateRum) {
+
+        URL url = null;
+
+        try {
+
+            String strUrl = ConfigProperties.get(CONFIG_SCHEME, env)
+                    + "://"
+                    + ConfigProperties.get(CONFIG_HOST, env)
+                    + URL_DELIMITER
+                    + ConfigProperties.get(CONFIG_PATH_WSMANDATE_MANDATE_PDFTPL)
+                    + URL_DELIMITER
+                    + creditorId
+                    + URL_DELIMITER
+                    + mandateRum;
+
+            LOGGER.debug("Mandate download URL : " + strUrl);
+
+            url = new URL(strUrl);
+
+        } catch (MalformedURLException e) {
+            LOGGER.error(UNEXPECTED_ERROR_MESSAGE, e);
+        }
+
+        return url;
+
+    }
+
+    /**
+     * Generate the URL to download the mandate document
+     *
+     * @return url
+     */
+    private static URL getResendOtpLinkUrl(ConfigEnvironment env, String creditorId, String mandateRum, String
+            transactionId) {
+
+        URL url = null;
+
+        try {
+
+            String query = "creditorId=" + creditorId
+                    + "&mandateRum=" + mandateRum
+                    //FixMe : il ne manque pas un "=" après transactionId ?
+                    + "&transactionId" + transactionId;
+
+            String strUrl = ConfigProperties.get(CONFIG_SCHEME, env)
+                    + "://"
+                    + ConfigProperties.get(CONFIG_HOST, env)
+                    + URL_DELIMITER
+                    + ConfigProperties.get(CONFIG_PATH_WSSIGNATURE_SEND_OTP)
+                    + "?"
+                    + URLEncoder.encode(query, StandardCharsets.UTF_8.name());
+
+            LOGGER.debug("Mandate download URL : " + strUrl);
+
+            url = new URL(strUrl);
+
+        } catch (UnsupportedEncodingException | MalformedURLException e) {
+            LOGGER.error(UNEXPECTED_ERROR_MESSAGE, e);
+
+        }
+
+        return url;
+
+    }
 
 
 }

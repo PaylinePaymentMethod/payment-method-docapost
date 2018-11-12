@@ -1,5 +1,6 @@
 package com.payline.payment.docapost.bean.rest.response.mandate;
 
+import com.google.gson.Gson;
 import com.payline.payment.docapost.bean.rest.common.DocapostBean;
 import com.payline.payment.docapost.bean.rest.response.error.XmlErrorResponse;
 import org.apache.logging.log4j.LogManager;
@@ -39,6 +40,14 @@ public abstract class AbstractXmlResponse extends DocapostBean {
 
     public boolean isResultOk() {
         return !(this instanceof XmlErrorResponse);
+    }
+
+
+    @Override
+    public String toString() {
+
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 
 }

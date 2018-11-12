@@ -9,14 +9,11 @@ import com.payline.pmapi.bean.paymentform.response.configuration.PaymentFormConf
 import com.payline.pmapi.bean.paymentform.response.logo.PaymentFormLogoResponse;
 import com.payline.pmapi.bean.paymentform.response.logo.impl.PaymentFormLogoResponseFile;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.io.IOException;
 import java.util.Locale;
 
 import static org.mockito.Mockito.mock;
@@ -24,7 +21,6 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PaymentFormConfigurationServiceImplTest {
-
 
 
     @InjectMocks
@@ -53,15 +49,15 @@ public class PaymentFormConfigurationServiceImplTest {
         Assert.assertTrue(paymentFormLogoResponse instanceof PaymentFormLogoResponseFile);
 
         PaymentFormLogoResponseFile casted = (PaymentFormLogoResponseFile) paymentFormLogoResponse;
-        Assert.assertEquals(200,casted.getHeight());
+        Assert.assertEquals(200, casted.getHeight());
         Assert.assertEquals(200, casted.getWidth());
     }
 
     @Test
     public void testGetLogo() {
         // when: getLogo is called
-        String paymentMethodIdentifier= "Docapost";
-        PaymentFormLogo paymentFormLogo = service.getLogo(paymentMethodIdentifier,Locale.FRANCE);
+        String paymentMethodIdentifier = "Docapost";
+        PaymentFormLogo paymentFormLogo = service.getLogo(paymentMethodIdentifier, Locale.FRANCE);
 
 
         // then: returned elements are not null

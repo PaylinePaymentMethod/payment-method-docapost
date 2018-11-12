@@ -22,15 +22,5 @@ public class JsonErrorResponse extends DocapostBean {
         return reason;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder result = new StringBuilder();
-
-        result.append("\n");
-        result.append("message : " + message + "\n");
-        result.append("reason : " + reason + "\n");
-
-        return result.toString();
-    }
 
 }

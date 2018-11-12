@@ -9,6 +9,7 @@ import com.payline.payment.docapost.bean.rest.response.mandate.WSCTOrderDTORespo
 import com.payline.payment.docapost.exception.InvalidRequestException;
 import com.payline.payment.docapost.service.AbstractRefundHttpService;
 import com.payline.payment.docapost.utils.DocapostUtils;
+import com.payline.payment.docapost.utils.PluginUtils;
 import com.payline.payment.docapost.utils.config.ConfigEnvironment;
 import com.payline.payment.docapost.utils.config.ConfigProperties;
 import com.payline.payment.docapost.utils.http.StringResponse;
@@ -49,7 +50,7 @@ public class RefundServiceImpl extends AbstractRefundHttpService<RefundRequest> 
         // Initialisation de la requete Docapost
         SctOrderCreateRequest sctOrderCreateRequest = RequestBuilderFactory.buildSctOrderCreateRequest(refundRequest);
 
-        ConfigEnvironment env = Boolean.FALSE.equals(refundRequest.getEnvironment().isSandbox()) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
+        ConfigEnvironment env = PluginUtils.getEnvironnement(refundRequest);
         String scheme = ConfigProperties.get(CONFIG_SCHEME, env);
         String host = ConfigProperties.get(CONFIG_HOST, env);
         String path = ConfigProperties.get(CONFIG_PATH_WSMANDATE_SCTORDER_CREATE);

@@ -2,6 +2,7 @@ package com.payline.payment.docapost.service;
 
 import com.payline.payment.docapost.exception.InvalidRequestException;
 import com.payline.payment.docapost.service.impl.RefundServiceImpl;
+import com.payline.payment.docapost.utils.http.DocapostHttpClient;
 import com.payline.payment.docapost.utils.http.StringResponse;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 import com.payline.pmapi.bean.refund.response.RefundResponse;
@@ -10,31 +11,32 @@ import com.payline.pmapi.bean.refund.response.impl.RefundResponseSuccess;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 
 import static com.payline.payment.docapost.TestUtils.createRefundRequest;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
 
 public class RefundServiceImplTest {
 
     @Mock
-    private RefundServiceImpl service;
-
-    @Mock
     private RefundRequest refundRequest;
 
+    @Spy
+    private DocapostHttpClient httpClient;
+
     private RefundRequest refundRequestNull;
+
+    @InjectMocks
+    private RefundServiceImpl service;
 
 
     @Before
     public void setup() {
-        this.service = new RefundServiceImpl();
-//        this.service = Mockito.mock(RefundServiceImpl.class);
+        service = new RefundServiceImpl();
+        MockitoAnnotations.initMocks(this);
+
     }
 
 
@@ -46,7 +48,7 @@ public class RefundServiceImplTest {
 
 
     @Test
-    public void refundRequestTest() {
+    public void refundRequestTest() throws IOException, URISyntaxException {
 
         RefundResponseSuccess responseMocked = RefundResponseSuccess
                 .RefundResponseSuccessBuilder
@@ -54,14 +56,16 @@ public class RefundServiceImplTest {
                 .withStatusCode("CREATED")
                 .withPartnerTransactionId("1108102438")
                 .build();
-            //TODO mock http call or call to processResponse
-    //    doReturn(responseMocked).when(service).processResponse(any(StringResponse.class));
-        doReturn(responseMocked).when(service).processResponse(any(StringResponse.class));
+        StringResponse stringResponse = new StringResponse();
+        stringResponse.setContent("<WSCTOrderDTO>test</WSCTOrderDTO>");
+        stringResponse.setCode(200);
 
+        Mockito.doReturn(stringResponse).when(httpClient).doPost(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
+                Mockito.anyString(), Mockito.anyString());
 
         refundRequest = createRefundRequest();
         RefundResponse response = service.refundRequest(refundRequest);
-        Assert.assertTrue(response instanceof RefundResponseFailure);
+        Assert.assertTrue(response instanceof RefundResponseSuccess);
     }
 
     @Test

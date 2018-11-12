@@ -44,17 +44,6 @@ public class InitiateSignatureRequest extends WSSignatureRequest implements WSSi
 
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder result = new StringBuilder();
-
-        result.append("***** InitiateSignatureRequest info\n");
-
-        result.append("creditorId : " + creditorId + "\n");
-        result.append("mandateRum : " + mandateRum + "\n");
-
-        return result.toString();
-    }
 
     //******************************************************************************************************************
     //***** BUILDER
