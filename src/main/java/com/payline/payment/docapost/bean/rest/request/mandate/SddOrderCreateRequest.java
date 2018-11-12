@@ -2,11 +2,9 @@ package com.payline.payment.docapost.bean.rest.request.mandate;
 
 import com.payline.payment.docapost.exception.InvalidRequestException;
 import com.payline.payment.docapost.utils.PluginUtils;
-import com.payline.pmapi.bean.payment.ContractProperty;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 
 import javax.xml.bind.annotation.*;
-import java.util.Map;
 
 import static com.payline.payment.docapost.utils.DocapostConstants.*;
 
@@ -26,6 +24,36 @@ import static com.payline.payment.docapost.utils.DocapostConstants.*;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SddOrderCreateRequest extends AbstractXmlRequest {
 
+    private static final String ERR_REQUEST = "Request must not be null";
+    private static final String ERR_CONTRACT = "Contract configuration properties object must not be null";
+    private static final String ERR_CREDITOR_ID = "Missing contract configuration property: creditor id";
+    private static final String ERR_CONTEXT = "Request context object must not be null";
+    private static final String ERR_RUM = "Missing context data: mandate rum";
+    private static final String ERR_SENSITIVE = "Partner configuration sensitive properties object must not be null";
+    private static final String ERR_AUTH_LOGIN = "Missing partner configuration property: auth login";
+    private static final String ERR_AUTH_PASS = "Missing partner configuration property: auth pass";
+    private static final String ERR_TRANSACTION_ID = "Missing mandatory property: transaction id";
+    private static final String ERR_SOFT_DESCRIPTOR = "Missing mandatory property: soft descriptor";
+    private static final String ERR_ORDER = "Order object must not be null";
+    private static final String ERR_AMOUNT = "Missing order property: amount";
+
+    private static final String[][] fields = {
+            {"contractConfiguration", ERR_CONTRACT},
+            {"contractConfiguration.contractProperties", ERR_CONTRACT},
+            {"contractConfiguration.contractProperties#" + CONTRACT_CONFIG_CREDITOR_ID, ERR_CREDITOR_ID},
+            {"requestContext", ERR_CONTEXT},
+            {"requestContext.requestData", ERR_CONTEXT},
+            {"requestContext.requestData#" + CONTEXT_DATA_MANDATE_RUM, ERR_RUM},
+            {"partnerConfiguration", ERR_SENSITIVE},
+            {"partnerConfiguration.sensitivePartnerConfigurationMap", ERR_SENSITIVE},
+            {"partnerConfiguration.sensitivePartnerConfigurationMap#" + PARTNER_CONFIG_AUTH_LOGIN, ERR_AUTH_LOGIN},
+            {"partnerConfiguration.sensitivePartnerConfigurationMap#" + PARTNER_CONFIG_AUTH_PASS, ERR_AUTH_PASS},
+            {"transactionId", ERR_TRANSACTION_ID},
+            {"softDescriptor", ERR_SOFT_DESCRIPTOR},
+            {"order", ERR_ORDER},
+            {"order.amount", ERR_AMOUNT}
+    };
+
     @XmlElement(name = "creditorId")
     private String creditorId;
 
@@ -40,12 +68,6 @@ public class SddOrderCreateRequest extends AbstractXmlRequest {
 
     @XmlElement(name = "e2eId")
     private String e2eId;
-
-    /**
-     * Public default constructor
-     */
-    public SddOrderCreateRequest() {
-    }
 
     /**
      * Constructor
@@ -84,21 +106,6 @@ public class SddOrderCreateRequest extends AbstractXmlRequest {
         return e2eId;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder result = new StringBuilder();
-
-        result.append("***** SddOrderCreateRequest info\n");
-
-        result.append("creditorId : " + creditorId + "\n");
-        result.append("rum : " + rum + "\n");
-        result.append("amount : " + amount + "\n");
-        result.append("label : " + label + "\n");
-        result.append("e2eId : " + e2eId + "\n");
-
-        return result.toString();
-    }
-
     //******************************************************************************************************************
     //***** BUILDER
     public static final class Builder {
@@ -108,7 +115,7 @@ public class SddOrderCreateRequest extends AbstractXmlRequest {
             // Check the input request for NPEs and mandatory fields
             this.checkInputRequest(paylineRequest);
 
-            SddOrderCreateRequest request = new SddOrderCreateRequest(
+            return  new SddOrderCreateRequest(
                     paylineRequest.getContractConfiguration().getContractProperties().get(CONTRACT_CONFIG_CREDITOR_ID).getValue(),
                     paylineRequest.getRequestContext().getRequestData().get(CONTEXT_DATA_MANDATE_RUM),
                     paylineRequest.getOrder().getAmount().getAmountInSmallestUnit().floatValue(),
@@ -116,60 +123,55 @@ public class SddOrderCreateRequest extends AbstractXmlRequest {
                     paylineRequest.getTransactionId()
             );
 
-            return request;
 
         }
 
         private void checkInputRequest(PaymentRequest paylineRequest) throws InvalidRequestException {
-            if (paylineRequest == null) {
-                throw new InvalidRequestException("Request must not be null");
-            }
 
-            if (paylineRequest.getContractConfiguration() == null
-                    || paylineRequest.getContractConfiguration().getContractProperties() == null) {
-                throw new InvalidRequestException("Contract configuration properties object must not be null");
-            }
-            Map<String, ContractProperty> contractProperties = paylineRequest.getContractConfiguration().getContractProperties();
-            if (contractProperties.get(CONTRACT_CONFIG_CREDITOR_ID) == null) {
-                throw new InvalidRequestException("Missing contract configuration property: creditor id");
-            }
+            PluginUtils.validate(paylineRequest, ERR_REQUEST, fields);
 
-            if (paylineRequest.getRequestContext() == null
-                    || paylineRequest.getRequestContext().getRequestData() == null) {
-                throw new InvalidRequestException("Request context object must not be null");
-            }
-            Map<String, String> requestContext = paylineRequest.getRequestContext().getRequestData();
-            if (requestContext.get(CONTEXT_DATA_MANDATE_RUM) == null) {
-                throw new InvalidRequestException("Missing context data: mandate rum");
-            }
+            /*
+            PluginUtils.requireNonNull(paylineRequest, ERR_REQUEST);
 
-            if (paylineRequest.getPartnerConfiguration() == null
-                    || paylineRequest.getPartnerConfiguration().getSensitiveProperties() == null) {
-                throw new InvalidRequestException("Partner configuration sensitive properties object must not be null");
+            Class clz = paylineRequest.getClass();
+            Object obj = paylineRequest;
+            Object parent = paylineRequest;
+            Map<String, Object> checkedObject = new HashMap<>();
+            String fieldName;
+            String key;
+            try {
+                for (String[] name : fields) {
+                    if (name[0].contains(".")) {
+                        String[] objNames = name[0].split("\\.");
+                        fieldName = objNames[objNames.length - 1];
+                        if (fieldName.contains("#")) {
+                            String[] mapKey = objNames[objNames.length - 1].split("#");
+                            parent = checkedObject.get(mapKey[0]);
+                            key = mapKey[1];
+                            PluginUtils.requireNonNull((Map) parent, key, name[1]);
+                            continue;
+                        } else {
+                            parent = checkedObject.get(objNames[objNames.length - 2]);
+                        }
+                    } else {
+                        fieldName = name[0];
+                        parent = paylineRequest;
+                    }
+                    clz = parent.getClass();
+                    Field f = clz.getDeclaredField(fieldName);
+                    if (!Modifier.isPublic(f.getModifiers())) {
+                        f.setAccessible(true);
+                    }
+                    obj = f.get(parent);
+                    PluginUtils.requireNonNull(obj, name[1]);
+                    checkedObject.put(fieldName, obj);
+                }
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
             }
-            Map<String, String> sensitiveProperties = paylineRequest.getPartnerConfiguration().getSensitiveProperties();
-            if (sensitiveProperties.get(PARTNER_CONFIG_AUTH_LOGIN) == null) {
-                throw new InvalidRequestException("Missing partner configuration property: auth login");
-            }
-            if (sensitiveProperties.get(PARTNER_CONFIG_AUTH_PASS) == null) {
-                throw new InvalidRequestException("Missing partner configuration property: auth pass");
-            }
-
-            if (PluginUtils.isEmpty(paylineRequest.getTransactionId())) {
-                throw new InvalidRequestException("Missing mandatory property: transaction id");
-            }
-
-            if (PluginUtils.isEmpty(paylineRequest.getSoftDescriptor())) {
-                throw new InvalidRequestException("Missing mandatory property: soft descriptor");
-            }
-
-            if (paylineRequest.getOrder() == null) {
-                throw new InvalidRequestException("Order object must not be null");
-            }
-            if (paylineRequest.getOrder().getAmount() == null) {
-                throw new InvalidRequestException("Missing order property: amount");
-            }
-
+            */
         }
 
     }

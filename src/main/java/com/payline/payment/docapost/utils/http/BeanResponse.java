@@ -1,6 +1,8 @@
 package com.payline.payment.docapost.utils.http;
 
-public abstract class BeanResponse {
+import com.payline.payment.docapost.bean.rest.common.DocapostBean;
+
+public abstract class BeanResponse extends DocapostBean {
 
     private int code;
     private String message;

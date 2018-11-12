@@ -44,17 +44,6 @@ public class InitiateSignatureRequest extends WSSignatureRequest implements WSSi
 
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder result = new StringBuilder();
-
-        result.append("***** InitiateSignatureRequest info\n");
-
-        result.append("creditorId : " + creditorId + "\n");
-        result.append("mandateRum : " + mandateRum + "\n");
-
-        return result.toString();
-    }
 
     //******************************************************************************************************************
     //***** BUILDER
@@ -65,12 +54,10 @@ public class InitiateSignatureRequest extends WSSignatureRequest implements WSSi
             // Check the input request for NPEs and mandatory fields
             this.checkInputRequest(paylineRequest, docapostLocalParam);
 
-            InitiateSignatureRequest request = new InitiateSignatureRequest(
+            return new InitiateSignatureRequest(
                     paylineRequest.getContractConfiguration().getContractProperties().get(CONTRACT_CONFIG_CREDITOR_ID).getValue(),
                     docapostLocalParam.getMandateRum()
             );
-
-            return request;
 
         }
 

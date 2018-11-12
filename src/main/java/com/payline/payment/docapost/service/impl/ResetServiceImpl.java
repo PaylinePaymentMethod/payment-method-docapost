@@ -9,6 +9,7 @@ import com.payline.payment.docapost.bean.rest.response.mandate.WSDDOrderDTORespo
 import com.payline.payment.docapost.exception.InvalidRequestException;
 import com.payline.payment.docapost.service.AbstractResetHttpService;
 import com.payline.payment.docapost.utils.DocapostUtils;
+import com.payline.payment.docapost.utils.PluginUtils;
 import com.payline.payment.docapost.utils.config.ConfigEnvironment;
 import com.payline.payment.docapost.utils.config.ConfigProperties;
 import com.payline.payment.docapost.utils.http.StringResponse;
@@ -26,12 +27,12 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import static com.payline.payment.docapost.utils.DocapostConstants.*;
+import static com.payline.payment.docapost.utils.PluginUtils.URL_DELIMITER;
 
 public class ResetServiceImpl extends AbstractResetHttpService<ResetRequest> implements ResetService {
 
     private static final Logger LOGGER = LogManager.getLogger(ResetServiceImpl.class);
 
-    public static final String URL_DELIMITER = "/";
 
     /**
      * Constructeur
@@ -51,7 +52,7 @@ public class ResetServiceImpl extends AbstractResetHttpService<ResetRequest> imp
         // Initialisation de la requete Docapost
         SddOrderCancelRequest sddOrderCancelRequest = RequestBuilderFactory.buildSddOrderCancelRequest(resetRequest);
 
-        ConfigEnvironment env = Boolean.FALSE.equals(resetRequest.getEnvironment().isSandbox()) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
+        ConfigEnvironment env = PluginUtils.getEnvironnement(resetRequest);
         String scheme = ConfigProperties.get(CONFIG_SCHEME, env);
         String host = ConfigProperties.get(CONFIG_HOST, env);
         String path = ConfigProperties.get(CONFIG_PATH_WSMANDATE_ORDER_CANCEL)
@@ -106,8 +107,6 @@ public class ResetServiceImpl extends AbstractResetHttpService<ResetRequest> imp
                     .aResetResponseFailure()
                     .withErrorCode(wsRequestResult.getDocapostErrorCode())
                     .withFailureCause(wsRequestResult.getPaylineFailureCause())
-                    // FIXME : Add fields ?
-                    //.withTransactionId()
                     .build();
 
 
@@ -120,8 +119,6 @@ public class ResetServiceImpl extends AbstractResetHttpService<ResetRequest> imp
                 .aResetResponseFailure()
                 .withErrorCode("XML RESPONSE PARSING FAILED")
                 .withFailureCause(FailureCause.INVALID_DATA)
-                // FIXME : Add fields ?
-                //.withTransactionId()
                 .build();
 
 

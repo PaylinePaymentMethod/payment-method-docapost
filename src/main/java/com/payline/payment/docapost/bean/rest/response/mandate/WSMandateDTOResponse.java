@@ -131,31 +131,10 @@ public class WSMandateDTOResponse extends AbstractXmlResponse {
         this.language = language;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder result = new StringBuilder();
-
-        result.append("***** WSMandateDTOResponse info\n");
-
-        result.append("creditorId : " + creditorId + "\n");
-        result.append("creditorIcs : " + creditorIcs + "\n");
-        result.append("rum : " + rum + "\n");
-        result.append("recurrent : " + recurrent + "\n");
-        result.append("status : " + status + "\n");
-        result.append("mode : " + mode + "\n");
-        result.append("flowName : " + flowName + "\n");
-        result.append("contextIdentifier : " + contextIdentifier + "\n");
-        result.append("language : " + language + "\n");
-
-        result.append(debtor.toString() + "\n");
-
-        return result.toString();
-    }
-
     //******************************************************************************************************************
     //***** BUILDER
     public static final class Builder {
-        public WSMandateDTOResponse fromXml(String xmlContent) {
+        public static WSMandateDTOResponse fromXml(String xmlContent) {
             return (WSMandateDTOResponse) parse(WSMandateDTOResponse.class, xmlContent);
         }
     }

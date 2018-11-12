@@ -63,21 +63,6 @@ public class SetCodeRequest extends WSSignatureRequest implements WSSignature {
 
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder result = new StringBuilder();
-
-        result.append("***** TerminateSignatureRequest info\n");
-
-        result.append("creditorId : " + creditorId + "\n");
-        result.append("mandateRum : " + mandateRum + "\n");
-        result.append("transactionId : " + transactionId + "\n");
-        result.append("signatureId : " + signatureId + "\n");
-        result.append("otp : " + otp + "\n");
-
-        return result.toString();
-    }
-
     //******************************************************************************************************************
     //***** BUILDER
     public static final class Builder {
@@ -88,15 +73,13 @@ public class SetCodeRequest extends WSSignatureRequest implements WSSignature {
             this.checkInputRequest(paylineRequest);
             Map<String, String> requestData = paylineRequest.getRequestContext().getRequestData();
 
-            SetCodeRequest request = new SetCodeRequest(
+            return new SetCodeRequest(
                     paylineRequest.getContractConfiguration().getContractProperties().get(CONTRACT_CONFIG_CREDITOR_ID).getValue(),
                     requestData.get(CONTEXT_DATA_MANDATE_RUM),
                     requestData.get(CONTEXT_DATA_TRANSACTION_ID),
                     requestData.get(CONTEXT_DATA_SIGNATURE_ID),
                     paylineRequest.getPaymentFormContext().getPaymentFormParameter().get(FORM_FIELD_OTP)
             );
-
-            return request;
 
         }
 

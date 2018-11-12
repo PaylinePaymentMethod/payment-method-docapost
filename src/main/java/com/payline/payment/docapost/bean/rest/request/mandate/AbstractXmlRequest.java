@@ -2,7 +2,6 @@ package com.payline.payment.docapost.bean.rest.request.mandate;
 
 import com.payline.payment.docapost.bean.rest.common.DocapostBean;
 import com.payline.payment.docapost.bean.rest.request.Request;
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,7 +38,7 @@ public abstract class AbstractXmlRequest extends DocapostBean implements Request
             LOGGER.error("XML parsing exception", e);
         }
 
-        return StringUtils.EMPTY;
+        return "";
 
     }
 

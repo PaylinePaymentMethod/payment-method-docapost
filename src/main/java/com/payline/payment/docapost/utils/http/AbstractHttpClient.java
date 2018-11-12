@@ -74,9 +74,7 @@ public abstract class AbstractHttpClient {
                 .setPath(path)
                 .build();
 
-        Header[] headers = new Header[2];
-        headers[0] = new BasicHeader(AUTHORIZATION, credential);
-        headers[1] = new BasicHeader(CONTENT_TYPE, contentType);
+        Header[] headers = new Header[]{new BasicHeader(AUTHORIZATION, credential), new BasicHeader(CONTENT_TYPE, contentType)};
 
         final HttpPost httpPostRequest = new HttpPost(uri);
         httpPostRequest.setHeaders(headers);
@@ -119,9 +117,7 @@ public abstract class AbstractHttpClient {
                 .setPath(path)
                 .build();
 
-        Header[] headers = new Header[2];
-        headers[0] = new BasicHeader(AUTHORIZATION, credential);
-        headers[1] = new BasicHeader(CONTENT_TYPE, contentType);
+        Header[] headers = new Header[]{new BasicHeader(AUTHORIZATION, credential), new BasicHeader(CONTENT_TYPE, contentType)};
 
         final HttpGet httpGetRequest = new HttpGet(uri);
         httpGetRequest.setHeaders(headers);

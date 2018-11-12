@@ -1,6 +1,7 @@
 package com.payline.payment.docapost.bean.rest.response.signature;
 
 import com.google.gson.annotations.SerializedName;
+import com.payline.payment.docapost.bean.rest.common.DocapostBean;
 import com.payline.payment.docapost.bean.rest.response.error.JsonErrorResponse;
 
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
 /**
  * Created by Thales on 07/09/2018.
  */
-public abstract class AbstractWSSignatureResponse {
+public abstract class AbstractWSSignatureResponse extends DocapostBean {
 
     @SerializedName("errors")
     protected List<JsonErrorResponse> errors;
@@ -27,17 +28,5 @@ public abstract class AbstractWSSignatureResponse {
         return !(this.errors != null && !this.errors.isEmpty());
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder result = new StringBuilder();
-
-        result.append("errors : \n");
-
-        for (int index = 0; index < errors.size(); index++) {
-            result.append(errors.toString() + "\n");
-        }
-
-        return result.toString();
-    }
 
 }

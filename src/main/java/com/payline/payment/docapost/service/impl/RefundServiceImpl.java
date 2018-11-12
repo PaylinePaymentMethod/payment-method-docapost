@@ -9,6 +9,7 @@ import com.payline.payment.docapost.bean.rest.response.mandate.WSCTOrderDTORespo
 import com.payline.payment.docapost.exception.InvalidRequestException;
 import com.payline.payment.docapost.service.AbstractRefundHttpService;
 import com.payline.payment.docapost.utils.DocapostUtils;
+import com.payline.payment.docapost.utils.PluginUtils;
 import com.payline.payment.docapost.utils.config.ConfigEnvironment;
 import com.payline.payment.docapost.utils.config.ConfigProperties;
 import com.payline.payment.docapost.utils.http.StringResponse;
@@ -49,7 +50,7 @@ public class RefundServiceImpl extends AbstractRefundHttpService<RefundRequest> 
         // Initialisation de la requete Docapost
         SctOrderCreateRequest sctOrderCreateRequest = RequestBuilderFactory.buildSctOrderCreateRequest(refundRequest);
 
-        ConfigEnvironment env = Boolean.FALSE.equals(refundRequest.getEnvironment().isSandbox()) ? ConfigEnvironment.PROD : ConfigEnvironment.DEV;
+        ConfigEnvironment env = PluginUtils.getEnvironnement(refundRequest);
         String scheme = ConfigProperties.get(CONFIG_SCHEME, env);
         String host = ConfigProperties.get(CONFIG_HOST, env);
         String path = ConfigProperties.get(CONFIG_PATH_WSMANDATE_SCTORDER_CREATE);
@@ -80,14 +81,14 @@ public class RefundServiceImpl extends AbstractRefundHttpService<RefundRequest> 
 
             if (sctOrderCreateXmlResponse.isResultOk()) {
 
-                WSCTOrderDTOResponse sctorderCreateResponse = (WSCTOrderDTOResponse) sctOrderCreateXmlResponse;
+                WSCTOrderDTOResponse sctOrderCreateResponse = (WSCTOrderDTOResponse) sctOrderCreateXmlResponse;
 
                 LOGGER.info("sctOrderCreateXmlResponse ok");
                 return RefundResponseSuccess
                         .RefundResponseSuccessBuilder
                         .aRefundResponseSuccess()
-                        .withStatusCode(sctorderCreateResponse.getStatus())
-                        .withPartnerTransactionId(sctorderCreateResponse.getE2eId())
+                        .withStatusCode(sctOrderCreateResponse.getStatus())
+                        .withPartnerTransactionId(sctOrderCreateResponse.getE2eId())
                         .build();
 
             }
@@ -103,10 +104,8 @@ public class RefundServiceImpl extends AbstractRefundHttpService<RefundRequest> 
                     .aRefundResponseFailure()
                     .withErrorCode(wsRequestResult.getDocapostErrorCode())
                     .withFailureCause(wsRequestResult.getPaylineFailureCause())
-                    // FIXME : Add fields ?
-                    //.withTransactionId()
+//                    .withPartnerTransactionId()
                     .build();
-
 
         }
 
@@ -117,8 +116,6 @@ public class RefundServiceImpl extends AbstractRefundHttpService<RefundRequest> 
                 .aRefundResponseFailure()
                 .withErrorCode("XML RESPONSE PARSING FAILED")
                 .withFailureCause(FailureCause.INVALID_DATA)
-                // FIXME : Add fields ?
-                //.withTransactionId()
                 .build();
 
 

@@ -49,19 +49,6 @@ public class SendOtpRequest extends WSSignatureRequest implements WSSignature {
 
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder result = new StringBuilder();
-
-        result.append("***** TerminateSignatureRequest info\n");
-
-        result.append("creditorId : " + creditorId + "\n");
-        result.append("mandateRum : " + mandateRum + "\n");
-        result.append("transactionId : " + transactionId + "\n");
-
-        return result.toString();
-    }
-
     //******************************************************************************************************************
     //***** BUILDER
     public static final class Builder {
@@ -71,13 +58,11 @@ public class SendOtpRequest extends WSSignatureRequest implements WSSignature {
             // Check the input request for NPEs and mandatory fields
             this.checkInputRequest(paylineRequest, docapostLocalParam);
 
-            SendOtpRequest request = new SendOtpRequest(
+            return new SendOtpRequest(
                     paylineRequest.getContractConfiguration().getContractProperties().get(CONTRACT_CONFIG_CREDITOR_ID).getValue(),
                     docapostLocalParam.getMandateRum(),
                     docapostLocalParam.getTransactionId()
             );
-
-            return request;
 
         }
 

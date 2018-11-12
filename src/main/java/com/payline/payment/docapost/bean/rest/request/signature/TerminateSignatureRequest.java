@@ -56,19 +56,6 @@ public class TerminateSignatureRequest extends WSSignatureRequest implements WSS
 
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder result = new StringBuilder();
-
-        result.append("***** TerminateSignatureRequest info\n");
-
-        result.append("creditorId : " + creditorId + "\n");
-        result.append("mandateRum : " + mandateRum + "\n");
-        result.append("transactionId : " + transactionId + "\n");
-        result.append("success : " + success + "\n");
-
-        return result.toString();
-    }
 
     //******************************************************************************************************************
     //***** BUILDER
@@ -79,14 +66,12 @@ public class TerminateSignatureRequest extends WSSignatureRequest implements WSS
             // Check the input request for NPEs and mandatory fields
             this.checkInputRequest(paylineRequest, docapostLocalParam);
 
-            TerminateSignatureRequest request = new TerminateSignatureRequest(
+            return new TerminateSignatureRequest(
                     paylineRequest.getContractConfiguration().getContractProperties().get(CONTRACT_CONFIG_CREDITOR_ID).getValue(),
                     paylineRequest.getRequestContext().getRequestData().get(CONTEXT_DATA_MANDATE_RUM),
                     paylineRequest.getRequestContext().getRequestData().get(CONTEXT_DATA_TRANSACTION_ID),
                     docapostLocalParam.getSignatureSuccess()
             );
-
-            return request;
 
         }
 

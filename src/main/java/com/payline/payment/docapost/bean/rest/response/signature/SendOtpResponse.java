@@ -22,27 +22,13 @@ public class SendOtpResponse extends AbstractWSSignatureResponse {
         return signatureId;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder result = new StringBuilder();
-
-        result.append("***** SendOtpResponse info\n");
-
-        result.append("signatureId : " + signatureId + "\n");
-
-        if (errors != null && !errors.isEmpty()) {
-            result.append(errors.toString() + "\n");
-        }
-
-        return result.toString();
-    }
 
     //******************************************************************************************************************
     //***** BUILDER
     public static final class Builder {
-        public SendOtpResponse fromJson( String jsonContent ) {
+        public SendOtpResponse fromJson(String jsonContent) {
             Gson gson = new Gson();
-            return gson.fromJson( jsonContent, SendOtpResponse.class );
+            return gson.fromJson(jsonContent, SendOtpResponse.class);
         }
     }
     //***** BUILDER

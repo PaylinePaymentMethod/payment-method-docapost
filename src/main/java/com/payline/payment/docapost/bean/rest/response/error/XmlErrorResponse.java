@@ -32,16 +32,6 @@ public class XmlErrorResponse extends AbstractXmlResponse {
         this.exception = exception;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder result = new StringBuilder();
-
-        result.append("***** XmlErrorResponse info\n");
-
-        result.append(exception.toString() + "\n");
-
-        return result.toString();
-    }
 
     //******************************************************************************************************************
     //***** BUILDER

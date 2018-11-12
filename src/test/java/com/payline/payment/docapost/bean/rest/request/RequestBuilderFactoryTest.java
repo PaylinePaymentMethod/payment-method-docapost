@@ -1,6 +1,5 @@
-package com.payline.payment.docapost.mandate.request;
+package com.payline.payment.docapost.bean.rest.request;
 
-import com.payline.payment.docapost.bean.rest.request.RequestBuilderFactory;
 import com.payline.payment.docapost.bean.rest.request.mandate.*;
 import com.payline.payment.docapost.bean.rest.request.signature.InitiateSignatureRequest;
 import com.payline.payment.docapost.bean.rest.request.signature.SendOtpRequest;
