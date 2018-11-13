@@ -59,96 +59,48 @@ public class WSDDOrderDTOResponse extends AbstractXmlResponse {
         return label;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
     public String getReference() {
         return reference;
-    }
-
-    public void setReference(String reference) {
-        this.reference = reference;
     }
 
     public String getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(String dueDate) {
-        this.dueDate = dueDate;
-    }
-
     public String getE2eId() {
         return e2eId;
-    }
-
-    public void setE2eId(String e2eId) {
-        this.e2eId = e2eId;
     }
 
     public String getRemitDate() {
         return remitDate;
     }
 
-    public void setRemitDate(String remitDate) {
-        this.remitDate = remitDate;
-    }
-
     public String getSequence() {
         return sequence;
-    }
-
-    public void setSequence(String sequence) {
-        this.sequence = sequence;
     }
 
     public String getIdentifier() {
         return identifier;
     }
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
-
     public String getRum() {
         return rum;
-    }
-
-    public void setRum(String rum) {
-        this.rum = rum;
     }
 
     public String getCreditorId() {
         return creditorId;
     }
 
-    public void setCreditorId(String creditorId) {
-        this.creditorId = creditorId;
-    }
-
     public String getStatus() {
         return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public String getStatusDate() {
         return statusDate;
     }
 
-    public void setStatusDate(String statusDate) {
-        this.statusDate = statusDate;
-    }
-
     public Float getAmount() {
         return amount;
-    }
-
-    public void setAmount(Float amount) {
-        this.amount = amount;
     }
 
     //******************************************************************************************************************

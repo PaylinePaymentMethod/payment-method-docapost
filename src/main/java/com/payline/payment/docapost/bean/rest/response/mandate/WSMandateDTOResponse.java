@@ -55,80 +55,40 @@ public class WSMandateDTOResponse extends AbstractXmlResponse {
         return creditorId;
     }
 
-    public void setCreditorId(String creditorId) {
-        this.creditorId = creditorId;
-    }
-
     public String getCreditorIcs() {
         return creditorIcs;
-    }
-
-    public void setCreditorIcs(String creditorIcs) {
-        this.creditorIcs = creditorIcs;
     }
 
     public String getRum() {
         return rum;
     }
 
-    public void setRum(String rum) {
-        this.rum = rum;
-    }
-
     public Boolean getRecurrent() {
         return recurrent;
-    }
-
-    public void setRecurrent(Boolean recurrent) {
-        this.recurrent = recurrent;
     }
 
     public String getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public Debtor getDebtor() {
         return debtor;
-    }
-
-    public void setDebtor(Debtor debtor) {
-        this.debtor = debtor;
     }
 
     public String getMode() {
         return mode;
     }
 
-    public void setMode(String mode) {
-        this.mode = mode;
-    }
-
     public String getFlowName() {
         return flowName;
-    }
-
-    public void setFlowName(String flowName) {
-        this.flowName = flowName;
     }
 
     public String getContextIdentifier() {
         return contextIdentifier;
     }
 
-    public void setContextIdentifier(String contextIdentifier) {
-        this.contextIdentifier = contextIdentifier;
-    }
-
     public String getLanguage() {
         return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
     }
 
     //******************************************************************************************************************
