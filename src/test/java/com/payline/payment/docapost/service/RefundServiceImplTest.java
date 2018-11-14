@@ -71,7 +71,6 @@ public class RefundServiceImplTest {
 
     @Test
     public void createSendRequestTest() throws URISyntaxException, IOException, InvalidRequestException {
-        //TODO mock appels doPost
         refundRequest = createRefundRequest();
         StringResponse response = service.createSendRequest(refundRequest);
         String stringResponse = response.toString();
@@ -129,11 +128,11 @@ public class RefundServiceImplTest {
     }
 
     @Test
-    public void buildRefundResponseFailure(){
-         RefundResponseFailure response = service.buildRefundResponseFailure("thisIsAnError", FailureCause.INVALID_DATA);
-         Assert.assertNotNull(response);
-         Assert.assertNotNull(response.getErrorCode());
-         Assert.assertNotNull(response.getFailureCause());
+    public void buildRefundResponseFailure() {
+        RefundResponseFailure response = service.buildRefundResponseFailure("thisIsAnError", FailureCause.INVALID_DATA);
+        Assert.assertNotNull(response);
+        Assert.assertNotNull(response.getErrorCode());
+        Assert.assertNotNull(response.getFailureCause());
     }
 
 }

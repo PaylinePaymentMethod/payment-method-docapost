@@ -1,44 +1,27 @@
 package com.payline.payment.docapost.Integration;
 
-import com.google.gson.Gson;
 import com.payline.payment.docapost.TestUtils;
-import com.payline.payment.docapost.bean.PaymentResponseSuccessAdditionalData;
 import com.payline.payment.docapost.service.impl.PaymentServiceImpl;
 import com.payline.payment.docapost.service.impl.PaymentWithRedirectionServiceImpl;
-import com.payline.payment.docapost.utils.config.ConfigEnvironment;
-import com.payline.payment.docapost.utils.config.ConfigProperties;
 import com.payline.pmapi.bean.payment.ContractProperty;
 import com.payline.pmapi.bean.payment.PaymentFormContext;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
-import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFormUpdated;
-import com.payline.pmapi.bean.payment.response.impl.PaymentResponseSuccess;
-import com.payline.pmapi.bean.paymentform.response.configuration.PaymentFormConfigurationResponse;
 import com.payline.pmapi.integration.AbstractPaymentIntegration;
-import org.junit.Assert;
 import org.junit.Test;
-import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 import static com.payline.payment.docapost.TestUtils.*;
-import static com.payline.payment.docapost.utils.DocapostConstants.*;
+import static com.payline.payment.docapost.utils.DocapostConstants.CONTRACT_CONFIG_CREDITOR_ID;
 
 
 public class TestIt extends AbstractPaymentIntegration {
-
-
     private PaymentServiceImpl paymentService = new PaymentServiceImpl();
     private PaymentWithRedirectionServiceImpl paymentWithRedirectionService = new PaymentWithRedirectionServiceImpl();
-    public static final String GOOD_CREDITOR_ID = "MARCHAND1";
-    //Todo  find a better way to do it
-    public Map<String, String> requestContext;
-    private PaymentFormConfigurationResponse formConfigutationResponse;
-
-    private String transactionID = "";
-    private PaymentRequest request;
+    private static final String GOOD_CREDITOR_ID = "MARCHAND1";
 
     @Override
     protected Map<String, ContractProperty> generateParameterContract() {
@@ -49,109 +32,59 @@ public class TestIt extends AbstractPaymentIntegration {
 
     @Override
     protected PaymentFormContext generatePaymentFormContext() {
-        return createDefaultPaymentFormContext();
+        //Saisir numero de telephone sur lequel sera envoyé l'
+        //Open a prompt which allows user to enter his phone number
+        //Iban is set automatically
+        String telephone = setupNumber();
+        return createDefaultPaymentFormContext(telephone);
     }
 
 
     //todo find a better way to get a prompt
     public static void main(String[] args) {
-        PaymentServiceImpl paymentServiceMain = new PaymentServiceImpl();
-        //step 2 Create a mandate
-        PaymentRequest paymentRequestStep2 = createDefaultPaymentRequestStep2();
-        PaymentResponseFormUpdated paymentResponseStep2 = (PaymentResponseFormUpdated) paymentServiceMain.paymentRequest(paymentRequestStep2);
 
+        TestIt testIt = new TestIt();
+
+        //Saisie du numéro de téléphone
+        String phoneNumber = setupNumber();
+
+        //step 2 Create a mandate
+        //Saisir OTP
+        PaymentRequest paymentRequestStep2 = createDefaultPaymentRequestStep2(phoneNumber);
+        PaymentResponseFormUpdated paymentResponseStep2 = (PaymentResponseFormUpdated) testIt.paymentService.paymentRequest(paymentRequestStep2);
 
         Map<String, String> requestContextMain = paymentResponseStep2.getRequestContext().getRequestData();
-//        PaymentFormConfigurationResponse formConfigurationResponse = paymentResponseStep2.getPaymentFormConfigurationResponse();
+        // Create a Payment request from payment request step 2 result
 
         //TODO REQUEST WITH PAYMENT RESPONSE STEP2
-        //Saisir OTP
-        Scanner keyboardUser = new Scanner(System.in);
+        Scanner keyboardOTP = new Scanner(System.in);
+
+
         System.out.println("Enter your  OTP : ");
-        String otp = keyboardUser.nextLine();
-        keyboardUser.close();
-        // Initialize a fake transaction request to check the validity of the contract parameters
+        String otp = keyboardOTP.nextLine();
         System.out.print("You entered : ");
         System.out.println(otp);
-//        Get OTP from a prompt ?
-        //Step 3 confirm with  OTP
-        PaymentRequest paymentRequestStep3 = createCustomPaymentRequestStep3(requestContextMain, otp);
-        //TODO FIND WHAT IS BUYER PAYMENT ID
-        PaymentResponseSuccess paymentResponseStep3 = (PaymentResponseSuccess) paymentServiceMain.paymentRequest(paymentRequestStep3);
+        keyboardOTP.close();
+        //Step 3 confirm  transaction with the OTP inputed
+        // !!! PaymentSuccess renvoyé
+        PaymentRequest paymentRequestStep3 = createCustomPaymentRequestStep3(requestContextMain, otp, phoneNumber);
 
-        System.out.println(paymentResponseStep3);
-        Assert.assertNotNull(paymentResponseStep3.getPartnerTransactionId());
-        Assert.assertNotNull(paymentResponseStep3.getTransactionAdditionalData());
+        testIt.fullRedirectionPayment(paymentRequestStep3, testIt.paymentService, testIt.paymentWithRedirectionService);
 
-        String additionalDataJson = paymentResponseStep3.getTransactionAdditionalData();
-
-        Gson gson = new Gson();
-        PaymentResponseSuccessAdditionalData paymentResponseSuccessAdditionalData = gson.fromJson(additionalDataJson, PaymentResponseSuccessAdditionalData.class);
-
-        //Next step : download mandate
-        String creditorId = GOOD_CREDITOR_ID;
-        String mandateRum = paymentResponseSuccessAdditionalData.getMandateRum();
-
-        String strUrl = ConfigProperties.get(CONFIG_SCHEME, ConfigEnvironment.DEV)
-                + "://"
-                + ConfigProperties.get(CONFIG_HOST, ConfigEnvironment.DEV)
-                + "/"
-                + ConfigProperties.get(CONFIG_PATH_WSMANDATE_MANDATE_PDFTPL)
-                + "/"
-                + creditorId
-                + "/"
-                + mandateRum;
-
-        //Download mandate
-        System.setProperty("webdriver.chrome.driver", "C:\\Users\\Thales\\Documents\\HME\\moyens de paiement\\chromedriver.exe");
-        ChromeDriver driver = new ChromeDriver();
-        driver.get(strUrl);
     }
-
 
     @Test
     public void fullPaymentTest() {
-//        request = createDefaultPaymentRequest();
-        request = createDefaultPaymentRequestStep2();
-        transactionID = request.getTransactionId();
-
+////        request = createDefaultPaymentRequest();
+//        request = createDefaultPaymentRequestStep2(PHONE_NUMBER_TEST);
 //        this.fullRedirectionPayment(request, paymentService, paymentWithRedirectionService);
     }
 
     @Override
     protected String payOnPartnerWebsite(String step) {
-
-        //step 2 Create a mandate
-        PaymentRequest paymentRequestStep2 = createDefaultPaymentRequestStep2();
-        PaymentResponseFormUpdated paymentResponseStep2 = (PaymentResponseFormUpdated) paymentService.paymentRequest(paymentRequestStep2);
-
-        requestContext = paymentResponseStep2.getRequestContext().getRequestData();
-        formConfigutationResponse = paymentResponseStep2.getPaymentFormConfigurationResponse();
-        step = paymentResponseStep2.getRequestContext().getRequestData().get(CONTEXT_DATA_STEP);
-        //TODO open a window to enter the otp code
-        //Saisir OTP
-        //Get OTP from a' prompt ?
-        String otp = "12345";
-        //TODO REQUEST WITH PAYMENT RESPONSE STEP2
-        //Saisir OTP
-        Scanner keyboardUser = new Scanner(System.in);
-        System.out.println("Enter your  OTP : ");
-        otp = keyboardUser.nextLine();
-        keyboardUser.close();
-        // Initialize a fake transaction request to check the validity of the contract parameters
-        System.out.print("You entered : ");
-        System.out.println(otp);
-        //Step 3 confirm with  OTP
-        //Create a third payment request with data from Config
-        PaymentRequest paymentRequestStep3 = createCustomPaymentRequestStep3(requestContext, otp);
-        PaymentResponse paymentResponseStep3 = paymentService.paymentRequest(paymentRequestStep3);
-//            PaymentResponseFormUpdated paymentResponseStep3 = (PaymentResponseFormUpdated) paymentService.paymentRequest(paymentRequestStep3);
-        Assert.assertNotNull(paymentResponseStep3);
-
-//       todo generate mandate download url
-        String downloadmadateUrl = null;
-
-        return downloadmadateUrl;
+        //we are not redirected to Docapost website
+        return null;
+//            return SUCCESS_URL;
     }
 
     @Override
@@ -165,35 +98,6 @@ public class TestIt extends AbstractPaymentIntegration {
     protected String cancelOnPartnerWebsite(String s) {
         return null;
     }
-
-
-/*
-    @Override
-    public void fullRedirectionPayment(PaymentRequest paymentRequest, PaymentService paymentService, PaymentWithRedirectionService paymentWithRedirectionService) {
-        PaymentResponse paymentResponseFromPaymentRequest = paymentService.paymentRequest(paymentRequest);
-//        this.checkPaymentResponseIsNotFailure(paymentResponseFromPaymentRequest);
-        PaymentResponseFormUpdated paymentResponseRedirect = (PaymentResponseFormUpdated) paymentResponseFromPaymentRequest;
-        String step = paymentResponseRedirect.getRequestContext().getRequestData().get(CONTEXT_DATA_STEP);
-
-        //    String redirectionUrl = this.payOnPartnerWebsite(partnerUrl);
-        //Return transactionID or response ??
-        //TODO return an URL to OTP form and check step is different than previous step
-
-
-        String linkOTP = this.payOnPartnerWebsite(step);
-        Assertions.assertNotNull(linkOTP);
-        String nextStep = requestContext.get(CONTEXT_DATA_STEP);
-
-        Assertions.assertNotNull(linkOTP);
-        //Assert we moving to the next step
-        Assert.assertNotEquals(nextStep, step);
-        //Assert we moving to  step sign OTP
-        Assert.assertEquals(CONTEXT_DATA_STEP_OTP, nextStep);
-
-        //Finalize here ?? or confirm
-
-    }
-*/
 
 
 }

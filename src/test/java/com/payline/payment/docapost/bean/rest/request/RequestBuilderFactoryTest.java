@@ -19,12 +19,13 @@ import static com.payline.payment.docapost.TestUtils.*;
 public class RequestBuilderFactoryTest {
 
     private PaymentRequest request;
+    private String telephone;
 
 
     @Before
     public void setup() {
 
-        request = createDefaultPaymentRequestStep2();
+        request = createDefaultPaymentRequestStep2(PHONE_NUMBER_TEST);
 
     }
 
@@ -113,7 +114,7 @@ public class RequestBuilderFactoryTest {
 
     @Test
     public void testBuildInitiateSignatureRequest() throws InvalidRequestException {
-        request = createDefaultPaymentRequestStep2();
+        request = createDefaultPaymentRequestStep2(telephone);
         DocapostLocalParam docapostLocalParam = DocapostLocalParam.getInstance();
         docapostLocalParam.restoreFromPaylineRequest(request);
 
@@ -126,7 +127,7 @@ public class RequestBuilderFactoryTest {
 
     @Test
     public void testBuildSendOtpRequest() throws InvalidRequestException {
-        request = createDefaultPaymentRequestStep2();
+        request = createDefaultPaymentRequestStep2(telephone);
         DocapostLocalParam docapostLocalParam = DocapostLocalParam.getInstance();
         docapostLocalParam.restoreFromPaylineRequest(request);
 
@@ -138,7 +139,7 @@ public class RequestBuilderFactoryTest {
 
     @Test
     public void testBuildSetCodeRequest() throws InvalidRequestException {
-        request = createDefaultPaymentRequestStep2();
+        request = createDefaultPaymentRequestStep2(telephone);
         SetCodeRequest setCodeRequest = RequestBuilderFactory.buildSetCodeRequest(request);
         Assert.assertNotNull(setCodeRequest);
         Assert.assertNotNull(setCodeRequest.getCreditorId());
@@ -151,7 +152,7 @@ public class RequestBuilderFactoryTest {
 
     @Test
     public void testBuildTerminateSignatureRequest() throws InvalidRequestException {
-        request = createDefaultPaymentRequestStep2();
+        request = createDefaultPaymentRequestStep2(telephone);
         DocapostLocalParam docapostLocalParam = DocapostLocalParam.getInstance();
         docapostLocalParam.restoreFromPaylineRequest(request);
         docapostLocalParam.setSignatureSuccess(false);

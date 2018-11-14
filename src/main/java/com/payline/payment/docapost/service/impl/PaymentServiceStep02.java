@@ -47,6 +47,8 @@ public class PaymentServiceStep02 implements PaymentServiceStep {
 
     public PaymentServiceStep02(DocapostHttpClient httpClient) {
         this.httpClient = httpClient;
+        //TEST ?
+        this.docapostLocalParam = DocapostLocalParam.getInstance();
     }
 
     @Override
@@ -60,9 +62,6 @@ public class PaymentServiceStep02 implements PaymentServiceStep {
 
         String requestBody;
         String responseBody;
-
-        // On recupere le numero de telephone saisi par l'utilisateur a l'etape precedente
-        String phone = paymentRequest.getPaymentFormContext().getPaymentFormParameter().get(FORM_FIELD_PHONE);
 
         scheme = ConfigProperties.get(CONFIG_SCHEME, env);
         host = ConfigProperties.get(CONFIG_HOST, env);
@@ -202,7 +201,6 @@ public class PaymentServiceStep02 implements PaymentServiceStep {
             //######################################################################################################
             //######################################################################################################
             //### API MandateWS /api/sendOTP
-
             // Initialisation de la requete Docapost
             SendOtpRequest sendOtpRequest = RequestBuilderFactory.buildSendOtpRequest(paymentRequest, this.docapostLocalParam);
 

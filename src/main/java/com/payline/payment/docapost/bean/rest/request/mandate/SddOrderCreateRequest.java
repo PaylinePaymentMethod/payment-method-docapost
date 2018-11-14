@@ -86,6 +86,13 @@ public class SddOrderCreateRequest extends AbstractXmlRequest {
 
     }
 
+    /**
+     * Public default constructor
+     */
+    public SddOrderCreateRequest() {
+        //ras
+    }
+
     public String getCreditorId() {
         return creditorId;
     }
@@ -115,7 +122,7 @@ public class SddOrderCreateRequest extends AbstractXmlRequest {
             // Check the input request for NPEs and mandatory fields
             this.checkInputRequest(paylineRequest);
 
-            return  new SddOrderCreateRequest(
+            return new SddOrderCreateRequest(
                     paylineRequest.getContractConfiguration().getContractProperties().get(CONTRACT_CONFIG_CREDITOR_ID).getValue(),
                     paylineRequest.getRequestContext().getRequestData().get(CONTEXT_DATA_MANDATE_RUM),
                     paylineRequest.getOrder().getAmount().getAmountInSmallestUnit().floatValue(),
@@ -129,49 +136,6 @@ public class SddOrderCreateRequest extends AbstractXmlRequest {
         private void checkInputRequest(PaymentRequest paylineRequest) throws InvalidRequestException {
 
             PluginUtils.validate(paylineRequest, ERR_REQUEST, fields);
-
-            /*
-            PluginUtils.requireNonNull(paylineRequest, ERR_REQUEST);
-
-            Class clz = paylineRequest.getClass();
-            Object obj = paylineRequest;
-            Object parent = paylineRequest;
-            Map<String, Object> checkedObject = new HashMap<>();
-            String fieldName;
-            String key;
-            try {
-                for (String[] name : fields) {
-                    if (name[0].contains(".")) {
-                        String[] objNames = name[0].split("\\.");
-                        fieldName = objNames[objNames.length - 1];
-                        if (fieldName.contains("#")) {
-                            String[] mapKey = objNames[objNames.length - 1].split("#");
-                            parent = checkedObject.get(mapKey[0]);
-                            key = mapKey[1];
-                            PluginUtils.requireNonNull((Map) parent, key, name[1]);
-                            continue;
-                        } else {
-                            parent = checkedObject.get(objNames[objNames.length - 2]);
-                        }
-                    } else {
-                        fieldName = name[0];
-                        parent = paylineRequest;
-                    }
-                    clz = parent.getClass();
-                    Field f = clz.getDeclaredField(fieldName);
-                    if (!Modifier.isPublic(f.getModifiers())) {
-                        f.setAccessible(true);
-                    }
-                    obj = f.get(parent);
-                    PluginUtils.requireNonNull(obj, name[1]);
-                    checkedObject.put(fieldName, obj);
-                }
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-            */
         }
 
     }

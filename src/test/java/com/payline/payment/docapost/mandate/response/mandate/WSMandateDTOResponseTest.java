@@ -32,7 +32,6 @@ public class WSMandateDTOResponseTest {
     @Test
     public void testToString() {
         String result = wsMandateDTOResponse.toString();
-        System.out.println(result);
         Assert.assertTrue(result.contains("creditorIcs"));
         Assert.assertTrue(result.contains("MycreditorId"));
         Assert.assertTrue(result.contains("10"));

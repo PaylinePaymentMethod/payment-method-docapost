@@ -36,7 +36,6 @@ public class ResetServiceImplTest {
     @Test
     public void createSendRequestTest() throws URISyntaxException, IOException, InvalidRequestException {
 
-        //TODO mock appels doPost
         ResetRequest resetRequest = createResetRequest();
         StringResponse response = service.createSendRequest(resetRequest);
         String stringResponse = response.toString();
@@ -105,7 +104,7 @@ public class ResetServiceImplTest {
     }
 
     @Test
-    public void buildRefundResponseFailure(){
+    public void buildRefundResponseFailure() {
         ResetResponseFailure response = service.buildResetResponseFailure("thisIsAnError", FailureCause.INVALID_DATA);
         Assert.assertNotNull(response);
         Assert.assertNotNull(response.getErrorCode());

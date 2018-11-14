@@ -44,7 +44,6 @@ public class PaymentFormConfigurationServiceImplTest {
 
         PaymentFormLogoResponse paymentFormLogoResponse = service.getPaymentFormLogo(paymentFormLogoRequest);
 
-        //TODO implement method
         Assert.assertNotNull(paymentFormLogoResponse);
         Assert.assertTrue(paymentFormLogoResponse instanceof PaymentFormLogoResponseFile);
 

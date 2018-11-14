@@ -29,7 +29,7 @@ public class TestUtils {
     public static final String GOOD_CREDITOR_ID = "MARCHAND1"; //testItSlimpay //democreditor01
     public static final String GOOD_LOGIN = "payline@docapost.fr"; //
     public static final String GOOD_PWD = "J:[ef8dccma";
-
+    public static String PHONE_NUMBER_TEST = "06060606";
     public HashMap<String, String> extendedData;
 
 
@@ -63,7 +63,7 @@ public class TestUtils {
                 .build();
     }
 
-    public static PaymentRequest createDefaultPaymentRequestStep2() {
+    public static PaymentRequest createDefaultPaymentRequestStep2(String phoneNumberTest) {
         final Amount amount = createAmount("EUR");
         final ContractConfiguration contractConfiguration = createContractConfiguration();
         final Environment environment = new Environment(NOTIFICATION_URL, SUCCESS_URL, CANCEL_URL, true);
@@ -97,16 +97,17 @@ public class TestUtils {
                 .withPartnerConfiguration(createDefaultPartnerConfiguration())
                 .withSoftDescriptor(softDescriptor)
                 .withRequestContext(requestContext)
-                .withPaymentFormContext(createDefaultPaymentFormContext())
+                .withPaymentFormContext(createDefaultPaymentFormContext(phoneNumberTest))
                 .build();
     }
 
 
-    public static PaymentRequest createCustomPaymentRequestStep3(Map<String, String> customRequestData, String otp) {
+    public static PaymentRequest createCustomPaymentRequestStep3(Map<String, String> customRequestData, String otp, String phoneNumberTest) {
         final Amount amount = createAmount("EUR");
         final ContractConfiguration contractConfiguration = createContractConfiguration();
         final Environment environment = new Environment(NOTIFICATION_URL, SUCCESS_URL, CANCEL_URL, true);
-        final String transactionID = "transactionID";
+        final String transactionID = customRequestData.get("transactionId");
+        //  final String transactionID = "transactionID";
         final Order order = createOrder(transactionID);
         final String softDescriptor = "softDescriptor";
         //TODO find a better way to do it
@@ -117,7 +118,7 @@ public class TestUtils {
                 .build();
 
         Map<String, String> paymentFormParameter = new HashMap<>();
-        paymentFormParameter.put(FORM_FIELD_PHONE, "0623737719");
+        paymentFormParameter.put(FORM_FIELD_PHONE, phoneNumberTest);
         paymentFormParameter.put(FORM_FIELD_OTP, otp);
 
         Map<String, String> sensitivePaymentFormParameter = new HashMap<>();
@@ -148,9 +149,9 @@ public class TestUtils {
      *
      * @return PaymentFormContext which contain a mobile phone number and a iban
      */
-    public static PaymentFormContext createDefaultPaymentFormContext() {
+    public static PaymentFormContext createDefaultPaymentFormContext(String phoneNumber) {
         Map<String, String> paymentFormParameter = new HashMap<>();
-        paymentFormParameter.put(FORM_FIELD_PHONE, "0623737719");
+        paymentFormParameter.put(FORM_FIELD_PHONE, phoneNumber);
         paymentFormParameter.put(FORM_FIELD_OTP, "1234");
 
         Map<String, String> sensitivePaymentFormParameter = new HashMap<>();
@@ -231,7 +232,7 @@ public class TestUtils {
                 .withLocale(locale)
                 .withTransactionId(transactionID)
                 .withSoftDescriptor(softDescriptor)
-                .withPaymentFormContext(createDefaultPaymentFormContext())
+                .withPaymentFormContext(createDefaultPaymentFormContext(PHONE_NUMBER_TEST))
                 .withPartnerConfiguration(createDefaultPartnerConfiguration())
                 .withLocale(Locale.FRANCE)
                 .withBuyer(createDefaultBuyer());
@@ -455,6 +456,21 @@ public class TestUtils {
                 .withPartnerConfiguration(createDefaultPartnerConfiguration())
 
                 .build();
+    }
+
+    /**
+     * Defini le numero de téléphone utilisé pour l'envoi d'OTP
+     *
+     * @return
+     */
+    public static String setupNumber() {
+
+        Scanner keyboardUser = new Scanner(System.in);
+        System.out.println("Enter your  phone number : ");
+        String phoneNumber = keyboardUser.nextLine();
+        keyboardUser.close();
+        PHONE_NUMBER_TEST = phoneNumber;
+        return phoneNumber;
     }
 
 

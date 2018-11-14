@@ -4,7 +4,6 @@ import com.payline.payment.docapost.bean.rest.request.signature.SendOtpRequest;
 import com.payline.payment.docapost.utils.config.ConfigEnvironment;
 import com.payline.payment.docapost.utils.config.ConfigProperties;
 import com.payline.payment.docapost.utils.i18n.I18nService;
-import com.payline.pmapi.bean.ActionRequest;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.paymentform.bean.field.*;
 import com.payline.pmapi.bean.paymentform.bean.field.specific.PaymentFormInputFieldIban;
@@ -113,7 +112,7 @@ public class DocapostFormUtils {
         Locale locale = request.getLocale();
         I18nService i18n = I18nService.getInstance();
         String phone = request.getPaymentFormContext().getPaymentFormParameter().get(FORM_FIELD_PHONE);
-        ConfigEnvironment env = PluginUtils.getEnvironnement((ActionRequest) request);
+        ConfigEnvironment env = PluginUtils.getEnvironnement(request);
 
 
         PaymentFormDisplayFieldText downloadMandateText = PaymentFormDisplayFieldText
@@ -269,8 +268,7 @@ public class DocapostFormUtils {
 
             String query = "creditorId=" + creditorId
                     + "&mandateRum=" + mandateRum
-                    //FixMe : il ne manque pas un "=" après transactionId ?
-                    + "&transactionId" + transactionId;
+                    + "&transactionId=" + transactionId;
 
             String strUrl = ConfigProperties.get(CONFIG_SCHEME, env)
                     + "://"
