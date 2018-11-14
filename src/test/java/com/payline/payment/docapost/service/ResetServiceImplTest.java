@@ -3,6 +3,7 @@ package com.payline.payment.docapost.service;
 import com.payline.payment.docapost.exception.InvalidRequestException;
 import com.payline.payment.docapost.service.impl.ResetServiceImpl;
 import com.payline.payment.docapost.utils.http.StringResponse;
+import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.reset.request.ResetRequest;
 import com.payline.pmapi.bean.reset.response.ResetResponse;
 import com.payline.pmapi.bean.reset.response.impl.ResetResponseFailure;
@@ -101,5 +102,13 @@ public class ResetServiceImplTest {
     @Test
     public void canPartialTest() {
         Assert.assertFalse(service.canPartial());
+    }
+
+    @Test
+    public void buildRefundResponseFailure(){
+        ResetResponseFailure response = service.buildResetResponseFailure("thisIsAnError", FailureCause.INVALID_DATA);
+        Assert.assertNotNull(response);
+        Assert.assertNotNull(response.getErrorCode());
+        Assert.assertNotNull(response.getFailureCause());
     }
 }
