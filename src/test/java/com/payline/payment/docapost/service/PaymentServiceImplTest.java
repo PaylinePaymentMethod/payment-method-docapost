@@ -8,6 +8,7 @@ import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFormUpdated;
 import com.payline.pmapi.service.PaymentService;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -15,13 +16,19 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.payline.payment.docapost.TestUtils.*;
 import static com.payline.payment.docapost.utils.DocapostConstants.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PaymentServiceImplTest {
+
 
     @InjectMocks
     private PaymentService paymentService = new PaymentServiceImpl();
@@ -29,33 +36,29 @@ public class PaymentServiceImplTest {
     @Mock
     private DocapostHttpClient httpClient;
 
-    // TODO
 
     @Test
     public void test() {
         Assert.assertTrue(true);
     }
 
-//    @Test
-//    public void testPaymentRequest_ok(){
-//        // TODO
-//        Assert.assertTrue( false );
-//    }
 
-//TODO tester le format de downloadMandateLink
+    @Before
+    public void setup() {
+
+    }
 
     @Test
     public void testPaymentServiceImpl() {
         PaymentServiceImpl paymentService = new PaymentServiceImpl();
-        //TODO improve this test
         Assert.assertNotNull(paymentService);
+
 
     }
 
     @Test
     public void testPaymentRequestStep1() {
         PaymentServiceImpl paymentService = new PaymentServiceImpl();
-        //TODO improve this test
         Assert.assertNotNull(paymentService);
 
         PaymentRequest paymentRequestStep1 = createDefaultPaymentRequest();
@@ -75,77 +78,98 @@ public class PaymentServiceImplTest {
     @Test
     public void testPaymentRequestStepIbanPhone() throws Exception {
 
-        //TODO improve this test
-        Assert.assertNotNull(paymentService);
 
-        //TODO use valid Credentials and remove the mock ?
-        StringResponse defaultResponse = new StringResponse();
-        defaultResponse.setCode(HTTP_OK);
-        //Mock de la reponse
-        defaultResponse.setContent("<WSMandateDTO><creditorId>MARCHAND1</creditorId>\n" +
-                "   <creditorIcs>FR28AAA000000</creditorIcs>\n" +
-                "   <rum>PAYLINE-KO4SPCEL98</rum>\n" +
-                "   <recurrent>false</recurrent>\n" +
-                "   <status>Compliant</status>\n" +
-                "   <debtor>\n" +
-                "      <lastName>NICOLAS</lastName>\n" +
-                "      <bic>NORDFRPPXXX</bic>\n" +
-                "      <iban>FR7630076020821234567890186</iban>\n" +
-                "      <firstName>MICHNIEWSKI</firstName>\n" +
-                "      <street>25 RUE GAMBETTA</street>\n" +
-                "      <postalCode>13130</postalCode>\n" +
-                "      <town>BERRE L'ETANG</town>\n" +
-                "      <phoneNumber>0623737719</phoneNumber>\n" +
-                "      <countryCode>FR</countryCode>\n" +
-                "      <complement/>\n" +
-                "      <complement2/>\n" +
-                "   </debtor>\n" +
-                "   <mode>READ</mode>\n" +
-                "   <flowName>STANDARD</flowName>\n" +
-                "   <language>fr</language>\n</WSMandateDTO>");
+        StringResponse stringResponse1 = new StringResponse();
+        stringResponse1.setCode(200);
+        stringResponse1.setMessage("OK");
+        stringResponse1.setContent("{\"transactionId\":\"2c969e2c66b0cd3201670e46b10a4d39\"}");
+
+        StringResponse stringResponse2 = new StringResponse();
+        stringResponse2.setCode(200);
+        stringResponse2.setMessage("OK");
+        stringResponse2.setContent("{\"signatureID\":\"76797019\"}");
+
+        StringResponse stringResponseXml = new StringResponse();
+        stringResponseXml.setCode(200);
+        stringResponseXml.setMessage("OK");
+        stringResponseXml.setContent("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
+                "<WSMandateDTO>" +
+                "<creditorId>MARCHAND1</creditorId>" +
+                "<creditorIcs>FR28AAA000000</creditorIcs>" +
+                "<rum>PAYLINE-GL6M8KY98H</rum>" +
+                "<recurrent>false</recurrent>" +
+                "<status>Compliant</status>" +
+                "<debtor><lastName>BAR</lastName><bic>NORDFRPPXXX</bic><iban>FR7630076020821234567890186</iban><firstName>FOO</firstName><street>12 RUE PARADIS</street><postalCode>75001</postalCode><town>PARIS</town><phoneNumber>06060606</phoneNumber><countryCode>FR</countryCode></debtor>" +
+                "<mode>READ</mode><flowName>STANDARD</flowName><language>fr</language>" +
+                "</WSMandateDTO>");
 
 
-//        when((httpClient).doPost(anyString(), anyString(),anyString(),anyString(),anyString())).thenReturn(defaultResponse);
-        PaymentRequest paymentRequestStep2 = createDefaultPaymentRequestStep2();
+        PaymentRequest paymentRequestStep2 = createDefaultPaymentRequestStep2(PHONE_NUMBER_TEST);
         //assert step is null, STEP 0
         String step = paymentRequestStep2.getRequestContext().getRequestData().get(CONTEXT_DATA_STEP);
         Assert.assertNotNull(paymentRequestStep2);
+
+        //Assert we are now on the next step : IBAN_PHONE
         Assert.assertEquals(CONTEXT_DATA_STEP_IBAN_PHONE, step);
-        StringResponse stringResponse = new StringResponse();
-        stringResponse.setContent("<WSMandateDTO>test</WSMandateDTO>");
-        stringResponse.setCode(200);
-
-        Mockito.when(
-                httpClient.doPost(
-                        Mockito.anyString(),
-                        Mockito.anyString(),
-                        Mockito.anyString(),
-                        Mockito.anyString(),
-                        Mockito.anyString())
-        ).thenReturn(defaultResponse);
-        PaymentResponseFormUpdated paymentResponse = (PaymentResponseFormUpdated) paymentService.paymentRequest(paymentRequestStep2);
-//        PaymentResponse paymentResponse = paymentService.paymentRequest(paymentRequestStep2);
 
 
-        //Check we are now on the next step : IBAN_PHONE
-//        Assert.assertNotNull(paymentResponse);
-        Class<? extends PaymentResponse> paymentResponseClass = paymentResponse.getClass();
-        if (paymentResponseClass.isInstance(PaymentResponseFormUpdated.class)) {
-            Assert.assertEquals(CONTEXT_DATA_STEP_IBAN_PHONE, paymentResponse.getRequestContext().getRequestData().get(CONTEXT_DATA_STEP));
-        }
-        Assert.assertEquals(CONTEXT_DATA_STEP_IBAN_PHONE, paymentResponse.getRequestContext().getRequestData().get(CONTEXT_DATA_STEP));
+        Mockito.when(httpClient.doPost(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(stringResponseXml);
+        Mockito.when(httpClient.doPost(anyString(), anyString(), anyString(), any(Map.class), anyString())).thenReturn(stringResponse1, stringResponse2);
+
+        PaymentResponse paymentResponse = paymentService.paymentRequest(paymentRequestStep2);
+        //Check we have a PaymentResponseUpdated
+        Assert.assertTrue(paymentResponse instanceof PaymentResponseFormUpdated);
+
+        //cast to PaymentResponseUpdated
+        PaymentResponseFormUpdated paymentResponseFormUpdated = (PaymentResponseFormUpdated) paymentResponse;
+
+        //Check we move on the next step : OTP
+        Assert.assertEquals(CONTEXT_DATA_STEP_OTP, paymentResponseFormUpdated.getRequestContext().getRequestData().get(CONTEXT_DATA_STEP));
 
     }
 
 
     @Test
-    public void testPaymentRequestStepOTP() {
+    public void testPaymentRequestStepOTP() throws IOException, URISyntaxException {
         PaymentServiceImpl paymentServiceMain = new PaymentServiceImpl();
 
-        PaymentRequest paymentRequestStep2 = createDefaultPaymentRequestStep2();
+        Map<String, String> requestContextMap = new HashMap<>();
+        requestContextMap.put(CONTEXT_DATA_STEP, CONTEXT_DATA_STEP_OTP);
+        requestContextMap.put(CONTEXT_DATA_MANDATE_RUM, "testRum");
+        requestContextMap.put(CONTEXT_DATA_TRANSACTION_ID, "123456789");
+        requestContextMap.put(CONTEXT_DATA_SIGNATURE_ID, "aSignature");
+
+        StringResponse stringResponse = new StringResponse();
+        stringResponse.setCode(200);
+        stringResponse.setMessage("OK");
+        stringResponse.setContent("{}");
+
+
+        StringResponse swddOrdercreatedMocked = new StringResponse();
+        swddOrdercreatedMocked.setCode(200);
+        swddOrdercreatedMocked.setMessage("OK");
+        swddOrdercreatedMocked.setContent("<WSDDOrderDTO>\n" +
+                "   <label>A simple order</label>\n" +
+                "   <dueDate>2018-12-27T00:00:00+01:00</dueDate>\n" +
+                "   <e2eId>1112140545</e2eId>\n" +
+                "   <remitDate>2018-12-05T00:00:00+01:00</remitDate>\n" +
+                "   <sequence>Recurrent</sequence>\n" +
+                "   <identifier>QIVP1F0GE6HE8KZFURENGNFWJ4N55BRD</identifier>\n" +
+                "   <rum>PAYLINE-3KTJVIKM5J</rum>\n" +
+                "   <creditorId>MARCHAND1</creditorId>\n" +
+                "   <status>Created</status>\n" +
+                "   <amount>100.0</amount>\n" +
+                "</WSDDOrderDTO>");
+
+        Mockito.when(httpClient.doPost(anyString(), anyString(), anyString(), any(Map.class), anyString())).thenReturn(stringResponse);
+        Mockito.when(httpClient.doPost(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(swddOrdercreatedMocked);
+
+        PaymentRequest paymentRequestStep2 = createDefaultPaymentRequestStep2(PHONE_NUMBER_TEST);
         PaymentResponseFormUpdated paymentResponseStep2 = (PaymentResponseFormUpdated) paymentServiceMain.paymentRequest(paymentRequestStep2);
+
+
         Map<String, String> requestContext = paymentResponseStep2.getRequestContext().getRequestData();
-        PaymentRequest paymentRequestStepOTP = createCustomPaymentRequestStep3(requestContext, CONTEXT_DATA_STEP_OTP);
+        PaymentRequest paymentRequestStepOTP = createCustomPaymentRequestStep3(requestContext, CONTEXT_DATA_STEP_OTP, PHONE_NUMBER_TEST);
 
         Assert.assertNotNull(paymentRequestStepOTP);
         Assert.assertNotNull(paymentRequestStepOTP.getPaymentFormContext().getPaymentFormParameter().get("formDebtorPhone"));

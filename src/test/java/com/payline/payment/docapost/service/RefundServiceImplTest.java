@@ -4,6 +4,7 @@ import com.payline.payment.docapost.exception.InvalidRequestException;
 import com.payline.payment.docapost.service.impl.RefundServiceImpl;
 import com.payline.payment.docapost.utils.http.DocapostHttpClient;
 import com.payline.payment.docapost.utils.http.StringResponse;
+import com.payline.pmapi.bean.common.FailureCause;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 import com.payline.pmapi.bean.refund.response.RefundResponse;
 import com.payline.pmapi.bean.refund.response.impl.RefundResponseFailure;
@@ -70,7 +71,6 @@ public class RefundServiceImplTest {
 
     @Test
     public void createSendRequestTest() throws URISyntaxException, IOException, InvalidRequestException {
-        //TODO mock appels doPost
         refundRequest = createRefundRequest();
         StringResponse response = service.createSendRequest(refundRequest);
         String stringResponse = response.toString();
@@ -127,5 +127,12 @@ public class RefundServiceImplTest {
         Assert.assertFalse(service.canPartial());
     }
 
+    @Test
+    public void buildRefundResponseFailure() {
+        RefundResponseFailure response = service.buildRefundResponseFailure("thisIsAnError", FailureCause.INVALID_DATA);
+        Assert.assertNotNull(response);
+        Assert.assertNotNull(response.getErrorCode());
+        Assert.assertNotNull(response.getFailureCause());
+    }
 
 }

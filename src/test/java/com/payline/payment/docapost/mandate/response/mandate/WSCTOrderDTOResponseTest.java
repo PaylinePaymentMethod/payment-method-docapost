@@ -12,7 +12,7 @@ import java.io.StringReader;
 
 public class WSCTOrderDTOResponseTest {
 
-   private WSCTOrderDTOResponse wsctOrderDTOResponse;
+    private WSCTOrderDTOResponse wsctOrderDTOResponse;
 
     @Before
     public void setup() throws JAXBException {
@@ -31,7 +31,6 @@ public class WSCTOrderDTOResponseTest {
     @Test
     public void testToString() {
         String result = wsctOrderDTOResponse.toString();
-        System.out.println(result);
         Assert.assertTrue(result.contains("myLabel"));
         Assert.assertTrue(result.contains("MycreditorId"));
         Assert.assertTrue(result.contains("10"));

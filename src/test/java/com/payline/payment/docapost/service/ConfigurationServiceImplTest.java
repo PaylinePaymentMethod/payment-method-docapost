@@ -40,10 +40,6 @@ public class ConfigurationServiceImplTest {
 
     @Test
     public void checkGood() throws IOException, URISyntaxException {
-        // given: valid contract properties
-
-        //POST call is mocked for the request right now
-        //TODO use valid Credentials and remove the mock ?
         StringResponse defaultResponse = new StringResponse();
         defaultResponse.setCode(HTTP_OK);
         defaultResponse.setContent("post OK");
@@ -58,9 +54,16 @@ public class ConfigurationServiceImplTest {
     }
 
     @Test
-    public void testCheck_wrongAccountData() {
+    public void testCheck_wrongAccountData() throws IOException, URISyntaxException {
         // given: invalid contract properties
         ContractParametersCheckRequest contractParametersCheckRequest = createContractParametersCheckRequest();
+
+        //Mocked http response
+        StringResponse defaultResponse = new StringResponse();
+        defaultResponse.setCode(401);
+        defaultResponse.setContent("Unauthorized");
+
+        when((httpClient).doPost(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(defaultResponse);
         Map<String, String> errors = service.check(contractParametersCheckRequest);
 
         // then: result contains  errors
@@ -68,17 +71,19 @@ public class ConfigurationServiceImplTest {
         Assert.assertEquals(3, errors.size());
     }
 
-    //
-//    @Test
-//    public void testCheck_unknownError(){
-//        // given: contract properties validation encounter an unexpected error (Server unavailable for example)
-//
-//        // when: checking configuration fields values
-//
-//        // then: result contains error(s)
-//        Assert.assertTrue( false );
-//    }
-//
+
+    @Test
+    public void testCheck_null() throws IOException, URISyntaxException {
+        // given: invalid contract properties
+        ContractParametersCheckRequest contractParametersCheckRequest = createContractParametersCheckRequest();
+        when((httpClient).doPost(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(null);
+        Map<String, String> errors = service.check(contractParametersCheckRequest);
+
+        // then: result contains  errors
+        Assert.assertTrue(errors.size() > 0);
+        Assert.assertEquals(3, errors.size());
+    }
+
     @Test
     public void testGetParameters() {
 

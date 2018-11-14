@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DocapostHttpClientTest {
-    // TODO : use mock ...
+
     private DocapostHttpClient client = new DocapostHttpClient();
 
 

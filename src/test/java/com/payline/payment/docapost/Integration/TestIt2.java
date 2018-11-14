@@ -37,6 +37,7 @@ public class TestIt2 extends AbstractPaymentIntegration {
 
     private String transactionID = "";
     private PaymentRequest request;
+    private String telephone = "0606060606";
 
 
     @Override
@@ -48,7 +49,14 @@ public class TestIt2 extends AbstractPaymentIntegration {
 
     @Override
     protected PaymentFormContext generatePaymentFormContext() {
-        return createDefaultPaymentFormContext();
+        //Saisir numero de telephone sur lequel sera envoyé l'otp
+        Scanner keyboardUser = new Scanner(System.in);
+        System.out.println("Enter your  phone number : ");
+        String telephone = keyboardUser.nextLine();
+        keyboardUser.close();
+        System.out.print("You entered : ");
+        System.out.println(telephone);
+        return createDefaultPaymentFormContext(telephone);
     }
 
 
@@ -118,14 +126,14 @@ public class TestIt2 extends AbstractPaymentIntegration {
         request = createDefaultPaymentRequest();
         transactionID = request.getTransactionId();
 
-        this.fullRedirectionPayment(request, paymentService, paymentWithRedirectionService);
+        //    this.fullRedirectionPayment(request, paymentService, paymentWithRedirectionService);
     }
 
     @Override
     protected String payOnPartnerWebsite(String step) {
 
         //step 2 Create a mandate
-        PaymentRequest paymentRequestStep2 = createDefaultPaymentRequestStep2();
+        PaymentRequest paymentRequestStep2 = createDefaultPaymentRequestStep2(telephone);
         PaymentResponseFormUpdated paymentResponseStep2 = (PaymentResponseFormUpdated) paymentService.paymentRequest(paymentRequestStep2);
         Map<String, String> requestContextMain = paymentResponseStep2.getRequestContext().getRequestData();
 
@@ -141,19 +149,25 @@ public class TestIt2 extends AbstractPaymentIntegration {
 
         //Saisir OTP
         //Get OTP from a' prompt ?
-//        String otp = "12345";
+        String otp = "12345";
         //TODO REQUEST WITH PAYMENT RESPONSE STEP2
         //Saisir OTP
-        Scanner keyboardUser = new Scanner(System.in);
+        //Saisir numero de telephone sur lequel sera envoyé l'otp
+        System.out.println("Enter your  phone number : ");
+        String telephone = "0606060606";
+        System.out.print("You entered : ");
+        System.out.println(telephone);
         System.out.println("Enter your  OTP : ");
-        String otp = keyboardUser.nextLine();
-        keyboardUser.close();
+//        Scanner keyboardUser = new Scanner(System.in);
+//
+//        String otp = keyboardUser.nextLine();
+//        keyboardUser.close();
         // Initialize a fake transaction request to check the validity of the contract parameters
         System.out.print("You entered : ");
         System.out.println(otp);
         //Step 3 confirm with  OTP
         //Create a third payment request with data from Config
-        PaymentRequest paymentRequestStep3 = createCustomPaymentRequestStep3(requestContext, otp);
+        PaymentRequest paymentRequestStep3 = createCustomPaymentRequestStep3(requestContext, otp, telephone);
         PaymentResponse paymentResponseStep3 = paymentService.paymentRequest(paymentRequestStep3);
 //            PaymentResponseFormUpdated paymentResponseStep3 = (PaymentResponseFormUpdated) paymentService.paymentRequest(paymentRequestStep3);
         Assert.assertNotNull(paymentResponseStep3);
@@ -188,10 +202,11 @@ public class TestIt2 extends AbstractPaymentIntegration {
 
         //TODO REQUEST WITH PAYMENT RESPONSE STEP2
         //Saisir OTP
-        Scanner keyboardUser = new Scanner(System.in);
+//        Scanner keyboardUser = new Scanner(System.in);
+        String otp = "12345";
         System.out.println("Enter your  OTP : ");
-        String otp = keyboardUser.nextLine();
-        keyboardUser.close();
+//        String otp = keyboardUser.nextLine();
+//        keyboardUser.close();
         // Initialize a fake transaction request to check the validity of the contract parameters
         System.out.print("You entered : ");
         System.out.println(otp);

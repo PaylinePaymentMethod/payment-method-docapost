@@ -32,7 +32,6 @@ public class DebtorTest {
                 .phoneNumber("0628692878")
                 .countryCode("FR");
 
-        System.out.println(debtor.toString());
 
         Assert.assertEquals("NICOLAS", debtor.getLastName());
         Assert.assertEquals("M", debtor.getFirstName());

@@ -32,7 +32,6 @@ public class WSDDOrderDTOResponseTest {
     @Test
     public void testToString() {
         String result = wsddOrderDTOResponse.toString();
-        System.out.println(result);
         Assert.assertTrue(result.contains("myLabel"));
         Assert.assertTrue(result.contains("MycreditorId"));
         Assert.assertTrue(result.contains("ref"));
