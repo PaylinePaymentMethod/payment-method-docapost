@@ -468,7 +468,7 @@ public class TestUtils {
         Scanner keyboardUser = new Scanner(System.in);
         System.out.println("Enter your  phone number : ");
         String phoneNumber = keyboardUser.nextLine();
-        keyboardUser.close();
+        keyboardUser.reset();
         PHONE_NUMBER_TEST = phoneNumber;
         return phoneNumber;
     }
