@@ -77,8 +77,8 @@ public class DocapostConstants {
     public static final Pattern OTP_FORM_VALIDATION = Pattern.compile("\\d{6}");
     public static final String OTP_FORM_REQUIRED_ERROR_MESSAGE = "form.otp.text.requiredErrorMessage";
     public static final String OTP_FORM_KEY = "Otp_Key";
-    public static final String OTP_FORM_VALUE = "Otp_Value";
-    public static final String OTP_FORM_LABEL = "Otp_Label";
+    public static final String OTP_FORM_VALUE = "OtpValue";
+    public static final String OTP_FORM_LABEL = "form.otp.label";
     public static final String OTP_FORM_PLACEHOLDER = "123456";
     public static final String OTP_FORM_VALIDATION_ERROR_MESSAGE = "form.otp.text.validationErrorMessage";
 
@@ -110,12 +110,12 @@ public class DocapostConstants {
 
     //Data used by the PaymentFormConfiguration noField Form
     public static final boolean NOFIELDFORM_DISPLAY_PAYMENT_BUTTON = true;
-    public static final String NOFIELDFORM_BUTTON_TEXT = "button_text";
-    public static final String NOFIELDFORM_BUTTON_DESCRIPTION = "Button_description";
+    public static final String NOFIELDFORM_BUTTON_TEXT = "form.nofield.button.text";
+    public static final String NOFIELDFORM_BUTTON_DESCRIPTION = "form.nofield.button.description";
 
     //Data used by the IbanForm Object
     public static final String IBAN_TEXT = "form.iban.phone.text.setIban";
-    public static final String IBAN_KEY = "button_description";
+    public static final String IBAN_KEY = "iban_key";
     public static final boolean IBAN_REQUIRED = false;
     public static final String IBAN_REQUIRED_ERROR_MESSAGE = "form.iban.phone.text.ibanRequiredErrorMessage";
 

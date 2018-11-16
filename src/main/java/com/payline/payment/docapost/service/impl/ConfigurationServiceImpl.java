@@ -39,24 +39,24 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         // Creditor id
         final InputParameter merchantName = new InputParameter();
         merchantName.setKey(CONTRACT_CONFIG_CREDITOR_ID);
-        merchantName.setLabel(CONTRACT_CONFIG_CREDITOR_ID_PROPERTY_LABEL);
-        merchantName.setDescription(CONTRACT_CONFIG_CREDITOR_ID_PROPERTY_DESCRIPTION);
+        merchantName.setLabel(this.i18n.getMessage(CONTRACT_CONFIG_CREDITOR_ID_PROPERTY_LABEL, locale));
+        merchantName.setDescription(this.i18n.getMessage(CONTRACT_CONFIG_CREDITOR_ID_PROPERTY_DESCRIPTION, locale));
         merchantName.setRequired(true);
         parameters.add(merchantName);
 
         // Auth login
         final InputParameter authLogin = new InputParameter();
         authLogin.setKey(PARTNER_CONFIG_AUTH_LOGIN);
-        authLogin.setLabel(PARTNER_CONFIG_AUTH_LOGIN_PROPERTY_LABEL);
-        authLogin.setDescription(PARTNER_CONFIG_AUTH_LOGIN_PROPERTY_DESCRIPTION);
+        authLogin.setLabel(this.i18n.getMessage(PARTNER_CONFIG_AUTH_LOGIN_PROPERTY_LABEL, locale));
+        authLogin.setDescription(this.i18n.getMessage(PARTNER_CONFIG_AUTH_LOGIN_PROPERTY_DESCRIPTION, locale));
         authLogin.setRequired(true);
         parameters.add(authLogin);
 
         // Auth pwd
         final InputParameter authPwd = new InputParameter();
         authPwd.setKey(PARTNER_CONFIG_AUTH_PASS);
-        authPwd.setLabel(PARTNER_CONFIG_AUTH_PASS_PROPERTY_LABEL);
-        authPwd.setDescription(PARTNER_CONFIG_AUTH_PASS_PROPERTY_DESCRIPTION);
+        authPwd.setLabel(this.i18n.getMessage(PARTNER_CONFIG_AUTH_PASS_PROPERTY_LABEL, locale));
+        authPwd.setDescription(this.i18n.getMessage(PARTNER_CONFIG_AUTH_PASS_PROPERTY_DESCRIPTION, locale));
         authPwd.setRequired(true);
         parameters.add(authPwd);
 

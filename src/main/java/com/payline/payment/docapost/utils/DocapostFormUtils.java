@@ -48,9 +48,9 @@ public class DocapostFormUtils {
                 .IbanFieldBuilder
                 .anIbanField()
                 .withKey(IBAN_KEY)
-                .withLabel(IBAN_TEXT)
+                .withLabel(i18n.getMessage(IBAN_TEXT, locale))
                 .withRequired(IBAN_REQUIRED)
-                .withRequiredErrorMessage(IBAN_REQUIRED_ERROR_MESSAGE)
+                .withRequiredErrorMessage(i18n.getMessage(IBAN_REQUIRED_ERROR_MESSAGE, locale))
                 .build();
 
         PaymentFormDisplayFieldText inputPhone = PaymentFormDisplayFieldText
@@ -65,13 +65,13 @@ public class DocapostFormUtils {
                 .withInputType(InputType.TEL)
                 .withFieldIcon(PHONE_FIELD_ICON)
                 .withKey(PHONE_KEY)
-                .withLabel(PHONE_LABEL)
+                .withLabel(i18n.getMessage(PHONE_LABEL, locale))
                 .withPlaceholder(PHONE_PLACEHOLDER)
                 .withRequired(PHONE_REQUIRED)
-                .withRequiredErrorMessage(PHONE_REQUIRED_ERROR_MESSAGE)
+                .withRequiredErrorMessage(i18n.getMessage(PHONE_REQUIRED_ERROR_MESSAGE, locale))
                 .withSecured(PHONE_SECURED)
                 .withValidation(PHONE_VALIDATION)
-                .withValidationErrorMessage(PHONE_VALIDATION_MESSAGE)
+                .withValidationErrorMessage(i18n.getMessage(PHONE_VALIDATION_MESSAGE, locale))
                 .withInputType(INPUT_TYPE)
                 //.withValue()
                 .build();
@@ -92,8 +92,8 @@ public class DocapostFormUtils {
         return CustomForm
                 .builder()
                 .withCustomFields(customFields)
-                .withButtonText(CUSTOMFORM_TEXT)
-                .withDescription(CUSTOMFORM_DESCRIPTION)
+                .withButtonText(i18n.getMessage(CUSTOMFORM_TEXT, locale))
+                .withDescription(i18n.getMessage(CUSTOMFORM_DESCRIPTION, locale))
                 .withDisplayButton(DISPLAY_CUSTOMFORM_BUTTON)
                 .build();
 
@@ -130,7 +130,7 @@ public class DocapostFormUtils {
                         docapostLocalParam.getMandateRum()
                 ))
                 .withName(i18n.getMessage(OTP_FORM_LINK_DOWNLOAD_MANDATE, locale))
-                .withTitle(OTP_FORM_LINK_DOWNLOAD_MANDATE)
+                .withTitle(i18n.getMessage(OTP_FORM_LINK_DOWNLOAD_MANDATE, locale))
                 .build();
 
         PaymentFormDisplayFieldText otpText = PaymentFormDisplayFieldText
@@ -151,7 +151,7 @@ public class DocapostFormUtils {
                 .withInputType(InputType.NUMBER)
                 .withFieldIcon(FieldIcon.PHONE)
                 .withKey(OTP_FORM_KEY)
-                .withLabel(OTP_FORM_LABEL)
+                .withLabel(i18n.getMessage(OTP_FORM_LABEL, locale))
                 .withPlaceholder(OTP_FORM_PLACEHOLDER)
                 .withRequired(false)
                 .withRequiredErrorMessage(i18n.getMessage(OTP_FORM_REQUIRED_ERROR_MESSAGE, locale))
@@ -210,7 +210,7 @@ public class DocapostFormUtils {
                 .builder()
                 .withCustomFields(customFields)
                 .withDescription(i18n.getMessage(CUSTOMFORM_DESCRIPTION, locale))
-                .withButtonText(CUSTOMFORM_TEXT)
+                .withButtonText(i18n.getMessage(CUSTOMFORM_TEXT, locale))
                 .withDisplayButton(true)
                 .build();
 
