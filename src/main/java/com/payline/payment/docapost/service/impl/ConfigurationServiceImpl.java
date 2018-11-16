@@ -77,13 +77,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         }
 
         // Credential auth login
-        final String authLogin = contractParametersCheckRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG_AUTH_LOGIN);
+        final String authLogin = accountInfo.get(PARTNER_CONFIG_AUTH_LOGIN);
         if (PluginUtils.isEmpty(authLogin)) {
             errors.put(PARTNER_CONFIG_AUTH_LOGIN, this.i18n.getMessage(PARTNER_CONFIG_AUTH_LOGIN_ERROR, locale));
         }
 
-        // Credential auth password
-        final String authPass = contractParametersCheckRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG_AUTH_PASS);
+        final String authPass = accountInfo.get(PARTNER_CONFIG_AUTH_PASS);
         if (PluginUtils.isEmpty(authPass)) {
             errors.put(PARTNER_CONFIG_AUTH_PASS, this.i18n.getMessage(PARTNER_CONFIG_AUTH_PASS_ERROR, locale));
         }
