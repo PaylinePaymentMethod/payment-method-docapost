@@ -129,7 +129,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             }
 
         } catch (Exception e) {
-            LOGGER.error("An error occurred sending the validation request to the Docapost server: " + e.getMessage());
+            LOGGER.error("An error occurred sending the validation request to the Docapost server: ", e);
             errors.put(CONTRACT_CONFIG_CREDITOR_ID, this.i18n.getMessage(CONTRACT_CONFIG_CREDITOR_ID_ERROR, locale));
             errors.put(PARTNER_CONFIG_AUTH_LOGIN, this.i18n.getMessage(PARTNER_CONFIG_AUTH_LOGIN_ERROR, locale));
             errors.put(PARTNER_CONFIG_AUTH_PASS, this.i18n.getMessage(PARTNER_CONFIG_AUTH_PASS_ERROR, locale));

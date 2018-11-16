@@ -82,10 +82,10 @@ public abstract class AbstractResetHttpService<T extends ResetRequest> {
             }
 
         } catch (InvalidRequestException e) {
-            logger.error("The input payment request is invalid: " + e.getMessage());
+            logger.error("The input payment request is invalid: ", e);
             return buildResetResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INVALID_DATA);
         } catch (IOException e) {
-            logger.error("An IOException occurred while sending the HTTP request or receiving the response: " + e.getMessage());
+            logger.error("An IOException occurred while sending the HTTP request or receiving the response: ", e);
             return buildResetResponseFailure(DEFAULT_ERROR_CODE, FailureCause.COMMUNICATION_ERROR);
         } catch (Exception e) {
             logger.error("An unexpected error occurred: ", e);
