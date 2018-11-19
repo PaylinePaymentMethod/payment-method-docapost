@@ -351,6 +351,8 @@ public class TestUtils {
         contractConfiguration.getContractProperties().put(CONTRACT_CONFIG_CREDITOR_ID, new ContractProperty(GOOD_CREDITOR_ID));
         contractConfiguration.getContractProperties().put(CONFIG_HOST, new ContractProperty("https://espaceclient.sepalia.fr/rcte"));
         contractConfiguration.getContractProperties().put(CONFIG_PATH_WSMANDATE_MANDATE_CREATE, new ContractProperty("mandate"));
+        contractConfiguration.getContractProperties().put(PARTNER_CONFIG_AUTH_LOGIN, new ContractProperty(GOOD_LOGIN));
+        contractConfiguration.getContractProperties().put(PARTNER_CONFIG_AUTH_PASS, new ContractProperty(GOOD_PWD));
         return contractConfiguration;
     }
 
@@ -441,8 +443,7 @@ public class TestUtils {
     public static PartnerConfiguration createDefaultPartnerConfiguration() {
         Map<String, String> partnerConfiguration = new HashMap<>();
         Map<String, String> sensitivePartnerConfiguration = new HashMap<>();
-        sensitivePartnerConfiguration.put(PARTNER_CONFIG_AUTH_LOGIN, GOOD_LOGIN);
-        sensitivePartnerConfiguration.put(PARTNER_CONFIG_AUTH_PASS, GOOD_PWD);
+
 
         return new PartnerConfiguration(partnerConfiguration, sensitivePartnerConfiguration);
     }

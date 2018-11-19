@@ -30,8 +30,8 @@ public class SddOrderCreateRequest extends AbstractXmlRequest {
     private static final String ERR_CONTEXT = "Request context object must not be null";
     private static final String ERR_RUM = "Missing context data: mandate rum";
     private static final String ERR_SENSITIVE = "Partner configuration sensitive properties object must not be null";
-    private static final String ERR_AUTH_LOGIN = "Missing partner configuration property: auth login";
-    private static final String ERR_AUTH_PASS = "Missing partner configuration property: auth pass";
+    private static final String ERR_AUTH_LOGIN = "Missing contract configuration property: auth login";
+    private static final String ERR_AUTH_PASS = "Missing contract configuration property: auth pass";
     private static final String ERR_TRANSACTION_ID = "Missing mandatory property: transaction id";
     private static final String ERR_SOFT_DESCRIPTOR = "Missing mandatory property: soft descriptor";
     private static final String ERR_ORDER = "Order object must not be null";
@@ -41,13 +41,13 @@ public class SddOrderCreateRequest extends AbstractXmlRequest {
             {"contractConfiguration", ERR_CONTRACT},
             {"contractConfiguration.contractProperties", ERR_CONTRACT},
             {"contractConfiguration.contractProperties#" + CONTRACT_CONFIG_CREDITOR_ID, ERR_CREDITOR_ID},
+            {"contractConfiguration.contractProperties#" + PARTNER_CONFIG_AUTH_LOGIN, ERR_AUTH_LOGIN},
+            {"contractConfiguration.contractProperties#" + PARTNER_CONFIG_AUTH_PASS, ERR_AUTH_PASS},
             {"requestContext", ERR_CONTEXT},
             {"requestContext.requestData", ERR_CONTEXT},
             {"requestContext.requestData#" + CONTEXT_DATA_MANDATE_RUM, ERR_RUM},
             {"partnerConfiguration", ERR_SENSITIVE},
             {"partnerConfiguration.sensitivePartnerConfigurationMap", ERR_SENSITIVE},
-            {"partnerConfiguration.sensitivePartnerConfigurationMap#" + PARTNER_CONFIG_AUTH_LOGIN, ERR_AUTH_LOGIN},
-            {"partnerConfiguration.sensitivePartnerConfigurationMap#" + PARTNER_CONFIG_AUTH_PASS, ERR_AUTH_PASS},
             {"transactionId", ERR_TRANSACTION_ID},
             {"softDescriptor", ERR_SOFT_DESCRIPTOR},
             {"order", ERR_ORDER},

@@ -79,17 +79,16 @@ public class SendOtpRequest extends WSSignatureRequest implements WSSignature {
             if (contractProperties.get(CONTRACT_CONFIG_CREDITOR_ID) == null) {
                 throw new InvalidRequestException("Missing contract configuration property: creditor id");
             }
+            if (contractProperties.get(PARTNER_CONFIG_AUTH_LOGIN) == null) {
+                throw new InvalidRequestException("Missing contract configuration property: auth login");
+            }
+            if (contractProperties.get(PARTNER_CONFIG_AUTH_PASS) == null) {
+                throw new InvalidRequestException("Missing contract configuration property: auth pass");
+            }
 
             if (paylineRequest.getPartnerConfiguration() == null
                     || paylineRequest.getPartnerConfiguration().getSensitiveProperties() == null) {
                 throw new InvalidRequestException("Partner configuration sensitive properties object must not be null");
-            }
-            Map<String, String> sensitiveProperties = paylineRequest.getPartnerConfiguration().getSensitiveProperties();
-            if (sensitiveProperties.get(PARTNER_CONFIG_AUTH_LOGIN) == null) {
-                throw new InvalidRequestException("Missing partner configuration property: auth login");
-            }
-            if (sensitiveProperties.get(PARTNER_CONFIG_AUTH_PASS) == null) {
-                throw new InvalidRequestException("Missing partner configuration property: auth pass");
             }
 
             if (docapostLocalParam == null) {
