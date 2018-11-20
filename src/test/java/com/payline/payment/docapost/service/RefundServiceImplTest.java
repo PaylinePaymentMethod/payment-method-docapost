@@ -71,6 +71,12 @@ public class RefundServiceImplTest {
 
     @Test
     public void createSendRequestTest() throws URISyntaxException, IOException, InvalidRequestException {
+        StringResponse responseMocked = new StringResponse();
+        responseMocked.setCode(200);
+        responseMocked.setMessage("OK");
+        responseMocked.setContent("<sepalia></sepalia>");
+
+
         refundRequest = createRefundRequest();
         StringResponse response = service.createSendRequest(refundRequest);
         String stringResponse = response.toString();
@@ -97,18 +103,21 @@ public class RefundServiceImplTest {
         responseMocked.setMessage("");
         responseMocked.setContent("");
 
+
         RefundResponse refundResponseNull = service.processResponse(responseMocked);
         Assert.assertNotNull(refundResponseNull);
         Assert.assertTrue(refundResponseNull instanceof RefundResponseFailure);
     }
 
     @Test
-    public void processResponseTestOK() {
+    public void processResponseTestOK() throws IOException, URISyntaxException {
         //Case responseSuccess
         StringResponse responseMocked = new StringResponse();
         responseMocked.setCode(200);
         responseMocked.setMessage("");
         responseMocked.setContent("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><WSCTOrderDTO><label>A simple order</label><dueDate>2018-11-09T00:00:00+01:00</dueDate><e2eId>1108102438</e2eId><remitDate>2018-11-08T00:00:00+01:00</remitDate><rum>PAYLINE-HXGELVOTHM</rum><creditorId>MARCHAND1</creditorId><status>CREATED</status><amount>100.0</amount><receiverName>NICOLAS</receiverName><receiverIban>FR7630076020821234567890186</receiverIban></WSCTOrderDTO>");
+        Mockito.doReturn(responseMocked).when(httpClient).doPost(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
+                Mockito.anyString(), Mockito.anyString());
 
         RefundResponse refundResponseSuccess = service.processResponse(responseMocked);
         Assert.assertNotNull(refundResponseSuccess);
@@ -119,12 +128,12 @@ public class RefundServiceImplTest {
 
     @Test
     public void canMultipleTest() {
-        Assert.assertFalse(service.canMultiple());
+        Assert.assertTrue(service.canMultiple());
     }
 
     @Test
     public void canPartialTest() {
-        Assert.assertFalse(service.canPartial());
+        Assert.assertTrue(service.canPartial());
     }
 
     @Test

@@ -123,12 +123,12 @@ public class RefundServiceImpl extends AbstractRefundHttpService<RefundRequest> 
 
     @Override
     public boolean canMultiple() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean canPartial() {
-        return false;
+        return true;
     }
 
     /**

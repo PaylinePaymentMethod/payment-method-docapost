@@ -126,12 +126,12 @@ public class ResetServiceImpl extends AbstractResetHttpService<ResetRequest> imp
 
     @Override
     public boolean canMultiple() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean canPartial() {
-        return false;
+        return true;
     }
 
     /**
