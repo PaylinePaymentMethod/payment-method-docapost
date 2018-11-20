@@ -310,10 +310,10 @@ public class SddOrderCreateRequestTest {
     @Test
     public void testCheckInputRequest_Amount_ko() throws Exception {
         expectedEx.expect(InvalidRequestException.class);
-        expectedEx.expectMessage("Missing order property: amount");
+        expectedEx.expectMessage("Missing mandatory property: amount");
         PaymentRequest paylineRequest = TestUtils.createDefaultPaymentRequest();
         paylineRequest.getRequestContext().getRequestData().put(CONTEXT_DATA_MANDATE_RUM, "rum");
-        FieldUtils.writeField(paylineRequest.getOrder(), "amount", null, true);
+        FieldUtils.writeField(paylineRequest, "amount", null, true);
 
         SddOrderCreateRequest sddOrderCreateRequest = new SddOrderCreateRequest.Builder().fromPaylineRequest(paylineRequest);
     }
