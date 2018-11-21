@@ -38,7 +38,8 @@ public class PaymentFormConfigurationServiceImpl implements PaymentFormConfigura
                 .aNoFieldForm()
                 .withDisplayButton(NOFIELDFORM_DISPLAY_PAYMENT_BUTTON)
                 .withButtonText(this.i18n.getMessage(NOFIELDFORM_BUTTON_TEXT, paymentFormConfigurationRequest.getLocale()))
-                .withDescription(this.i18n.getMessage(NOFIELDFORM_BUTTON_DESCRIPTION, paymentFormConfigurationRequest.getLocale()))
+//                .withDescription(this.i18n.getMessage(NOFIELDFORM_BUTTON_DESCRIPTION, paymentFormConfigurationRequest.getLocale()))
+                .withDescription("")
                 .build();
 
         return PaymentFormConfigurationResponseSpecific

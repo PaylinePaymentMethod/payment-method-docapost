@@ -77,7 +77,7 @@ public class DocapostConstants {
     public static final Pattern OTP_FORM_VALIDATION = Pattern.compile("\\d{6}");
     public static final String OTP_FORM_REQUIRED_ERROR_MESSAGE = "form.otp.text.requiredErrorMessage";
     public static final String OTP_FORM_KEY = "formOtp";
-    public static final String OTP_FORM_VALUE = "OtpValue";
+    public static final String OTP_FORM_VALUE = "";
     public static final String OTP_FORM_LABEL = "form.otp.label";
     public static final String OTP_FORM_PLACEHOLDER = "123456";
     public static final String OTP_FORM_VALIDATION_ERROR_MESSAGE = "form.otp.text.validationErrorMessage";
@@ -136,6 +136,8 @@ public class DocapostConstants {
     public static final String CUSTOMFORM_TEXT = "form.customForm.text.buttonText";
     public static final String CUSTOMFORM_DESCRIPTION = "form.customForm.text.description";
     public static final boolean DISPLAY_CUSTOMFORM_BUTTON = true;
+    public static final String CUSTOMFORM_TEXT_SIGN = "form.customForm.sign.text.buttonText";
+    public static final String CUSTOMFORM_TEXT_SIGN_DESCRIPTION = "form.customForm.sign.text.description";
 
 
     public static final String SAVE_MANDATE_KEY = "formSaveMandate";

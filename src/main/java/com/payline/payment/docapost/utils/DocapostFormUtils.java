@@ -93,7 +93,8 @@ public class DocapostFormUtils {
                 .builder()
                 .withCustomFields(customFields)
                 .withButtonText(i18n.getMessage(CUSTOMFORM_TEXT, locale))
-                .withDescription(i18n.getMessage(CUSTOMFORM_DESCRIPTION, locale))
+//                .withDescription(i18n.getMessage(CUSTOMFORM_DESCRIPTION, locale))
+                .withDescription("")
                 .withDisplayButton(DISPLAY_CUSTOMFORM_BUTTON)
                 .build();
 
@@ -161,18 +162,19 @@ public class DocapostFormUtils {
                 .withValue(OTP_FORM_VALUE)
                 .build();
 
-        PaymentFormDisplayFieldLink resendOtpLink = PaymentFormDisplayFieldLink
-                .PaymentFormDisplayFieldLinkBuilder
-                .aPaymentFormDisplayFieldLink()
-                .withUrl(getResendOtpLinkUrl(
-                        env,
-                        sendOtpRequest.getCreditorId(),
-                        docapostLocalParam.getMandateRum(),
-                        docapostLocalParam.getTransactionId()
-                ))
-                .withName(i18n.getMessage(OTP_FORM_TEXT_RESEND_OTP, locale))
-                .withTitle(i18n.getMessage(OTP_FORM_TEXT_RESEND_OTP, locale))
-                .build();
+        //Resend otp pas disponible pour le moment
+//        PaymentFormDisplayFieldLink resendOtpLink = PaymentFormDisplayFieldLink
+//                .PaymentFormDisplayFieldLinkBuilder
+//                .aPaymentFormDisplayFieldLink()
+//                .withUrl(getResendOtpLinkUrl(
+//                        env,
+//                        sendOtpRequest.getCreditorId(),
+//                        docapostLocalParam.getMandateRum(),
+//                        docapostLocalParam.getTransactionId()
+//                ))
+//                .withName(i18n.getMessage(OTP_FORM_TEXT_RESEND_OTP, locale))
+//                .withTitle(i18n.getMessage(OTP_FORM_TEXT_RESEND_OTP, locale))
+//                .build();
 
         PaymentFormInputFieldCheckbox acceptCondition = PaymentFormInputFieldCheckbox
                 .PaymentFormFieldCheckboxBuilder
@@ -196,21 +198,21 @@ public class DocapostFormUtils {
                 .withSecured(SAVE_MANDATE_SECURED)
                 .build();
 
+
         List<PaymentFormField> customFields = new ArrayList<>();
         customFields.add(downloadMandateText);
         customFields.add(downloadMandateLink);
         customFields.add(otpText);
         customFields.add(setOtpText);
         customFields.add(otpForm);
-        customFields.add(resendOtpLink);
         customFields.add(acceptCondition);
         customFields.add(saveMandate);
 
         return CustomForm
                 .builder()
                 .withCustomFields(customFields)
-                .withDescription(i18n.getMessage(CUSTOMFORM_DESCRIPTION, locale))
-                .withButtonText(i18n.getMessage(CUSTOMFORM_TEXT, locale))
+                .withDescription(i18n.getMessage(CUSTOMFORM_TEXT_SIGN_DESCRIPTION, locale))
+                .withButtonText(i18n.getMessage(CUSTOMFORM_TEXT_SIGN, locale))
                 .withDisplayButton(true)
                 .build();
 
