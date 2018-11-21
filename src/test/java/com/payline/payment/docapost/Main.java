@@ -33,7 +33,7 @@ public class Main {
         String xmlResponse = "";
         String jsonResponse = "";
 
-        DocapostHttpClient docapostHttpClient = new DocapostHttpClient(10, 10, 15);
+        DocapostHttpClient docapostHttpClient = DocapostHttpClient.getInstance();
 
         String credentials = DocapostUtils.generateBasicCredentials(TmpTestData.AUTH_LOGIN, TmpTestData.AUTH_MDP);
 

@@ -20,20 +20,24 @@ public class DocapostHttpClient extends AbstractHttpClient {
     /**
      * Instantiate a HTTP client with default values.
      */
-    public DocapostHttpClient() {
-        super(10, 10, 15);
+    private DocapostHttpClient() {
+        super();
     }
 
     /**
-     * Instantiate a HTTP client.
-     *
-     * @param connectTimeout Default connect timeout (in seconds) for new connections. A value of 0 means no timeout.
-     * @param writeTimeout   Default write timeout (in seconds) for new connections. A value of 0 means no timeout.
-     * @param readTimeout    Default read timeout (in seconds) for new connections. A value of 0 means no timeout.
+     * Singleton Holder
      */
-    public DocapostHttpClient(int connectTimeout, int writeTimeout, int readTimeout) {
-        super(connectTimeout, writeTimeout, readTimeout);
+    private static class SingletonHolder {
+        private static final DocapostHttpClient INSTANCE = new DocapostHttpClient();
     }
+
+    /**
+     * @return the singleton instance
+     */
+    public static DocapostHttpClient getInstance() {
+        return SingletonHolder.INSTANCE;
+    }
+
 
     /**
      * Send a POST request, with a XML content type.

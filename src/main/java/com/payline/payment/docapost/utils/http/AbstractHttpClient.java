@@ -1,5 +1,6 @@
 package com.payline.payment.docapost.utils.http;
 
+import com.payline.payment.docapost.utils.config.ConfigProperties;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
@@ -19,8 +20,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static com.payline.payment.docapost.utils.DocapostConstants.AUTHORIZATION;
-import static com.payline.payment.docapost.utils.DocapostConstants.CONTENT_TYPE;
+import static com.payline.payment.docapost.utils.DocapostConstants.*;
 
 /**
  * This utility class provides a basic HTTP client to send requests, using OkHttp library.
@@ -32,17 +32,19 @@ public abstract class AbstractHttpClient {
 
     /**
      * Instantiate a HTTP client.
-     *
-     * @param connectTimeout Determines the timeout in milliseconds until a connection is established
-     * @param requestTimeout The timeout in milliseconds used when requesting a connection from the connection manager
-     * @param socketTimeout  Defines the socket timeout (SO_TIMEOUT) in milliseconds, which is the timeout for waiting for data or, put differently, a maximum period inactivity between two consecutive data packets)
      */
-    protected AbstractHttpClient(int connectTimeout, int requestTimeout, int socketTimeout) {
+
+    protected AbstractHttpClient() {
+
+        int connectTimeout = Integer.parseInt(ConfigProperties.get(CONFIG_HTTP_CONNECT_TIMEOUT));
+        int requestTimeout = Integer.parseInt(ConfigProperties.get(CONFIG_HTTP_WRITE_TIMEOUT));
+        int readTimeout = Integer.parseInt(ConfigProperties.get(CONFIG_HTTP_READ_TIMEOUT));
+
 
         final RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectTimeout(connectTimeout * 1000)
                 .setConnectionRequestTimeout(requestTimeout * 1000)
-                .setSocketTimeout(socketTimeout * 1000)
+                .setSocketTimeout(readTimeout * 1000)
                 .build();
 
         this.client = HttpClientBuilder.create()

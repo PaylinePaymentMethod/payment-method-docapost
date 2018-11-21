@@ -30,7 +30,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     private I18nService i18n = I18nService.getInstance();
 
-    private DocapostHttpClient httpClient = new DocapostHttpClient();
+    private DocapostHttpClient httpClient = DocapostHttpClient.getInstance();
 
     @Override
     public List<AbstractParameter> getParameters(Locale locale) {
@@ -144,8 +144,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             props.load(ConfigurationServiceImpl.class.getClassLoader().getResourceAsStream(RELEASE_PROPERTIES));
         } catch (IOException e) {
             LOGGER.error("An error occurred reading the file: " + RELEASE_PROPERTIES);
-            props.setProperty(RELEASE_VERSION, "unknown");
-            props.setProperty(RELEASE_DATE, "01/01/1900");
+            throw new RuntimeException("Failed to reading file release.properties: ", e);
+
         }
 
         LocalDate date = LocalDate.parse(props.getProperty(RELEASE_DATE), DateTimeFormatter.ofPattern(RELEASE_DATE_FORMAT));
