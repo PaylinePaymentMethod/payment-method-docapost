@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.payline.payment.docapost.TestUtils;
 import com.payline.payment.docapost.bean.PaymentResponseSuccessAdditionalData;
 import com.payline.payment.docapost.service.impl.PaymentServiceImpl;
-import com.payline.payment.docapost.service.impl.PaymentWithRedirectionServiceImpl;
 import com.payline.payment.docapost.utils.config.ConfigEnvironment;
 import com.payline.payment.docapost.utils.config.ConfigProperties;
 import com.payline.pmapi.bean.payment.ContractProperty;
@@ -16,7 +15,6 @@ import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFormUpdated;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseSuccess;
 import com.payline.pmapi.integration.AbstractPaymentIntegration;
 import com.payline.pmapi.service.PaymentService;
-import com.payline.pmapi.service.PaymentWithRedirectionService;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
@@ -30,7 +28,6 @@ import static com.payline.payment.docapost.utils.DocapostConstants.*;
 
 public class TestIt extends AbstractPaymentIntegration {
     private PaymentServiceImpl paymentService = new PaymentServiceImpl();
-    private PaymentWithRedirectionServiceImpl paymentWithRedirectionService = new PaymentWithRedirectionServiceImpl();
     private static final String GOOD_CREDITOR_ID = "MARCHAND1";
 
     @Override
@@ -79,12 +76,7 @@ public class TestIt extends AbstractPaymentIntegration {
         // !!! PaymentSuccess renvoyé
         PaymentRequest paymentRequestStep3 = createCustomPaymentRequestStep3(requestContextMain, otp, phoneNumber);
 
-        testIt.checkPaymentResponse(paymentRequestStep3, testIt.paymentService, testIt.paymentWithRedirectionService);
-
-        /*Below test method from parent Class
-        /Dont work now because payment method return a PaymentSuccessResponse vs PaymentRedirectReponse is expected
-        */
-//        testIt.fullRedirectionPayment(paymentRequestStep3, testIt.paymentService, testIt.paymentWithRedirectionService);
+        testIt.checkPaymentResponse(paymentRequestStep3, testIt.paymentService);
 
     }
 
@@ -118,7 +110,7 @@ public class TestIt extends AbstractPaymentIntegration {
      * Check we have a good PaymentResponseSuccess
      *
      */
-    public void checkPaymentResponse(PaymentRequest paymentRequest, PaymentService paymentService, PaymentWithRedirectionService paymentWithRedirectionService) {
+    private void checkPaymentResponse(PaymentRequest paymentRequest, PaymentService paymentService) {
         PaymentResponse paymentResponseFromPaymentRequest = paymentService.paymentRequest(paymentRequest);
         this.checkPaymentResponseIsNotFailure(paymentResponseFromPaymentRequest);
         this.checkPaymentResponseIsRightClass("paymentRequest", paymentResponseFromPaymentRequest, PaymentResponseSuccess.class);
