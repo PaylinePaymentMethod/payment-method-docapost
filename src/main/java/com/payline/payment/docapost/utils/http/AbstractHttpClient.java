@@ -14,6 +14,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
@@ -29,6 +31,7 @@ import static com.payline.payment.docapost.utils.DocapostConstants.*;
 public abstract class AbstractHttpClient {
 
     private CloseableHttpClient client;
+    private static final Logger LOGGER = LogManager.getLogger(AbstractHttpClient.class);
 
     /**
      * Instantiate a HTTP client.
@@ -82,20 +85,38 @@ public abstract class AbstractHttpClient {
         httpPostRequest.setHeaders(headers);
         httpPostRequest.setEntity(body);
 
-        try (CloseableHttpResponse httpResponse = this.client.execute(httpPostRequest)) {
+        final long start = System.currentTimeMillis();
+        int count = 0;
+        StringResponse strResponse = null;
+        while (count < 3 && strResponse == null) {
+            try (CloseableHttpResponse httpResponse = this.client.execute(httpPostRequest)) {
 
-            final StringResponse strResponse = new StringResponse();
-            strResponse.setCode(httpResponse.getStatusLine().getStatusCode());
-            strResponse.setMessage(httpResponse.getStatusLine().getReasonPhrase());
+                LOGGER.info("Start partner call... [HOST: {}]", host);
 
-            if (httpResponse.getEntity() != null) {
-                final String responseAsString = EntityUtils.toString(httpResponse.getEntity());
-                strResponse.setContent(responseAsString);
+                strResponse = new StringResponse();
+                strResponse.setCode(httpResponse.getStatusLine().getStatusCode());
+                strResponse.setMessage(httpResponse.getStatusLine().getReasonPhrase());
+
+                if (httpResponse.getEntity() != null) {
+                    final String responseAsString = EntityUtils.toString(httpResponse.getEntity());
+                    strResponse.setContent(responseAsString);
+                }
+                final long end = System.currentTimeMillis();
+
+                LOGGER.info("End partner call [T: {}ms] [CODE: {}]", end - start, strResponse.getCode());
+
+            } catch (final IOException e) {
+                LOGGER.error("Error while partner call [T: {}ms]", System.currentTimeMillis() - start, e);
+                strResponse = null;
+            } finally {
+                count++;
             }
-
-            return strResponse;
-
         }
+
+        if (strResponse == null) {
+            throw new IOException("Partner response empty");
+        }
+        return strResponse;
 
     }
 
@@ -124,20 +145,40 @@ public abstract class AbstractHttpClient {
         final HttpGet httpGetRequest = new HttpGet(uri);
         httpGetRequest.setHeaders(headers);
 
-        try (CloseableHttpResponse httpResponse = this.client.execute(httpGetRequest)) {
+        final long start = System.currentTimeMillis();
+        int count = 0;
+        StringResponse strResponse = null;
+        while (count < 3 && strResponse == null) {
+            try (CloseableHttpResponse httpResponse = this.client.execute(httpGetRequest)) {
 
-            final StringResponse strResponse = new StringResponse();
-            strResponse.setCode(httpResponse.getStatusLine().getStatusCode());
-            strResponse.setMessage(httpResponse.getStatusLine().getReasonPhrase());
+                LOGGER.info("Start partner call... [HOST: {}]", host);
 
-            if (httpResponse.getEntity() != null) {
-                final String responseAsString = EntityUtils.toString(httpResponse.getEntity());
-                strResponse.setContent(responseAsString);
+                strResponse = new StringResponse();
+                strResponse.setCode(httpResponse.getStatusLine().getStatusCode());
+                strResponse.setMessage(httpResponse.getStatusLine().getReasonPhrase());
+
+                if (httpResponse.getEntity() != null) {
+                    final String responseAsString = EntityUtils.toString(httpResponse.getEntity());
+                    strResponse.setContent(responseAsString);
+                }
+                final long end = System.currentTimeMillis();
+
+                LOGGER.info("End partner call [T: {}ms] [CODE: {}]", end - start, strResponse.getCode());
+
+            } catch (final IOException e) {
+                LOGGER.error("Error while partner call [T: {}ms]", System.currentTimeMillis() - start, e);
+                strResponse = null;
+                
+            } finally {
+                count++;
             }
 
-            return strResponse;
-
         }
+        if (strResponse == null) {
+            throw new IOException("Partner response empty");
+        }
+
+        return strResponse;
 
     }
 
