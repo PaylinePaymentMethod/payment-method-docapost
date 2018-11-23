@@ -13,6 +13,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.util.Currency;
+
 import static com.payline.payment.docapost.utils.DocapostConstants.*;
 
 /**
@@ -317,5 +319,20 @@ public class SddOrderCreateRequestTest {
 
         SddOrderCreateRequest sddOrderCreateRequest = new SddOrderCreateRequest.Builder().fromPaylineRequest(paylineRequest);
     }
+
+    /**
+     * Method: checkInputRequest(PaymentRequest paylineRequest)
+     */
+    @Test
+    public void testCheckInputRequest_Currency_Ko() throws Exception {
+        expectedEx.expect(InvalidRequestException.class);
+        expectedEx.expectMessage("Currency must be in euro");
+        PaymentRequest paylineRequest = TestUtils.createDefaultPaymentRequest();
+        paylineRequest.getRequestContext().getRequestData().put(CONTEXT_DATA_MANDATE_RUM, "rum");
+        FieldUtils.writeField(paylineRequest.getAmount(), "currency", Currency.getInstance("BRL"), true);
+
+        SddOrderCreateRequest sddOrderCreateRequest = new SddOrderCreateRequest.Builder().fromPaylineRequest(paylineRequest);
+    }
+
 
 } 

@@ -5,6 +5,7 @@ import com.payline.pmapi.bean.payment.ContractProperty;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 
 import javax.xml.bind.annotation.*;
+import java.util.Currency;
 import java.util.Map;
 
 import static com.payline.payment.docapost.utils.DocapostConstants.*;
@@ -144,7 +145,9 @@ public class SddOrderCreateRequest extends AbstractXmlRequest {
             if (paylineRequest.getAmount() == null) {
                 throw new InvalidRequestException("Missing mandatory property: amount");
             }
-
+            if (paylineRequest.getAmount().getCurrency() != Currency.getInstance("EUR")) {
+                throw new InvalidRequestException("Currency must be in euro");
+            }
             if (paylineRequest.getOrder() == null) {
                 throw new InvalidRequestException("Order object must not be null");
             }

@@ -155,11 +155,9 @@ public class SctOrderCreateRequest extends AbstractXmlRequest {
             if (paylineRequest.getAmount() == null) {
                 throw new InvalidRequestException("Missing order property: amount");
             }
-
             if (paylineRequest.getAmount().getCurrency() != Currency.getInstance("EUR")) {
-                throw new InvalidRequestException("Currency must be euro");
+                throw new InvalidRequestException("Currency must be in euro");
             }
-
         }
 
     }
