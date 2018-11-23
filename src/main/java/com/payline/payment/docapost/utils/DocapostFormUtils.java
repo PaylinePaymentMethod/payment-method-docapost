@@ -249,7 +249,7 @@ public class DocapostFormUtils {
             url = new URL(strUrl);
 
         } catch (MalformedURLException e) {
-            LOGGER.error(UNEXPECTED_ERROR_MESSAGE, e);
+            LOGGER.error(UNEXPECTED_ERROR_MESSAGE, e.getMessage(), e);
         }
 
         return url;
@@ -285,7 +285,7 @@ public class DocapostFormUtils {
             url = new URL(strUrl);
 
         } catch (UnsupportedEncodingException | MalformedURLException e) {
-            LOGGER.error(UNEXPECTED_ERROR_MESSAGE, e);
+            LOGGER.error(UNEXPECTED_ERROR_MESSAGE, e.getMessage(), e);
 
         }
 

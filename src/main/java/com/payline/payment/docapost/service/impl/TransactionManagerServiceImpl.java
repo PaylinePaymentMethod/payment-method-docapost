@@ -34,7 +34,7 @@ public class TransactionManagerServiceImpl implements TransactionManagerService 
                 additionalDataMap.put("signatureId", paymentResponseSuccessAdditionalData.getSignatureId());
 
             } catch (JsonSyntaxException e) {
-                LOGGER.error("Additional data syntax incorrect [{}]", e);
+                LOGGER.error("Additional data syntax incorrect [{}]", e.getMessage(), e);
                 throw new JsonSyntaxException("Additional data syntax incorrect [{}]", e);
 
             }

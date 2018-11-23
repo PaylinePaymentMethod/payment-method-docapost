@@ -143,7 +143,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         try {
             props.load(ConfigurationServiceImpl.class.getClassLoader().getResourceAsStream(RELEASE_PROPERTIES));
         } catch (IOException e) {
-            LOGGER.error("An error occurred reading the file: " + RELEASE_PROPERTIES);
+            LOGGER.error("An error occurred reading the file: " + RELEASE_PROPERTIES, e.getMessage(), e);
             throw new RuntimeException("Failed to reading file release.properties: ", e);
 
         }
