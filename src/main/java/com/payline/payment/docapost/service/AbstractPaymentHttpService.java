@@ -70,7 +70,7 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
             }
 
         } catch (Exception e) {
-            logger.error("An unexpected error occurred: ", e.getMessage(), e);
+            logger.error("An unexpected error occurred: {}", e.getMessage(), e);
             return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
         }
 

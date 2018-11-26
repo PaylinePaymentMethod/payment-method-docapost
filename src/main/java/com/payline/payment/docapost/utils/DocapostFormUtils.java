@@ -27,7 +27,7 @@ public class DocapostFormUtils {
 
     private I18nService i18n = I18nService.getInstance();
     private static final Logger LOGGER = LogManager.getLogger(DocapostFormUtils.class);
-    private static final String UNEXPECTED_ERROR_MESSAGE = "An unexpected error occurred: ";
+    private static final String UNEXPECTED_ERROR_MESSAGE = "An unexpected error occurred: {}";
 
 
     /**

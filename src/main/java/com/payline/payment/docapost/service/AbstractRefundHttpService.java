@@ -76,13 +76,13 @@ public abstract class AbstractRefundHttpService<T extends RefundRequest> {
             }
 
         } catch (InvalidRequestException e) {
-            logger.error("The input payment request is invalid: ", e.getMessage(), e);
+            logger.error("The input payment request is invalid: {}", e.getMessage(), e);
             return buildRefundResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INVALID_DATA);
         } catch (IOException e) {
-            logger.error("An IOException occurred while sending the HTTP request or receiving the response: ", e.getMessage(), e);
+            logger.error("An IOException occurred while sending the HTTP request or receiving the response: {}", e.getMessage(), e);
             return buildRefundResponseFailure(DEFAULT_ERROR_CODE, FailureCause.COMMUNICATION_ERROR);
         } catch (Exception e) {
-            logger.error("An unexpected error occurred: ", e.getMessage(), e);
+            logger.error("An unexpected error occurred: {}", e.getMessage(), e);
             return buildRefundResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
         }
 

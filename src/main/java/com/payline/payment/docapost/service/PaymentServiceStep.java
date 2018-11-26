@@ -13,7 +13,7 @@ public interface PaymentServiceStep {
     String HTTP_SENDING_ERROR_MESSAGE = "An HTTP error occurred while sending the request: ";
     String HTTP_NULL_RESPONSE_ERROR_MESSAGE = "The HTTP response or its body is null and should not be";
     String DEFAULT_ERROR_CODE = "no code transmitted";
-    String UNEXPECTED_ERROR_MESSAGE = "An unexpected error occurred: ";
+    String UNEXPECTED_ERROR_MESSAGE = "An unexpected error occurred: {}";
 
 
     PaymentResponse processPaymentStep(PaymentRequest paymentRequest,
