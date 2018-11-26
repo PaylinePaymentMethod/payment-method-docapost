@@ -301,13 +301,13 @@ public class PaymentServiceStep02 implements PaymentServiceStep {
                     .withRequestContext(requestContext)
                     .build();
         } catch (InvalidRequestException e) {
-            LOGGER.error("The input payment request is invalid: " + e.getMessage());
+            LOGGER.error("The input payment request is invalid: ", e.getMessage(), e);
             return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INVALID_DATA);
         } catch (IOException e) {
-            LOGGER.error("An IOException occurred while sending the HTTP request or receiving the response: " + e.getMessage());
+            LOGGER.error("An IOException occurred while sending the HTTP request or receiving the response: {}", e.getMessage(), e);
             return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.COMMUNICATION_ERROR);
         } catch (Exception e) {
-            LOGGER.error(UNEXPECTED_ERROR_MESSAGE, e);
+            LOGGER.error(UNEXPECTED_ERROR_MESSAGE, e.getMessage(), e);
             return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
         }
 

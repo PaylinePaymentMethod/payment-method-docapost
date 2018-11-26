@@ -63,8 +63,8 @@ public class ResetServiceImpl extends AbstractResetHttpService<ResetRequest> imp
 
         LOGGER.info("Path {}", path);
         // Recuperation des donnees necessaires pour la generation du Header Basic credentials des appels WS
-        String authLogin = resetRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG_AUTH_LOGIN);
-        String authPass = resetRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG_AUTH_PASS);
+        String authLogin = resetRequest.getContractConfiguration().getProperty(PARTNER_CONFIG_AUTH_LOGIN).getValue();
+        String authPass = resetRequest.getContractConfiguration().getProperty(PARTNER_CONFIG_AUTH_PASS).getValue();
 
         return this.httpClient.doGet(
                 scheme,
@@ -126,12 +126,12 @@ public class ResetServiceImpl extends AbstractResetHttpService<ResetRequest> imp
 
     @Override
     public boolean canMultiple() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean canPartial() {
-        return false;
+        return true;
     }
 
     /**

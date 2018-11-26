@@ -56,8 +56,8 @@ public class RefundServiceImpl extends AbstractRefundHttpService<RefundRequest> 
         String path = ConfigProperties.get(CONFIG_PATH_WSMANDATE_SCTORDER_CREATE);
 
         // Recuperation des donnees necessaires pour la generation du Header Basic credentials des appels WS
-        String authLogin = refundRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG_AUTH_LOGIN);
-        String authPass = refundRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG_AUTH_PASS);
+        String authLogin = refundRequest.getContractConfiguration().getProperty(PARTNER_CONFIG_AUTH_LOGIN).getValue();
+        String authPass = refundRequest.getContractConfiguration().getProperty(PARTNER_CONFIG_AUTH_PASS).getValue();
 
         // Generation des donnees du body de la requete
         String requestBody = sctOrderCreateRequest.buildBody();
@@ -123,12 +123,12 @@ public class RefundServiceImpl extends AbstractRefundHttpService<RefundRequest> 
 
     @Override
     public boolean canMultiple() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean canPartial() {
-        return false;
+        return true;
     }
 
     /**

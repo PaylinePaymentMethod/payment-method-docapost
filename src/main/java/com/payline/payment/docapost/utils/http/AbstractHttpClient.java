@@ -1,5 +1,6 @@
 package com.payline.payment.docapost.utils.http;
 
+import com.payline.payment.docapost.utils.config.ConfigProperties;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
@@ -13,14 +14,15 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static com.payline.payment.docapost.utils.DocapostConstants.AUTHORIZATION;
-import static com.payline.payment.docapost.utils.DocapostConstants.CONTENT_TYPE;
+import static com.payline.payment.docapost.utils.DocapostConstants.*;
 
 /**
  * This utility class provides a basic HTTP client to send requests, using OkHttp library.
@@ -29,20 +31,23 @@ import static com.payline.payment.docapost.utils.DocapostConstants.CONTENT_TYPE;
 public abstract class AbstractHttpClient {
 
     private CloseableHttpClient client;
+    private static final Logger LOGGER = LogManager.getLogger(AbstractHttpClient.class);
 
     /**
      * Instantiate a HTTP client.
-     *
-     * @param connectTimeout Determines the timeout in milliseconds until a connection is established
-     * @param requestTimeout The timeout in milliseconds used when requesting a connection from the connection manager
-     * @param socketTimeout  Defines the socket timeout (SO_TIMEOUT) in milliseconds, which is the timeout for waiting for data or, put differently, a maximum period inactivity between two consecutive data packets)
      */
-    protected AbstractHttpClient(int connectTimeout, int requestTimeout, int socketTimeout) {
+
+    protected AbstractHttpClient() {
+
+        int connectTimeout = Integer.parseInt(ConfigProperties.get(CONFIG_HTTP_CONNECT_TIMEOUT));
+        int requestTimeout = Integer.parseInt(ConfigProperties.get(CONFIG_HTTP_WRITE_TIMEOUT));
+        int readTimeout = Integer.parseInt(ConfigProperties.get(CONFIG_HTTP_READ_TIMEOUT));
+
 
         final RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectTimeout(connectTimeout * 1000)
                 .setConnectionRequestTimeout(requestTimeout * 1000)
-                .setSocketTimeout(socketTimeout * 1000)
+                .setSocketTimeout(readTimeout * 1000)
                 .build();
 
         this.client = HttpClientBuilder.create()
@@ -80,20 +85,38 @@ public abstract class AbstractHttpClient {
         httpPostRequest.setHeaders(headers);
         httpPostRequest.setEntity(body);
 
-        try (CloseableHttpResponse httpResponse = this.client.execute(httpPostRequest)) {
+        final long start = System.currentTimeMillis();
+        int count = 0;
+        StringResponse strResponse = null;
+        while (count < 3 && strResponse == null) {
+            try (CloseableHttpResponse httpResponse = this.client.execute(httpPostRequest)) {
 
-            final StringResponse strResponse = new StringResponse();
-            strResponse.setCode(httpResponse.getStatusLine().getStatusCode());
-            strResponse.setMessage(httpResponse.getStatusLine().getReasonPhrase());
+                LOGGER.info("Start partner call... [HOST: {}]", host);
 
-            if (httpResponse.getEntity() != null) {
-                final String responseAsString = EntityUtils.toString(httpResponse.getEntity());
-                strResponse.setContent(responseAsString);
+                strResponse = new StringResponse();
+                strResponse.setCode(httpResponse.getStatusLine().getStatusCode());
+                strResponse.setMessage(httpResponse.getStatusLine().getReasonPhrase());
+
+                if (httpResponse.getEntity() != null) {
+                    final String responseAsString = EntityUtils.toString(httpResponse.getEntity());
+                    strResponse.setContent(responseAsString);
+                }
+                final long end = System.currentTimeMillis();
+
+                LOGGER.info("End partner call [T: {}ms] [CODE: {}]", end - start, strResponse.getCode());
+
+            } catch (final IOException e) {
+                LOGGER.error("Error while partner call [T: {}ms]", System.currentTimeMillis() - start, e);
+                strResponse = null;
+            } finally {
+                count++;
             }
-
-            return strResponse;
-
         }
+
+        if (strResponse == null) {
+            throw new IOException("Partner response empty");
+        }
+        return strResponse;
 
     }
 
@@ -122,20 +145,40 @@ public abstract class AbstractHttpClient {
         final HttpGet httpGetRequest = new HttpGet(uri);
         httpGetRequest.setHeaders(headers);
 
-        try (CloseableHttpResponse httpResponse = this.client.execute(httpGetRequest)) {
+        final long start = System.currentTimeMillis();
+        int count = 0;
+        StringResponse strResponse = null;
+        while (count < 3 && strResponse == null) {
+            try (CloseableHttpResponse httpResponse = this.client.execute(httpGetRequest)) {
 
-            final StringResponse strResponse = new StringResponse();
-            strResponse.setCode(httpResponse.getStatusLine().getStatusCode());
-            strResponse.setMessage(httpResponse.getStatusLine().getReasonPhrase());
+                LOGGER.info("Start partner call... [HOST: {}]", host);
 
-            if (httpResponse.getEntity() != null) {
-                final String responseAsString = EntityUtils.toString(httpResponse.getEntity());
-                strResponse.setContent(responseAsString);
+                strResponse = new StringResponse();
+                strResponse.setCode(httpResponse.getStatusLine().getStatusCode());
+                strResponse.setMessage(httpResponse.getStatusLine().getReasonPhrase());
+
+                if (httpResponse.getEntity() != null) {
+                    final String responseAsString = EntityUtils.toString(httpResponse.getEntity());
+                    strResponse.setContent(responseAsString);
+                }
+                final long end = System.currentTimeMillis();
+
+                LOGGER.info("End partner call [T: {}ms] [CODE: {}]", end - start, strResponse.getCode());
+
+            } catch (final IOException e) {
+                LOGGER.error("Error while partner call [T: {}ms]", System.currentTimeMillis() - start, e);
+                strResponse = null;
+                
+            } finally {
+                count++;
             }
 
-            return strResponse;
-
         }
+        if (strResponse == null) {
+            throw new IOException("Partner response empty");
+        }
+
+        return strResponse;
 
     }
 

@@ -5,7 +5,6 @@ import com.payline.payment.docapost.utils.DocapostLocalParam;
 import com.payline.payment.docapost.utils.DocapostUtils;
 import com.payline.payment.docapost.utils.PluginUtils;
 import com.payline.payment.docapost.utils.config.ConfigEnvironment;
-import com.payline.payment.docapost.utils.config.ConfigProperties;
 import com.payline.payment.docapost.utils.http.DocapostHttpClient;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
@@ -32,13 +31,7 @@ public class PaymentServiceImpl implements PaymentService {
      * Constructeur
      */
     public PaymentServiceImpl() {
-
-        int connectTimeout = Integer.parseInt(ConfigProperties.get(CONFIG_HTTP_CONNECT_TIMEOUT));
-        int writeTimeout = Integer.parseInt(ConfigProperties.get(CONFIG_HTTP_WRITE_TIMEOUT));
-        int readTimeout = Integer.parseInt(ConfigProperties.get(CONFIG_HTTP_READ_TIMEOUT));
-
-        this.httpClient = new DocapostHttpClient(connectTimeout, writeTimeout, readTimeout);
-
+        this.httpClient = DocapostHttpClient.getInstance();
         this.docapostLocalParam = DocapostLocalParam.getInstance();
 
     }
@@ -72,8 +65,8 @@ public class PaymentServiceImpl implements PaymentService {
 
         }
         // Recuperation des donnees necessaires pour la generation du Header Basic credentials des appels WS
-        String authLogin = paymentRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG_AUTH_LOGIN);
-        String authPass = paymentRequest.getPartnerConfiguration().getSensitiveProperties().get(PARTNER_CONFIG_AUTH_PASS);
+        String authLogin = paymentRequest.getContractConfiguration().getProperty(PARTNER_CONFIG_AUTH_LOGIN).getValue();
+        String authPass = paymentRequest.getContractConfiguration().getProperty(PARTNER_CONFIG_AUTH_PASS).getValue();
 
         credencials = DocapostUtils.generateBasicCredentials(authLogin, authPass);
         //----------------------------------------------------------------------------------------------------------

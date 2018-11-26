@@ -23,9 +23,9 @@ import static com.payline.payment.docapost.utils.DocapostConstants.*;
  */
 public class TestUtils {
 
-    public static final String SUCCESS_URL = "https://succesurl.com/";
-    public static final String CANCEL_URL = "http://localhost/cancelurl.com/";
-    public static final String NOTIFICATION_URL = "http://google.com/";
+    private static final String SUCCESS_URL = "https://succesurl.com/";
+    private static final String CANCEL_URL = "http://localhost/cancelurl.com/";
+    private static final String NOTIFICATION_URL = "http://google.com/";
     public static final String GOOD_CREDITOR_ID = "MARCHAND1"; //testItSlimpay //democreditor01
     public static final String GOOD_LOGIN = "payline@docapost.fr"; //
     public static final String GOOD_PWD = "J:[ef8dccma";
@@ -351,12 +351,16 @@ public class TestUtils {
         contractConfiguration.getContractProperties().put(CONTRACT_CONFIG_CREDITOR_ID, new ContractProperty(GOOD_CREDITOR_ID));
         contractConfiguration.getContractProperties().put(CONFIG_HOST, new ContractProperty("https://espaceclient.sepalia.fr/rcte"));
         contractConfiguration.getContractProperties().put(CONFIG_PATH_WSMANDATE_MANDATE_CREATE, new ContractProperty("mandate"));
+        contractConfiguration.getContractProperties().put(PARTNER_CONFIG_AUTH_LOGIN, new ContractProperty(GOOD_LOGIN));
+        contractConfiguration.getContractProperties().put(PARTNER_CONFIG_AUTH_PASS, new ContractProperty(GOOD_PWD));
         return contractConfiguration;
     }
 
     public static Map<String, String> createAccountInfo() {
         Map<String, String> accountInfo = new HashMap<>();
         accountInfo.put(CONTRACT_CONFIG_CREDITOR_ID, GOOD_CREDITOR_ID);
+        accountInfo.put(PARTNER_CONFIG_AUTH_LOGIN, GOOD_LOGIN);
+        accountInfo.put(PARTNER_CONFIG_AUTH_PASS, GOOD_PWD);
         return accountInfo;
     }
 
@@ -439,8 +443,7 @@ public class TestUtils {
     public static PartnerConfiguration createDefaultPartnerConfiguration() {
         Map<String, String> partnerConfiguration = new HashMap<>();
         Map<String, String> sensitivePartnerConfiguration = new HashMap<>();
-        sensitivePartnerConfiguration.put(PARTNER_CONFIG_AUTH_LOGIN, GOOD_LOGIN);
-        sensitivePartnerConfiguration.put(PARTNER_CONFIG_AUTH_PASS, GOOD_PWD);
+
 
         return new PartnerConfiguration(partnerConfiguration, sensitivePartnerConfiguration);
     }

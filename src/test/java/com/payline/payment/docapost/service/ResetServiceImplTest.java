@@ -11,6 +11,7 @@ import com.payline.pmapi.bean.reset.response.impl.ResetResponseSuccess;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -19,6 +20,7 @@ import static com.payline.payment.docapost.TestUtils.createResetRequest;
 
 public class ResetServiceImplTest {
 
+    @InjectMocks
     private ResetServiceImpl service;
 
 
@@ -35,6 +37,7 @@ public class ResetServiceImplTest {
 
     @Test
     public void createSendRequestTest() throws URISyntaxException, IOException, InvalidRequestException {
+
 
         ResetRequest resetRequest = createResetRequest();
         StringResponse response = service.createSendRequest(resetRequest);
@@ -95,12 +98,12 @@ public class ResetServiceImplTest {
     @Test
     public void canMultipleTest() {
 
-        Assert.assertFalse(service.canMultiple());
+        Assert.assertTrue(service.canMultiple());
     }
 
     @Test
     public void canPartialTest() {
-        Assert.assertFalse(service.canPartial());
+        Assert.assertTrue(service.canPartial());
     }
 
     @Test

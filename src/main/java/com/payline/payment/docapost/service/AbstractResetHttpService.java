@@ -2,7 +2,6 @@ package com.payline.payment.docapost.service;
 
 import com.payline.payment.docapost.exception.InvalidRequestException;
 import com.payline.payment.docapost.utils.ActionRequestResponse;
-import com.payline.payment.docapost.utils.config.ConfigProperties;
 import com.payline.payment.docapost.utils.http.DocapostHttpClient;
 import com.payline.payment.docapost.utils.http.StringResponse;
 import com.payline.pmapi.bean.common.FailureCause;
@@ -14,8 +13,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-
-import static com.payline.payment.docapost.utils.DocapostConstants.*;
 
 /**
  * This abstract service handles the common issues encountered when sending, receiving and processing a {@link ResetRequest} (or subclass)
@@ -31,10 +28,7 @@ public abstract class AbstractResetHttpService<T extends ResetRequest> {
     protected DocapostHttpClient httpClient;
 
     protected AbstractResetHttpService() {
-        int connectTimeout = Integer.parseInt(ConfigProperties.get(CONFIG_HTTP_CONNECT_TIMEOUT));
-        int writeTimeout = Integer.parseInt(ConfigProperties.get(CONFIG_HTTP_WRITE_TIMEOUT));
-        int readTimeout = Integer.parseInt(ConfigProperties.get(CONFIG_HTTP_READ_TIMEOUT));
-        this.httpClient = new DocapostHttpClient(connectTimeout, writeTimeout, readTimeout);
+        this.httpClient = DocapostHttpClient.getInstance();
     }
 
     /**
@@ -82,13 +76,13 @@ public abstract class AbstractResetHttpService<T extends ResetRequest> {
             }
 
         } catch (InvalidRequestException e) {
-            logger.error("The input payment request is invalid: " + e.getMessage());
+            logger.error("The input payment request is invalid: {}", e.getMessage(), e);
             return buildResetResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INVALID_DATA);
         } catch (IOException e) {
-            logger.error("An IOException occurred while sending the HTTP request or receiving the response: " + e.getMessage());
+            logger.error("An IOException occurred while sending the HTTP request or receiving the response: {}", e.getMessage(), e);
             return buildResetResponseFailure(DEFAULT_ERROR_CODE, FailureCause.COMMUNICATION_ERROR);
         } catch (Exception e) {
-            logger.error("An unexpected error occurred: ", e);
+            logger.error("An unexpected error occurred: {}", e.getMessage(), e);
             return buildResetResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
         }
 

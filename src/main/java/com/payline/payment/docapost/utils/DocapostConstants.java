@@ -76,9 +76,9 @@ public class DocapostConstants {
 
     public static final Pattern OTP_FORM_VALIDATION = Pattern.compile("\\d{6}");
     public static final String OTP_FORM_REQUIRED_ERROR_MESSAGE = "form.otp.text.requiredErrorMessage";
-    public static final String OTP_FORM_KEY = "Otp_Key";
-    public static final String OTP_FORM_VALUE = "Otp_Value";
-    public static final String OTP_FORM_LABEL = "Otp_Label";
+    public static final String OTP_FORM_KEY = "formOtp";
+    public static final String OTP_FORM_VALUE = "";
+    public static final String OTP_FORM_LABEL = "form.otp.label";
     public static final String OTP_FORM_PLACEHOLDER = "123456";
     public static final String OTP_FORM_VALIDATION_ERROR_MESSAGE = "form.otp.text.validationErrorMessage";
 
@@ -110,18 +110,18 @@ public class DocapostConstants {
 
     //Data used by the PaymentFormConfiguration noField Form
     public static final boolean NOFIELDFORM_DISPLAY_PAYMENT_BUTTON = true;
-    public static final String NOFIELDFORM_BUTTON_TEXT = "button_text";
-    public static final String NOFIELDFORM_BUTTON_DESCRIPTION = "Button_description";
+    public static final String NOFIELDFORM_BUTTON_TEXT = "form.nofield.button.text";
+    public static final String NOFIELDFORM_BUTTON_DESCRIPTION = "form.nofield.button.description";
 
     //Data used by the IbanForm Object
     public static final String IBAN_TEXT = "form.iban.phone.text.setIban";
-    public static final String IBAN_KEY = "button_description";
+    public static final String IBAN_KEY = "formDebtorIban";
     public static final boolean IBAN_REQUIRED = false;
     public static final String IBAN_REQUIRED_ERROR_MESSAGE = "form.iban.phone.text.ibanRequiredErrorMessage";
 
     //Data used by the phoneForm Object
     public static final FieldIcon PHONE_FIELD_ICON = FieldIcon.PHONE;
-    public static final String PHONE_KEY = "phone_key";
+    public static final String PHONE_KEY = "formDebtorPhone";
     public static final String PHONE_LABEL = "form.iban.phone.text.setPhone";
     public static final boolean PHONE_REQUIRED = true;
     public static final String PHONE_REQUIRED_ERROR_MESSAGE = "form.iban.phone.text.phoneRequiredErrorMessage";
@@ -136,9 +136,11 @@ public class DocapostConstants {
     public static final String CUSTOMFORM_TEXT = "form.customForm.text.buttonText";
     public static final String CUSTOMFORM_DESCRIPTION = "form.customForm.text.description";
     public static final boolean DISPLAY_CUSTOMFORM_BUTTON = true;
+    public static final String CUSTOMFORM_TEXT_SIGN = "form.customForm.sign.text.buttonText";
+    public static final String CUSTOMFORM_TEXT_SIGN_DESCRIPTION = "form.customForm.sign.text.description";
 
 
-    public static final String SAVE_MANDATE_KEY = "save_mandate_key";
+    public static final String SAVE_MANDATE_KEY = "formSaveMandate";
     public static final boolean SAVE_MANDATE_REQUIRED = true;
     public static final boolean SAVE_MANDATE_PRECHECKED = true;
     public static final boolean SAVE_MANDATE_SECURED = true;
@@ -146,7 +148,7 @@ public class DocapostConstants {
 
     public static final boolean ACCEPT_CONDITION_REQUIRED = true;
     public static final boolean ACCEPT_CONDITION_PRECHECKED = true;
-    public static final String ACCEPT_CONDITION_KEY = "acceptCondition_key";
+    public static final String ACCEPT_CONDITION_KEY = "formAcceptCondition";
     public static final boolean ACCEPT_CONDITION_SECURED = true;
     public static final String ACCEPT_CONDITION_REQUIRED_ERROR_MESSAGE = "form.acceptCondition.text.requiredErrorMessage";
 

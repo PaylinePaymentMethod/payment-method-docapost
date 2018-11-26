@@ -13,6 +13,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.util.Currency;
+
 import static com.payline.payment.docapost.utils.DocapostConstants.*;
 
 /**
@@ -239,10 +241,10 @@ public class SddOrderCreateRequestTest {
     @Test
     public void testCheckInputRequest_authLogin_ko() throws Exception {
         expectedEx.expect(InvalidRequestException.class);
-        expectedEx.expectMessage("Missing partner configuration property: auth login");
+        expectedEx.expectMessage("Missing contract configuration property: auth login");
         PaymentRequest paylineRequest = TestUtils.createDefaultPaymentRequest();
         paylineRequest.getRequestContext().getRequestData().put(CONTEXT_DATA_MANDATE_RUM, "rum");
-        paylineRequest.getPartnerConfiguration().getSensitiveProperties().remove(PARTNER_CONFIG_AUTH_LOGIN);
+        paylineRequest.getContractConfiguration().getContractProperties().remove(PARTNER_CONFIG_AUTH_LOGIN);
 
         SddOrderCreateRequest sddOrderCreateRequest = new SddOrderCreateRequest.Builder().fromPaylineRequest(paylineRequest);
     }
@@ -254,10 +256,10 @@ public class SddOrderCreateRequestTest {
     @Test
     public void testCheckInputRequest_authPass_ko() throws Exception {
         expectedEx.expect(InvalidRequestException.class);
-        expectedEx.expectMessage("Missing partner configuration property: auth pass");
+        expectedEx.expectMessage("Missing contract configuration property: auth pass");
         PaymentRequest paylineRequest = TestUtils.createDefaultPaymentRequest();
         paylineRequest.getRequestContext().getRequestData().put(CONTEXT_DATA_MANDATE_RUM, "rum");
-        paylineRequest.getPartnerConfiguration().getSensitiveProperties().remove(PARTNER_CONFIG_AUTH_PASS);
+        paylineRequest.getContractConfiguration().getContractProperties().remove(PARTNER_CONFIG_AUTH_PASS);
 
         SddOrderCreateRequest sddOrderCreateRequest = new SddOrderCreateRequest.Builder().fromPaylineRequest(paylineRequest);
     }
@@ -310,12 +312,27 @@ public class SddOrderCreateRequestTest {
     @Test
     public void testCheckInputRequest_Amount_ko() throws Exception {
         expectedEx.expect(InvalidRequestException.class);
-        expectedEx.expectMessage("Missing order property: amount");
+        expectedEx.expectMessage("Missing mandatory property: amount");
         PaymentRequest paylineRequest = TestUtils.createDefaultPaymentRequest();
         paylineRequest.getRequestContext().getRequestData().put(CONTEXT_DATA_MANDATE_RUM, "rum");
-        FieldUtils.writeField(paylineRequest.getOrder(), "amount", null, true);
+        FieldUtils.writeField(paylineRequest, "amount", null, true);
 
         SddOrderCreateRequest sddOrderCreateRequest = new SddOrderCreateRequest.Builder().fromPaylineRequest(paylineRequest);
     }
+
+    /**
+     * Method: checkInputRequest(PaymentRequest paylineRequest)
+     */
+    @Test
+    public void testCheckInputRequest_Currency_Ko() throws Exception {
+        expectedEx.expect(InvalidRequestException.class);
+        expectedEx.expectMessage("Currency must be in euro");
+        PaymentRequest paylineRequest = TestUtils.createDefaultPaymentRequest();
+        paylineRequest.getRequestContext().getRequestData().put(CONTEXT_DATA_MANDATE_RUM, "rum");
+        FieldUtils.writeField(paylineRequest.getAmount(), "currency", Currency.getInstance("BRL"), true);
+
+        SddOrderCreateRequest sddOrderCreateRequest = new SddOrderCreateRequest.Builder().fromPaylineRequest(paylineRequest);
+    }
+
 
 } 

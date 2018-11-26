@@ -35,7 +35,7 @@ public abstract class AbstractXmlRequest extends DocapostBean implements Request
             return writer.toString();
 
         } catch (JAXBException e) {
-            LOGGER.error("XML parsing exception", e);
+            LOGGER.error("XML parsing exception: {}", e.getMessage(), e);
         }
 
         return "";

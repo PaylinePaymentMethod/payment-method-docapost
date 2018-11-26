@@ -7,6 +7,7 @@ import com.payline.pmapi.bean.payment.ContractProperty;
 import com.payline.pmapi.bean.refund.request.RefundRequest;
 
 import javax.xml.bind.annotation.*;
+import java.util.Currency;
 import java.util.Map;
 
 import static com.payline.payment.docapost.utils.DocapostConstants.*;
@@ -98,7 +99,7 @@ public class SctOrderCreateRequest extends AbstractXmlRequest {
             return new SctOrderCreateRequest(
                     paylineRequest.getContractConfiguration().getContractProperties().get(CONTRACT_CONFIG_CREDITOR_ID).getValue(),
                     new PaymentResponseSuccessAdditionalData.Builder().fromJson(paylineRequest.getTransactionAdditionalData()).getMandateRum(),
-                    paylineRequest.getOrder().getAmount().getAmountInSmallestUnit().floatValue(),
+                    paylineRequest.getAmount().getAmountInSmallestUnit().floatValue(),
                     paylineRequest.getSoftDescriptor(),
                     paylineRequest.getPartnerTransactionId()
             );
@@ -118,17 +119,16 @@ public class SctOrderCreateRequest extends AbstractXmlRequest {
             if (contractProperties.get(CONTRACT_CONFIG_CREDITOR_ID) == null) {
                 throw new InvalidRequestException("Missing contract configuration property: creditor id");
             }
+            if (contractProperties.get(PARTNER_CONFIG_AUTH_LOGIN) == null) {
+                throw new InvalidRequestException("Missing contract configuration property: auth login");
+            }
+            if (contractProperties.get(PARTNER_CONFIG_AUTH_PASS) == null) {
+                throw new InvalidRequestException("Missing contract configuration property: auth pass");
+            }
 
             if (paylineRequest.getPartnerConfiguration() == null
                     || paylineRequest.getPartnerConfiguration().getSensitiveProperties() == null) {
                 throw new InvalidRequestException("Partner configuration sensitive properties object must not be null");
-            }
-            Map<String, String> sensitiveProperties = paylineRequest.getPartnerConfiguration().getSensitiveProperties();
-            if (sensitiveProperties.get(PARTNER_CONFIG_AUTH_LOGIN) == null) {
-                throw new InvalidRequestException("Missing partner configuration property: auth login");
-            }
-            if (sensitiveProperties.get(PARTNER_CONFIG_AUTH_PASS) == null) {
-                throw new InvalidRequestException("Missing partner configuration property: auth pass");
             }
 
             if (paylineRequest.getTransactionAdditionalData() == null) {
@@ -152,10 +152,12 @@ public class SctOrderCreateRequest extends AbstractXmlRequest {
             if (paylineRequest.getOrder() == null) {
                 throw new InvalidRequestException("Order object must not be null");
             }
-            if (paylineRequest.getOrder().getAmount() == null) {
+            if (paylineRequest.getAmount() == null) {
                 throw new InvalidRequestException("Missing order property: amount");
             }
-
+            if (paylineRequest.getAmount().getCurrency() != Currency.getInstance("EUR")) {
+                throw new InvalidRequestException("Currency must be in euro");
+            }
         }
 
     }

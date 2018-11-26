@@ -1,7 +1,6 @@
 package com.payline.payment.docapost.service;
 
 import com.payline.payment.docapost.utils.ActionRequestResponse;
-import com.payline.payment.docapost.utils.config.ConfigProperties;
 import com.payline.payment.docapost.utils.http.DocapostHttpClient;
 import com.payline.payment.docapost.utils.http.StringResponse;
 import com.payline.pmapi.bean.common.FailureCause;
@@ -10,8 +9,6 @@ import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFailure;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import static com.payline.payment.docapost.utils.DocapostConstants.*;
 
 /**
  * This abstract service handles the common issues encountered when sending, receiving and processing a {@link PaymentRequest} (or subclass)
@@ -27,10 +24,8 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
     protected DocapostHttpClient httpClient;
 
     protected AbstractPaymentHttpService() {
-        int connectTimeout = Integer.parseInt(ConfigProperties.get(CONFIG_HTTP_CONNECT_TIMEOUT));
-        int writeTimeout = Integer.parseInt(ConfigProperties.get(CONFIG_HTTP_WRITE_TIMEOUT));
-        int readTimeout = Integer.parseInt(ConfigProperties.get(CONFIG_HTTP_READ_TIMEOUT));
-        this.httpClient = new DocapostHttpClient(connectTimeout, writeTimeout, readTimeout);
+        this.httpClient = DocapostHttpClient.getInstance();
+
     }
 
     /**
@@ -75,7 +70,7 @@ public abstract class AbstractPaymentHttpService<T extends PaymentRequest> {
             }
 
         } catch (Exception e) {
-            logger.error("An unexpected error occurred: ", e);
+            logger.error("An unexpected error occurred: {}", e.getMessage(), e);
             return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
         }
 
