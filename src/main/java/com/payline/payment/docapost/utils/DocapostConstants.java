@@ -21,6 +21,13 @@ public class DocapostConstants {
     public static final String RELEASE_VERSION = "release.version";
     public static final String RELEASE_PROPERTIES = "release.properties";
 
+    public static final String LOGO_FILE_NAME = "logo.file.name";
+    public static final String LOGO_FORMAT = "logo.format";
+    public static final String LOGO_CONTENT_TYPE = "logo.content.type";
+    public static final String LOGO_HEIGHT = "logo.height";
+    public static final String LOGO_WIDTH = "logo.width";
+    public static final String LOGO_PROPERTIES = "logo.properties";
+
     public static final String MANDATE_RUM_GENERATION_DATE_FORMAT = "yyyyMMddHHmmss";
 
     public static final String RESOURCE_BUNDLE_BASE_NAME = "messages";

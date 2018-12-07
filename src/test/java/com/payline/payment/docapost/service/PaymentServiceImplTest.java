@@ -7,7 +7,6 @@ import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFormUpdated;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -34,18 +33,6 @@ public class PaymentServiceImplTest {
 
     @Mock
     private DocapostHttpClient httpClient;
-
-
-    @Test
-    public void test() {
-        Assert.assertTrue(true);
-    }
-
-
-    @Before
-    public void setup() {
-
-    }
 
     @Test
     public void testPaymentServiceImpl() {
@@ -130,7 +117,7 @@ public class PaymentServiceImplTest {
 
     @Test
     public void testPaymentRequestStepOTP() throws IOException, URISyntaxException {
-        PaymentServiceImpl paymentServiceImpl = new PaymentServiceImpl();
+//        PaymentServiceImpl paymentServiceImpl = new PaymentServiceImpl();
 
         Map<String, String> requestContextMap = new HashMap<>();
         requestContextMap.put(CONTEXT_DATA_STEP, CONTEXT_DATA_STEP_OTP);
@@ -160,11 +147,11 @@ public class PaymentServiceImplTest {
                 "   <amount>100.0</amount>\n" +
                 "</WSDDOrderDTO>");
 
-//        Mockito.when(httpClient.doPost(anyString(), anyString(), anyString(), any(Map.class), anyString())).thenReturn(stringResponse);
-//        Mockito.when(httpClient.doPost(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(swddOrdercreatedMocked);
+        Mockito.when(httpClient.doPost(anyString(), anyString(), anyString(), any(Map.class), anyString())).thenReturn(stringResponse);
+        Mockito.when(httpClient.doPost(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(swddOrdercreatedMocked);
 
         PaymentRequest paymentRequestStep2 = createDefaultPaymentRequestStep2(PHONE_NUMBER_TEST);
-        PaymentResponseFormUpdated paymentResponseStep2 = (PaymentResponseFormUpdated) paymentServiceImpl.paymentRequest(paymentRequestStep2);
+        PaymentResponseFormUpdated paymentResponseStep2 = (PaymentResponseFormUpdated) paymentService.paymentRequest(paymentRequestStep2);
 
 
         Map<String, String> requestContext = paymentResponseStep2.getRequestContext().getRequestData();

@@ -73,7 +73,6 @@ public class DocapostFormUtils {
                 .withValidation(PHONE_VALIDATION)
                 .withValidationErrorMessage(i18n.getMessage(PHONE_VALIDATION_MESSAGE, locale))
                 .withInputType(INPUT_TYPE)
-                //.withValue()
                 .build();
 
         PaymentFormDisplayFieldText inputPhoneInfo = PaymentFormDisplayFieldText
@@ -187,16 +186,16 @@ public class DocapostFormUtils {
                 .withSecured(ACCEPT_CONDITION_SECURED)
                 .build();
 
-        PaymentFormInputFieldCheckbox saveMandate = PaymentFormInputFieldCheckbox
-                .PaymentFormFieldCheckboxBuilder
-                .aPaymentFormFieldCheckbox()
-                .withRequired(SAVE_MANDATE_REQUIRED)
-                .withLabel(i18n.getMessage(OTP_FORM_CHECKBOX_SAVE_MANDATE, locale))
-                .withRequiredErrorMessage(i18n.getMessage(SAVE_MANDATE_REQUIRED_ERROR_MESSAGE, locale))
-                .withKey(SAVE_MANDATE_KEY)
-                .withPrechecked(SAVE_MANDATE_PRECHECKED)
-                .withSecured(SAVE_MANDATE_SECURED)
-                .build();
+//        PaymentFormInputFieldCheckbox saveMandate = PaymentFormInputFieldCheckbox
+//                .PaymentFormFieldCheckboxBuilder
+//                .aPaymentFormFieldCheckbox()
+//                .withRequired(SAVE_MANDATE_REQUIRED)
+//                .withLabel(i18n.getMessage(OTP_FORM_CHECKBOX_SAVE_MANDATE, locale))
+//                .withRequiredErrorMessage(i18n.getMessage(SAVE_MANDATE_REQUIRED_ERROR_MESSAGE, locale))
+//                .withKey(SAVE_MANDATE_KEY)
+//                .withPrechecked(SAVE_MANDATE_PRECHECKED)
+//                .withSecured(SAVE_MANDATE_SECURED)
+//                .build();
 
 
         List<PaymentFormField> customFields = new ArrayList<>();
@@ -206,7 +205,7 @@ public class DocapostFormUtils {
         customFields.add(setOtpText);
         customFields.add(otpForm);
         customFields.add(acceptCondition);
-        customFields.add(saveMandate);
+//        customFields.add(saveMandate);
 
         return CustomForm
                 .builder()

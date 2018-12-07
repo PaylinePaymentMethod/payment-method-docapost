@@ -39,6 +39,7 @@ public class ResetServiceImplTest {
     public void createSendRequestTest() throws URISyntaxException, IOException, InvalidRequestException {
 
 
+        //FIXME : add mock httpClient
         ResetRequest resetRequest = createResetRequest();
         StringResponse response = service.createSendRequest(resetRequest);
         String stringResponse = response.toString();
