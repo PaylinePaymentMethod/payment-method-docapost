@@ -76,7 +76,7 @@ public class RefundServiceImplTest {
         responseMocked.setMessage("OK");
         responseMocked.setContent("<sepalia></sepalia>");
 
-
+        //FIXME : add mock httpClient
         refundRequest = createRefundRequest();
         StringResponse response = service.createSendRequest(refundRequest);
         String stringResponse = response.toString();
