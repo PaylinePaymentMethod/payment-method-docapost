@@ -97,10 +97,6 @@ public class WSMandateDTOResponse extends AbstractXmlResponse {
         public static WSMandateDTOResponse fromXml(String xmlContent) {
             return (WSMandateDTOResponse) parse(WSMandateDTOResponse.class, xmlContent);
         }
-
-        private Builder() {
-            // ras.
-        }
     }
     //***** BUILDER
     //******************************************************************************************************************
