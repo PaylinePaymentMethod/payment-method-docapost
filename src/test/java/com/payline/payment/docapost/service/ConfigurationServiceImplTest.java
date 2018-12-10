@@ -107,7 +107,6 @@ public class ConfigurationServiceImplTest {
         // then: assert release version and release date are not null
         Assert.assertNotNull(releaseInformation.getVersion());
         Assert.assertFalse(releaseInformation.getVersion().isEmpty());
-
         Assert.assertNotNull(releaseInformation.getDate());
     }
 

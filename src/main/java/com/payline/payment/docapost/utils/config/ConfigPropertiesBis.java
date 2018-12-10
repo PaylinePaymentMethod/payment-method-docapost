@@ -30,7 +30,6 @@ public class ConfigPropertiesBis {
      */
     public static String get(String key) {
         if (properties == null) {
-            // TODO: if null, backup to a code-based default configuration ? (to avoid runtime exception)
             logger.error("Property " + key + " doesn't exist");
             readProperties();
 
@@ -67,8 +66,6 @@ public class ConfigPropertiesBis {
 
         } catch (Exception e) {
             logger.error("An error occurred reading the configuration properties file");
-
-            // TODO: backup to a code-based default configuration ? (to avoid runtime exception)
         }
 
     }
