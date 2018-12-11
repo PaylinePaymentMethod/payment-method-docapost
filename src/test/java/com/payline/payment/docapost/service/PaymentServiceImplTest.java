@@ -7,7 +7,6 @@ import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.bean.payment.response.impl.PaymentResponseFormUpdated;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -34,18 +33,6 @@ public class PaymentServiceImplTest {
 
     @Mock
     private DocapostHttpClient httpClient;
-
-
-    @Test
-    public void test() {
-        Assert.assertTrue(true);
-    }
-
-
-    @Before
-    public void setup() {
-
-    }
 
     @Test
     public void testPaymentServiceImpl() {
@@ -130,7 +117,7 @@ public class PaymentServiceImplTest {
 
     @Test
     public void testPaymentRequestStepOTP() throws IOException, URISyntaxException {
-        PaymentServiceImpl paymentServiceImpl = new PaymentServiceImpl();
+//        PaymentServiceImpl paymentServiceImpl = new PaymentServiceImpl();
 
         Map<String, String> requestContextMap = new HashMap<>();
         requestContextMap.put(CONTEXT_DATA_STEP, CONTEXT_DATA_STEP_OTP);
@@ -138,16 +125,21 @@ public class PaymentServiceImplTest {
         requestContextMap.put(CONTEXT_DATA_TRANSACTION_ID, "123456789");
         requestContextMap.put(CONTEXT_DATA_SIGNATURE_ID, "aSignature");
 
-        StringResponse stringResponse = new StringResponse();
-        stringResponse.setCode(200);
-        stringResponse.setMessage("OK");
-        stringResponse.setContent("{}");
 
+        StringResponse stringResponse1 = new StringResponse();
+        stringResponse1.setCode(200);
+        stringResponse1.setMessage("OK");
+        stringResponse1.setContent("{\"transactionId\":\"2c969e2c66b0cd3201670e46b10a4d39\"}");
+
+        StringResponse stringResponse2 = new StringResponse();
+        stringResponse2.setCode(200);
+        stringResponse2.setMessage("OK");
+        stringResponse2.setContent("{\"signatureID\":\"76797019\"}");
 
         StringResponse swddOrdercreatedMocked = new StringResponse();
         swddOrdercreatedMocked.setCode(200);
         swddOrdercreatedMocked.setMessage("OK");
-        swddOrdercreatedMocked.setContent("<WSDDOrderDTO>\n" +
+        swddOrdercreatedMocked.setContent("<WSMandateDTO>\n" +
                 "   <label>A simple order</label>\n" +
                 "   <dueDate>2018-12-27T00:00:00+01:00</dueDate>\n" +
                 "   <e2eId>1112140545</e2eId>\n" +
@@ -158,13 +150,13 @@ public class PaymentServiceImplTest {
                 "   <creditorId>MARCHAND1</creditorId>\n" +
                 "   <status>Created</status>\n" +
                 "   <amount>100.0</amount>\n" +
-                "</WSDDOrderDTO>");
+                "</WSMandateDTO>");
 
-//        Mockito.when(httpClient.doPost(anyString(), anyString(), anyString(), any(Map.class), anyString())).thenReturn(stringResponse);
-//        Mockito.when(httpClient.doPost(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(swddOrdercreatedMocked);
+        Mockito.when(httpClient.doPost(anyString(), anyString(), anyString(), any(Map.class), anyString())).thenReturn(stringResponse1, stringResponse2);
+        Mockito.when(httpClient.doPost(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(swddOrdercreatedMocked);
 
         PaymentRequest paymentRequestStep2 = createDefaultPaymentRequestStep2(PHONE_NUMBER_TEST);
-        PaymentResponseFormUpdated paymentResponseStep2 = (PaymentResponseFormUpdated) paymentServiceImpl.paymentRequest(paymentRequestStep2);
+        PaymentResponseFormUpdated paymentResponseStep2 = (PaymentResponseFormUpdated) paymentService.paymentRequest(paymentRequestStep2);
 
 
         Map<String, String> requestContext = paymentResponseStep2.getRequestContext().getRequestData();

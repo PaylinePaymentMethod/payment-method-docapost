@@ -70,7 +70,7 @@ public class TestUtils {
         final String transactionID = "transactionID";
         final Order order = createOrder(transactionID);
         final String softDescriptor = "softDescriptor";
-        //TODO find a better way to do it
+
         Map<String, String> requestData = new HashMap<>();
         requestData.put(CONTEXT_DATA_STEP, CONTEXT_DATA_STEP_IBAN_PHONE);
         requestData.put(CONTEXT_DATA_MANDATE_RUM, createRUM());
@@ -110,7 +110,7 @@ public class TestUtils {
         //  final String transactionID = "transactionID";
         final Order order = createOrder(transactionID);
         final String softDescriptor = "softDescriptor";
-        //TODO find a better way to do it
+
         Map<String, String> requestData = customRequestData;
         final RequestContext requestContext = RequestContext.RequestContextBuilder
                 .aRequestContext()
@@ -246,7 +246,6 @@ public class TestUtils {
         PaymentResponseSuccessAdditionalData additionalData = new PaymentResponseSuccessAdditionalData().mandateRum(rum).transactionId(transactionID).signatureId("signature1");
         final Order order = createOrder(transactionID);
         final String softDescriptor = "softDescriptor";
-        //TODO find a better way to do it
         Map<String, String> requestData = new HashMap<>();
         requestData.put(CONTEXT_DATA_STEP, CONTEXT_DATA_STEP_IBAN_PHONE);
         requestData.put(CONTEXT_DATA_MANDATE_RUM, rum);
@@ -274,7 +273,6 @@ public class TestUtils {
         PaymentResponseSuccessAdditionalData additionalData = new PaymentResponseSuccessAdditionalData().mandateRum(rum).transactionId(transactionID).signatureId("signature1");
         final Order order = createOrder(transactionID);
         final String softDescriptor = "softDescriptor";
-        //TODO find a better way to do it
         Map<String, String> requestData = new HashMap<>();
         requestData.put(CONTEXT_DATA_STEP, CONTEXT_DATA_STEP_IBAN_PHONE);
         requestData.put(CONTEXT_DATA_MANDATE_RUM, rum);

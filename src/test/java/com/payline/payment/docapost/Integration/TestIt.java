@@ -47,7 +47,6 @@ public class TestIt extends AbstractPaymentIntegration {
     }
 
 
-    //todo find a better way to get a prompt
     public static void main(String[] args) {
 
         TestIt testIt = new TestIt();
@@ -64,7 +63,6 @@ public class TestIt extends AbstractPaymentIntegration {
         Map<String, String> requestContextMain = paymentResponseStep2.getRequestContext().getRequestData();
         // Create a Payment request from payment request step 2 result
 
-        //TODO REQUEST WITH PAYMENT RESPONSE STEP2
         Scanner keyboardOTP = new Scanner(System.in);
         keyboardOTP.reset();
         System.out.println("Enter your  OTP : ");
