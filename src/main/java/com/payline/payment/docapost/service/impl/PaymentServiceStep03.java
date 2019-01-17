@@ -71,6 +71,7 @@ public class PaymentServiceStep03 implements PaymentServiceStep {
         //######################################################################################################
         //### API MandateWS /api/setCode
         try {
+
             // Initialisation de la requete Docapost
             SetCodeRequest setCodeRequest = RequestBuilderFactory.buildSetCodeRequest(paymentRequest);
 
@@ -85,11 +86,11 @@ public class PaymentServiceStep03 implements PaymentServiceStep {
             );
 
             if (setCodeStringResponse == null) {
-                LOGGER.debug("SetCodeResponse StringResponse is null !");
+                LOGGER.debug("SetCodeRequest StringResponse is null !");
                 LOGGER.error(HTTP_NULL_RESPONSE_ERROR_MESSAGE);
                 return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
             }
-            LOGGER.debug("SetCodeResponse StringResponse : {}", setCodeStringResponse.toString());
+            LOGGER.debug("SetCodeRequest StringResponse : {}", setCodeStringResponse.toString());
 
             switch (ActionRequestResponse.checkResponse(setCodeStringResponse)) {
                 case OK_200:
@@ -144,11 +145,11 @@ public class PaymentServiceStep03 implements PaymentServiceStep {
 
             if (terminateSignatureStringResponse == null) {
 
-                LOGGER.debug("TerminateSignatureResponse StringResponse is null !");
+                LOGGER.debug("TerminateSignatureRequest StringResponse is null !");
                 LOGGER.error(HTTP_NULL_RESPONSE_ERROR_MESSAGE);
                 return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
             }
-            LOGGER.debug("TerminateSignatureResponse StringResponse : {}", terminateSignatureStringResponse.toString());
+            LOGGER.debug("TerminateSignatureRequest StringResponse : {}", terminateSignatureStringResponse.toString());
 
             switch (ActionRequestResponse.checkResponse(terminateSignatureStringResponse)) {
                 case OK_200:
@@ -274,7 +275,7 @@ public class PaymentServiceStep03 implements PaymentServiceStep {
             return PaymentResponseSuccess
                     .PaymentResponseSuccessBuilder
                     .aPaymentResponseSuccess()
-                    .withPartnerTransactionId(docapostLocalParam.getTransactionId())
+                    .withPartnerTransactionId(paymentRequest.getTransactionId())
                     .withTransactionAdditionalData(paymentResponseSuccessAdditionalData.toJson())
                     .withStatusCode(docapostLocalParam.getOrderStatus())
                     .withMessage(new Message(SUCCESS, this.i18n.getMessage(PAYMENT_RESPONSE_SUCCESS_MESSAGE, locale)))

@@ -71,6 +71,7 @@ public class PaymentServiceStep02 implements PaymentServiceStep {
         //######################################################################################################
         //### API MandateWS /api/mandate/create
         try {
+
             // Initialisation de la requete Docapost
             MandateCreateRequest mandateCreateRequest = RequestBuilderFactory.buildMandateCreateRequest(paymentRequest);
 
@@ -99,6 +100,7 @@ public class PaymentServiceStep02 implements PaymentServiceStep {
 
             switch (ActionRequestResponse.checkResponse(mandateCreateStringResponse)) {
                 case OK_200:
+
                     responseBody = mandateCreateStringResponse.getContent().trim();
 
 
@@ -159,11 +161,11 @@ public class PaymentServiceStep02 implements PaymentServiceStep {
 
             if (initiateSignatureStringResponse == null) {
 
-                LOGGER.debug("InitiateSignatureResponse StringResponse is null !");
+                LOGGER.debug("InitiateSignatureRequest StringResponse is null !");
                 LOGGER.error(HTTP_NULL_RESPONSE_ERROR_MESSAGE);
                 return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
             }
-            LOGGER.debug("InitiateSignatureResponse StringResponse : {}", initiateSignatureStringResponse.toString());
+            LOGGER.debug("InitiateSignatureRequest StringResponse : {}", initiateSignatureStringResponse.toString());
 
             switch (ActionRequestResponse.checkResponse(initiateSignatureStringResponse)) {
                 case OK_200:
@@ -216,11 +218,11 @@ public class PaymentServiceStep02 implements PaymentServiceStep {
 
             if (sendOTPStringResponse == null) {
 
-                LOGGER.debug("SendOTPResponse StringResponse is null !");
+                LOGGER.debug("SendOTPRequest StringResponse is null !");
                 LOGGER.error(HTTP_NULL_RESPONSE_ERROR_MESSAGE);
                 return buildPaymentResponseFailure(DEFAULT_ERROR_CODE, FailureCause.INTERNAL_ERROR);
             }
-            LOGGER.debug("SendOTPResponse StringResponse : {}", sendOTPStringResponse.toString());
+            LOGGER.debug("SendOTPRequest StringResponse : {}", sendOTPStringResponse.toString());
 
             switch (ActionRequestResponse.checkResponse(sendOTPStringResponse)) {
                 case OK_200:

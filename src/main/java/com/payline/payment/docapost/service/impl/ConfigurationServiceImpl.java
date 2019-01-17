@@ -8,6 +8,7 @@ import com.payline.payment.docapost.utils.config.ConfigProperties;
 import com.payline.payment.docapost.utils.http.DocapostHttpClient;
 import com.payline.payment.docapost.utils.http.StringResponse;
 import com.payline.payment.docapost.utils.i18n.I18nService;
+import com.payline.pmapi.bean.configuration.PartnerConfiguration;
 import com.payline.pmapi.bean.configuration.ReleaseInformation;
 import com.payline.pmapi.bean.configuration.parameter.AbstractParameter;
 import com.payline.pmapi.bean.configuration.parameter.impl.InputParameter;
@@ -44,22 +45,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         merchantName.setRequired(true);
         parameters.add(merchantName);
 
-        // Auth login
-        final InputParameter authLogin = new InputParameter();
-        authLogin.setKey(PARTNER_CONFIG_AUTH_LOGIN);
-        authLogin.setLabel(this.i18n.getMessage(PARTNER_CONFIG_AUTH_LOGIN_PROPERTY_LABEL, locale));
-        authLogin.setDescription(this.i18n.getMessage(PARTNER_CONFIG_AUTH_LOGIN_PROPERTY_DESCRIPTION, locale));
-        authLogin.setRequired(true);
-        parameters.add(authLogin);
-
-        // Auth pwd
-        final InputParameter authPwd = new InputParameter();
-        authPwd.setKey(PARTNER_CONFIG_AUTH_PASS);
-        authPwd.setLabel(this.i18n.getMessage(PARTNER_CONFIG_AUTH_PASS_PROPERTY_LABEL, locale));
-        authPwd.setDescription(this.i18n.getMessage(PARTNER_CONFIG_AUTH_PASS_PROPERTY_DESCRIPTION, locale));
-        authPwd.setRequired(true);
-        parameters.add(authPwd);
-
         return parameters;
     }
 
@@ -68,6 +53,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
         Locale locale = contractParametersCheckRequest.getLocale();
         final Map<String, String> accountInfo = contractParametersCheckRequest.getAccountInfo();
+        final PartnerConfiguration partnerConfiguration = contractParametersCheckRequest.getPartnerConfiguration();
         final Map<String, String> errors = new HashMap<>();
 
         // Creditor id
@@ -77,12 +63,13 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         }
 
         // Credential auth login
-        final String authLogin = accountInfo.get(PARTNER_CONFIG_AUTH_LOGIN);
+        final String authLogin = partnerConfiguration.getProperty(PARTNER_CONFIG_AUTH_LOGIN);
         if (PluginUtils.isEmpty(authLogin)) {
             errors.put(PARTNER_CONFIG_AUTH_LOGIN, this.i18n.getMessage(PARTNER_CONFIG_AUTH_LOGIN_ERROR, locale));
         }
 
-        final String authPass = accountInfo.get(PARTNER_CONFIG_AUTH_PASS);
+        // Credential auth login
+        final String authPass = partnerConfiguration.getSensitiveProperties().get(PARTNER_CONFIG_AUTH_PASS);
         if (PluginUtils.isEmpty(authPass)) {
             errors.put(PARTNER_CONFIG_AUTH_PASS, this.i18n.getMessage(PARTNER_CONFIG_AUTH_PASS_ERROR, locale));
         }

@@ -62,6 +62,8 @@ public class RefundServiceImpl extends AbstractRefundHttpService<RefundRequest> 
         // Generation des donnees du body de la requete
         String requestBody = sctOrderCreateRequest.buildBody();
 
+        LOGGER.debug("SctOrderCreateRequest XML body : {}", requestBody);
+
         return this.httpClient.doPost(
                 scheme,
                 host,
@@ -73,51 +75,61 @@ public class RefundServiceImpl extends AbstractRefundHttpService<RefundRequest> 
     }
 
     @Override
-    public RefundResponse processResponse(StringResponse response) {
+    public RefundResponse processResponseSuccess(StringResponse response) {
 
         AbstractXmlResponse sctOrderCreateXmlResponse = getSctOrderCreateResponse(response.getContent().trim());
 
         if (sctOrderCreateXmlResponse != null) {
 
+            // Just in case but must be true
             if (sctOrderCreateXmlResponse.isResultOk()) {
+
+                LOGGER.info("SctOrderCreateXmlResponse AbstractXmlResponse instance of WSCTOrderDTOResponse");
 
                 WSCTOrderDTOResponse sctOrderCreateResponse = (WSCTOrderDTOResponse) sctOrderCreateXmlResponse;
 
-                LOGGER.info("sctOrderCreateXmlResponse ok");
-                return RefundResponseSuccess
-                        .RefundResponseSuccessBuilder
-                        .aRefundResponseSuccess()
-                        .withStatusCode(sctOrderCreateResponse.getStatus())
-                        .withPartnerTransactionId(sctOrderCreateResponse.getE2eId())
-                        .build();
+                LOGGER.debug("SddOrderCreateResponse : {}", sctOrderCreateResponse.toString());
+
+                return buildRefundResponseSuccess(sctOrderCreateResponse.getStatus(), sctOrderCreateResponse.getE2eId());
 
             }
-
-            XmlErrorResponse xmlErrorResponse = (XmlErrorResponse) sctOrderCreateXmlResponse;
-
-            WSRequestResultEnum wsRequestResult = WSRequestResultEnum.fromDocapostErrorCode(xmlErrorResponse.getException().getCode());
-
-            LOGGER.info("sctOrderCreateXmlResponse ko");
-
-            return RefundResponseFailure
-                    .RefundResponseFailureBuilder
-                    .aRefundResponseFailure()
-                    .withErrorCode(wsRequestResult.getDocapostErrorCode())
-                    .withFailureCause(wsRequestResult.getPaylineFailureCause())
-//                    .withPartnerTransactionId()
-                    .build();
 
         }
 
         // case : sctOrderCreateXmlResponse is null
         LOGGER.info("null sctOrderCreateXmlResponse");
-        return RefundResponseFailure
-                .RefundResponseFailureBuilder
-                .aRefundResponseFailure()
-                .withErrorCode("XML RESPONSE PARSING FAILED")
-                .withFailureCause(FailureCause.INVALID_DATA)
-                .build();
+        return buildRefundResponseFailure("XML RESPONSE PARSING FAILED", FailureCause.INVALID_DATA);
 
+    }
+
+    @Override
+    public RefundResponse processResponseFailure(StringResponse response) {
+
+        AbstractXmlResponse sctOrderCreateXmlResponse = getSctOrderCreateResponse(response.getContent().trim());
+
+        if (sctOrderCreateXmlResponse != null) {
+
+            // Just in case but must be true
+            if (!sctOrderCreateXmlResponse.isResultOk()) {
+
+                LOGGER.info("SctOrderCreateXmlResponse AbstractXmlResponse instance of XmlErrorResponse");
+
+                XmlErrorResponse xmlErrorResponse = (XmlErrorResponse) sctOrderCreateXmlResponse;
+
+                LOGGER.debug("SddOrderCreateResponse : {}", xmlErrorResponse.toString());
+
+                // Retrieve the partner error type
+                WSRequestResultEnum wsRequestResult = WSRequestResultEnum.fromDocapostErrorCode(xmlErrorResponse.getException().getCode());
+
+                return buildPaymentResponseFailure(wsRequestResult);
+
+            }
+
+        }
+
+        // case : sctOrderCreateXmlResponse is null
+        LOGGER.info("null sctOrderCreateXmlResponse");
+        return buildRefundResponseFailure("XML RESPONSE PARSING FAILED", FailureCause.INVALID_DATA);
 
     }
 

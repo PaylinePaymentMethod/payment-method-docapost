@@ -154,7 +154,7 @@ public class DocapostConstants {
     public static final String SAVE_MANDATE_REQUIRED_ERROR_MESSAGE = "form.saveMandate.text.requiredErrorMessage";
 
     public static final boolean ACCEPT_CONDITION_REQUIRED = true;
-    public static final boolean ACCEPT_CONDITION_PRECHECKED = true;
+    public static final boolean ACCEPT_CONDITION_PRECHECKED = false;
     public static final String ACCEPT_CONDITION_KEY = "formAcceptCondition";
     public static final boolean ACCEPT_CONDITION_SECURED = true;
     public static final String ACCEPT_CONDITION_REQUIRED_ERROR_MESSAGE = "form.acceptCondition.text.requiredErrorMessage";
