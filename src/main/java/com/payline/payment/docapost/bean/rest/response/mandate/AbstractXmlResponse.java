@@ -3,7 +3,7 @@ package com.payline.payment.docapost.bean.rest.response.mandate;
 import com.google.gson.Gson;
 import com.payline.payment.docapost.bean.rest.common.DocapostBean;
 import com.payline.payment.docapost.bean.rest.response.error.XmlErrorResponse;
-import org.apache.logging.log4j.LogManager;
+import com.payline.pmapi.logger.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.xml.bind.JAXBContext;

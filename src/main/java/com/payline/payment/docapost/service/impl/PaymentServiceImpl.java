@@ -9,7 +9,7 @@ import com.payline.payment.docapost.utils.http.DocapostHttpClient;
 import com.payline.pmapi.bean.payment.request.PaymentRequest;
 import com.payline.pmapi.bean.payment.response.PaymentResponse;
 import com.payline.pmapi.service.PaymentService;
-import org.apache.logging.log4j.LogManager;
+import com.payline.pmapi.logger.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static com.payline.payment.docapost.utils.DocapostConstants.*;

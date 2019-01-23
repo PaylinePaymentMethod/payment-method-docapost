@@ -20,7 +20,7 @@ import com.payline.pmapi.bean.reset.response.ResetResponse;
 import com.payline.pmapi.bean.reset.response.impl.ResetResponseFailure;
 import com.payline.pmapi.bean.reset.response.impl.ResetResponseSuccess;
 import com.payline.pmapi.service.ResetService;
-import org.apache.logging.log4j.LogManager;
+import com.payline.pmapi.logger.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;

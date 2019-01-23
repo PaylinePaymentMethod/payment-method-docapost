@@ -1,6 +1,6 @@
 package com.payline.payment.docapost.utils.config;
 
-import org.apache.logging.log4j.LogManager;
+import com.payline.pmapi.logger.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.InputStream;
